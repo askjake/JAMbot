@@ -1,0 +1,19 @@
+- Tool/Resource Name: pip install opencv-python
+  Specific information needed: Installs the OpenCV library for Python to be used in image processing scripts
+  Required Bash Command (if applicable): sudo apt-get update && sudo apt-get install python3-pip, sudo pip3 install opencv-python
+  URL to find the information: https://pypi.org/project/opencv-python/
+
+ - Tool/Resource Name: Checking the location of the input image
+  Specific information needed: Determine if 'input.jpg' is in the same directory as the Python script or provide its full path
+  Required Bash Command (if applicable): ls -lh input.jpg
+  URL to find the information: https://en.wikipedia.org/wiki/Path_(computing)
+
+ - Tool/Resource Name: Checking file permissions
+  Specific information needed: Ensure read and write access to the input image and output folder
+  Required Bash Command (if applicable): ls -l input.jpg, ls -ld directory
+  URL to find the information: https://help.ubuntu.com/community/FilePermissions
+
+ - Tool/Resource Name: Jupyter notebook troubleshooting
+  Specific information needed: Ensure the execution context is set correctly and restart the kernel if necessary
+  Required Bash Command (if applicable): jupyter notebook
+  URL to find the information: https://jupyter.readthedocs.io/en/stable/troubleshooting.html

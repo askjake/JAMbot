@@ -1,0 +1,9 @@
+Flask
+requests
+numpy
+scikit-learn
+psycopg2-binary
+gunicorn
+drain3
+paramiko
+atlassian-python-api
