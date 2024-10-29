@@ -6,127 +6,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="host-name">STB Control Panel</title>
     <style>
-        /* Chatbox styles */
-        #chatbox {
-            position: float;
-            bottom: 0;
-            width: 50%;
-            height: 85%;
-            background-color: #f1f1f1;
-            border: 1px solid #ccc;
-            border-radius: 10px 10px 0 0;
-            padding: 10px;
-            font-family: Arial, sans-serif;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+        /* Layout for side-by-side panels */
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            background-color: #f0f0f0;
         }
 
-        #chatbox #messages {
+        /* Chatbox styles */
+        #chatbox {
+            width: 50%;
+            height: 100%;
+            background-color: #f1f1f1;
+            border-right: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #messages {
             height: 60%;
             overflow-y: auto;
             border: 1px solid #ccc;
-            padding: 10px;
             margin-bottom: 10px;
             background-color: white;
         }
 
         /* Auto-expanding textarea */
         #user-input {
-            width: 100%;
+            width: 95%;
             padding: 5px;
-            font-family: Arial, sans-serif;
             resize: none;
             overflow: hidden;
             line-height: 1.5;
             border: 1px solid #ccc;
             border-radius: 5px;
-            margin-bottom: 10px;
-        }
-		
-        #chatbox input[type="text"],
-        #chatbox input[type="number"] {
-            width: 20%;
-            padding: 5px;
-            margin-right: 5%;
         }
 
-        #chatbox button {
+        /* Auto-expanding textarea */
+        #editor {
+            width: 95%;
             padding: 5px;
-            background-color: #4CAF50;
-            color: white;
-            border: black;
+            overflow: hidden;
+            overflow-y: auto;
+            line-height: 1.5;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
         }
 
-        #chatbox button:hover {
-            background-color: #45a049;
-        }
-
-        .drop-zone {
-            border: 2px dashed #ccc;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .drop-zone.dragover {
-            background-color: #e8f7ff;
-        }
-
-        .top-buttons,
         .bottom-buttons {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-top: 10px;
         }
 
-        .dropdown-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
+        /* Explorer panel styles */
+        #explorer {
+            width: 50%;
+            height: 100%;
+            overflow-y: auto;
+            background-color: #fff;
+            border-left: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
-        .dropdown-container select {
-            width: 45%;
+        .file-item {
             padding: 5px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
         }
 
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        .file-item:hover {
             background-color: #f0f0f0;
         }
     </style>
 </head>
 
 <body>
+    <div class="container">
+
+<body>
     <div id="chatbox">
         <div class="top-buttons">
-		
-	
-	<label for="image">Upload an Image for Analysis:</label>
-    <input type="file" id="image" name="file" accept="image/*"><br><br>
-            <button onclick="analyzeImage()">Analyze Image</button>
-            <button id="workflowButton">Start Workflow</button>
-        </div>
+                <label for="image">Upload an Image for Analysis:</label>
+                <input type="file" id="image" accept="image/*"><br><br>
+                <button onclick="analyzeImage()">Analyze Image</button>
+                <button id="workflowButton">Start Workflow</button>				
+                <div id="workflow-step-container">Current Workflow Step:<span id="workflow-step">0</span></div>
 
-        <div class="drop-zone" id="drop-zone">
-            Drag and drop a file here or click to select a file.
-        </div>
+            </div>
 
-        <div id="messages"></div>
+            <div id="messages">Drag and drop files here or click below to send messages...</div>
+
 
         <div class="input-row">
 		    <label for="max-tokens-input">Max Tokens:</label>
             <input type="number" id="max-tokens-input" placeholder="Max Tokens (default -2)" value="-2" min="1">
 			<label for="num_ctx">How big is your plate:</label>
             <input type="number" id="num_ctx" placeholder="(default 2048)" value="5096" min="255">
-			<label for="max-tokens-input">Temp:</label>
+			<label for="temperature">Temp:</label>
             <input type="number" id="temperature" placeholder="Temp (default 1)" value="1" min="0">
         </div>
 
@@ -175,14 +154,182 @@
             <input type="checkbox" id="gabrielMuteToggle">
         </div>
     </div>
+	
+<div id="explorer">
+    <h3>Scripts</h3>
+    <div class="controls">
+        <label for="sort-method">Sort by:</label>
+        <select id="sort-method" onchange="fetchFileList()">
+            <option value="name">Name</option>
+            <option value="type">Type</option>
+            <option value="created">Creation Date</option>
+        </select>
+    </div>
 
+    <textarea id="editor" placeholder="Select a file to view/edit..."></textarea>
 
-</body>
+    <div class="editor-controls">
+        <button id="save-button" onclick="saveFile()">Save Changes</button>
+        <button id="run-button" onclick="runScript()">Run Script</button>
+        <button id="refresh-button" onclick="fetchFileList()">Refresh Scripts</button>
+        <button id="delete-button" onclick="deleteSelectedFiles()">Delete Selected</button>
+		<button onclick="fetch('/code-cleaner').then(response => response.json()).then(data => alert(data.message));">Clean and Format Scripts</button>
+    </div>
+    <div id="file-list">Loading...</div>
 
+</div>
 </html>
 
     
     <script>
+	
+function updateWorkflowStep() {
+    fetch('/get-workflow-step')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('workflow-step').textContent = data.workflow_repeats;
+        })
+        .catch(error => console.error('Error fetching workflow step:', error));
+}
+
+function startWorkflow() {
+    fetch('/trigger-workflow', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            updateWorkflowStep();
+        })
+        .catch(error => console.error('Error starting workflow:', error));
+}
+
+// Poll the server every 2 seconds to keep the step value updated
+setInterval(updateWorkflowStep, 2000);
+	
+        let currentFile = '';  // Store the currently opened file name
+
+        // Handle drag and drop for the entire messages area
+        const messages = document.getElementById('messages');
+
+        messages.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            messages.classList.add('dragover');
+        });
+
+        messages.addEventListener('dragleave', () => {
+            messages.classList.remove('dragover');
+        });
+
+        messages.addEventListener('drop', (e) => {
+            e.preventDefault();
+            messages.classList.remove('dragover');
+
+            const items = e.dataTransfer.items;
+            if (items) {
+                handleFileUpload(items);
+            }
+        });
+		
+let currentSortMethod = 'name';  // Track the current sort method
+
+// Fetch and display the list of files, with toggled sort direction
+function fetchFileList(sortMethod = 'name') {
+    // Check if the same sort method was selected, and toggle the direction
+    const isSameMethod = (sortMethod === currentSortMethod);
+    currentSortMethod = sortMethod;  // Update the current method
+
+    fetch(`/list-files?sort=${sortMethod}`)
+        .then(response => response.json())
+        .then(data => {
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '';  // Clear the list
+
+            data.files.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'file-checkbox';
+                checkbox.value = file;
+
+                fileItem.appendChild(checkbox);
+                fileItem.appendChild(document.createTextNode(` ${file}`));
+                fileItem.onclick = () => openFile(file);
+
+                fileList.appendChild(fileItem);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching file list:', error);
+            document.getElementById('file-list').textContent = 'Failed to load files.';
+        });
+}
+
+// Attach event listener to the sort dropdown
+document.getElementById('sort-method').addEventListener('change', (e) => {
+    fetchFileList(e.target.value);
+});
+
+// Open a file in the editor
+function openFile(filename) {
+    currentFile = filename;
+
+    fetch(`/read-file/${filename}`)
+        .then(response => response.text())
+        .then(content => {
+            document.getElementById('editor').value = content;
+        })
+        .catch(error => console.error('Error reading file:', error));
+}
+
+// Save changes made in the editor
+function saveFile() {
+    const content = document.getElementById('editor').value;
+
+    fetch('/save-file', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: currentFile, content })
+    })
+        .then(response => response.json())
+        .then(result => alert(result.message))
+        .catch(error => console.error('Error saving file:', error));
+}
+
+// Run the script in a virtual environment or emulator
+function runScript() {
+    fetch(`/run-script/${currentFile}`)
+        .then(response => response.json())
+        .then(result => alert(`Script Output:\n${result.output}`))
+        .catch(error => console.error('Error running script:', error));
+}
+
+// Delete selected files
+function deleteSelectedFiles() {
+    const checkboxes = document.querySelectorAll('.file-checkbox:checked');
+    const filesToDelete = Array.from(checkboxes).map(cb => cb.value);
+
+    if (filesToDelete.length === 0) {
+        alert('Please select at least one file to delete.');
+        return;
+    }
+
+    fetch('/delete-files', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files: filesToDelete })
+    })
+        .then(response => response.json())
+        .then(result => {
+            alert(result.message);
+            fetchFileList();  // Refresh the file list
+        })
+        .catch(error => console.error('Error deleting files:', error));
+}
+
+        // Load the file list when the page is ready
+        document.addEventListener('DOMContentLoaded', fetchFileList);
+		
 		    // Konami Code sequence
     const konamiCode = [
         "ArrowUp", "ArrowUp",
@@ -218,60 +365,161 @@
         });
 		
 document.addEventListener('DOMContentLoaded', () => {
-    const messageDiv = document.getElementById('messages');
-    const processedUrls = new Set();  // A set to keep track of processed URLs
+    const chatWindow = document.getElementById('messages');
+    if (!chatWindow) {
+        console.error("Chat window not found.");
+        return;
+    }
 
-    // Function to handle embedding a detected URL
-    function handleGenericUrl(url) {
-        if (processedUrls.has(url)) {
-            return;  // URL has already been processed, prevent reposting
+    const processedUrls = new Set(); // Track processed URLs
+    const allowedTools = ['bash', 'pip'];
+    const toolPattern = new RegExp(`(${allowedTools.join('|')})\\s+(.+)`, 'i');
+    const urlPattern = /(https?|ftp|sftp):\/\/[^\s/$.?#].[^\s]*/gi;
+    const codePattern = /```(bash|python|perl|ruby|javascript)?([\s\S]*?)```/gi;
+    const logScraperPattern = /log_scraper\s+(.+)/i;
+
+    let accumulatedScripts = {}; // Store accumulated scripts by language
+
+
+    // Unified function to observe and handle all new messages
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+                if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+                const messageContent = node.textContent.trim();
+
+                // Handle code blocks
+                let match;
+                while ((match = codePattern.exec(messageContent)) !== null) {
+                    const language = match[1] || 'unknown';
+                    const scriptContent = match[2].trim();
+                    console.log(`Detected code block in ${language}:`, scriptContent);
+
+                    accumulateCodeBlock(language, scriptContent);
+                }
+
+                // Handle URLs
+                const urls = messageContent.match(urlPattern);
+                if (urls) urls.forEach(handleGenericUrl);
+				
+                // Detect and handle log_scraper command
+                const logScraperMatch = messageContent.match(logScraperPattern);
+                if (logScraperMatch) {
+                    const args = logScraperMatch[1].trim();
+                    console.log(`Detected log_scraper command with arguments: ${args}`);
+                    triggerLogScraper(args);  // Call the API with extracted arguments
+                }
+
+                // Handle tool commands
+                const toolMatch = messageContent.match(toolPattern);
+                if (toolMatch) {
+                    const [_, toolName, toolArgument] = toolMatch;
+                    console.log(`Detected tool: ${toolName} with argument: ${toolArgument}`);
+                    executeToolCommand(toolName, toolArgument);
+                }
+            });
+        });
+    });
+
+    observer.observe(chatWindow, { childList: true, subtree: true });
+
+    // Function to accumulate code blocks
+    function accumulateCodeBlock(language, content) {
+        if (!accumulatedScripts[language]) {
+            accumulatedScripts[language] = [];
         }
+        accumulatedScripts[language].push(content);
+    }
 
-        processedUrls.add(url);  // Mark URL as processed
+    // Function to trigger the /log-scraper API endpoint
+    function triggerLogScraper(args) {
+        fetch('/log-scraper', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ arg: args })
+        })
+        .then(response => response.json())
+        .then(result => {
+            const message = result.success 
+                ? `Log scraper output: ${result.output}` 
+                : `Error: ${result.error}`;
+            appendToChatWindow('Log Scraper', message);
+        })
+        .catch(error => {
+            appendToChatWindow('Log Scraper', `Error: ${error.message}`);
+        });
+    }
+	
+    // Function to save accumulated code blocks
+async function saveCodeBlock(language) {
+    if (!accumulatedScripts[language]) return;
+
+    const completeScript = accumulatedScripts[language].join('\n');
+    
+    try {
+        // Await filename generation before proceeding
+        const filename = await generateFilename(language, completeScript);
+        console.log(`Saving complete ${language} script to: ${filename}`);  // Debug log
+        
+        // Now that the filename is ready, call ScriptSaver
+        ScriptSaver(filename, completeScript);
+        
+        // Clear accumulated scripts after saving
+        delete accumulatedScripts[language];
+    } catch (error) {
+        console.error('Error saving code block:', error);
+    }
+}
+
+    // Call this function periodically to save all accumulated code blocks
+    setInterval(() => {
+        for (const language in accumulatedScripts) {
+            saveCodeBlock(language);
+        }
+    }, 10000);
+
+    // Handle URLs
+    function handleGenericUrl(url) {
+        if (processedUrls.has(url)) return;
+
+        processedUrls.add(url);
         const formData = new FormData();
         formData.append('generic_url', url);
-
-        messageDiv.innerHTML += `<p>url observer: Auto-embedding...</p>`;
+        //appendToChatWindow('URL Observer', 'Auto-embedding...');
 
         fetch('/embed-content', {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
-        .then(result => {
-            messageDiv.innerHTML += `<p>url observer: ${result.result}</p>`;
-            messageDiv.scrollTop = messageDiv.scrollHeight;  // Scroll to the bottom after adding new content
-        })
-        .catch(error => {
-            messageDiv.innerHTML += `<p>url observer: Error - ${error.message}</p>`;
-            messageDiv.scrollTop = messageDiv.scrollHeight;  // Scroll to the bottom after adding new content
-        });
+            .then(response => response.json())
+            //.then(result => appendToChatWindow('URL Observer', result.result || "Content embedded."))
+            //.catch(error => appendToChatWindow('URL Observer', `Error - ${error.message}`));
     }
 
-    // Regex pattern to detect URLs
-    const urlPattern = /(https?|ftp|sftp):\/\/[^\s/$.?#].[^\s]*/gi;
+    // Execute tool commands
+    function executeToolCommand(toolName, toolArgument) {
+        fetch('/tools/allowed')
+            .then(response => response.text())
+            .then(text => {
+                const allowedCommands = text.split('\n').map(cmd => cmd.trim());
+                if (toolName === 'bash' && !allowedCommands.includes(toolArgument.split(' ')[0])) {
+                    //appendToChatWindow('Tool Observer', `Command "${toolArgument}" is not allowed.`);
+                    return;
+                }
 
-    // MutationObserver to watch for changes in the messageDiv
-    const observer = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
-            if (mutation.type === 'childList') {
-                mutation.addedNodes.forEach(node => {
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        // Check if the new node contains a URL
-                        const urls = node.innerHTML.match(urlPattern);
-                        if (urls) {
-                            urls.forEach(url => handleGenericUrl(url));
-                        }
-                    }
-                });
-            }
-        });
-    });
-
-    // Start observing the messageDiv for added nodes
-    observer.observe(messageDiv, { childList: true, subtree: true });
+                fetch(`/tools/${toolName}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ argument: toolArgument })
+                })
+                    .then(response => response.json())
+                    //.then(result => appendToChatWindow('Tool Observer', formatTextAsHtml(result.result)))
+                    //.catch(error => appendToChatWindow('Tool Observer', `Error: ${error.message}`));
+            })
+            .catch(error => appendToChatWindow('Tool Observer', `Error loading allowed commands: ${error.message}`));
+    }
 });
-
 	
     let discoInterval;
 	
@@ -343,37 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Error checking Disco Biscuit status:', error));
     }, 100000); // Check every 10 seconds
 	
-    // Handle drag-and-drop file upload
-    const dropZone = document.getElementById('drop-zone');
-	
-dropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropZone.classList.add('dragover');
-});
 
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('dragover');
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        const items = e.dataTransfer.items;
-
-        if (items) {
-            //handleFileUpload(items);
-        }
-    });
-
-    dropZone.addEventListener('click', () => {
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.onchange = () => {
-            const files = fileInput.files;
-            handleFileUpload(files);
-        };
-        fileInput.click();
-    });
 
 		
 		function analyzeImage() {
@@ -412,35 +630,6 @@ dropZone.addEventListener('dragover', (e) => {
     });
 }
 
-function insertChatMessage(author, message) {
-    const messagesContainer = document.getElementById('messages');
-    if (!messagesContainer) {
-        console.error("Chatbox not found.");
-        return;
-    }
-	
-	
-
-    // Create a new div for the message
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('chat-message');
-
-    // Format message content
-    const authorSpan = document.createElement('strong');
-    authorSpan.textContent = author + ": ";
-    const messageContent = document.createElement('span');
-    messageContent.textContent = message;
-
-    // Append author and message to the message div
-    messageDiv.appendChild(authorSpan);
-    messageDiv.appendChild(messageContent);
-
-    // Append the new message div to the messages container
-    messagesContainer.appendChild(messageDiv);
-
-    // Scroll to the bottom of the messages container
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
 
 
 function handleBotReplyToAvery(message) {
@@ -448,7 +637,9 @@ function handleBotReplyToAvery(message) {
     const botModels = ['AI1', 'AI2', 'Gabriel'];
     const replyingBot = botModels[Math.floor(Math.random() * botModels.length)];
     
+    const num_ctx = parseInt(document.getElementById('num_ctx').value) || 2048;
     const modelAI = document.getElementById(replyingBot.toLowerCase() + 'Model').value || replyingBot;
+            const maxTokens = parseInt(document.getElementById('max-tokens-input').value) || -2;
 
     // Check if the replying bot is muted
     if (document.getElementById(replyingBot.toLowerCase() + 'MuteToggle').checked) {
@@ -470,7 +661,7 @@ function handleBotReplyToAvery(message) {
                         num_predict: maxTokens,
                         num_ctx: num_ctx,
 						temperature: 1,
-						history: "True"
+						history: true
 						},
         }),
     })
@@ -485,30 +676,6 @@ function handleBotReplyToAvery(message) {
         console.error('Error in bot reply:', error);
     });
 }
-
-    function handleImageUpload(file) {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        fetch('/analyze-image', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.caption) {
-                const messageDiv = document.getElementById('messages');
-                const captionMessage = document.createElement('p');
-                captionMessage.textContent = `BLIP: ${data.caption}`;
-                messageDiv.appendChild(captionMessage);
-            } else if (data.error) {
-                console.error('Error:', data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error uploading image:', error);
-        });
-    }
 
     function handleFileUpload(items) {
         const modelAI1 = getCookie('AI1') || 'Alex';
@@ -642,48 +809,26 @@ function displayError(errorMessage) {
     document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
 }
 
-// Update event handler for dropping URLs and files
-document.getElementById('drop-zone').addEventListener('drop', (event) => {
-    event.preventDefault();
-    const items = event.dataTransfer.items;
 
-    if (items) {
-        handleFileUpload(items);
-    } else {
-        const url = event.dataTransfer.getData('URL');
-        if (url) {
-            // Handle generic URL upload
-            uploadFile(null, getCookie('AI1') || 'Aqua', url);
-        }
-    }
-});
-
-// Prevent default behavior for dragover
-document.getElementById('drop-zone').addEventListener('dragover', (event) => {
-    event.preventDefault();
-});
-
-// Function to format text into HTML, replacing newlines and preserving code blocks
+// Function to format text into HTML, preserving newlines and code blocks with backticks
 function formatTextAsHtml(text) {
-    // Replace newlines with <br> for line breaks
-    let formattedText = text.replace(/\n/g, '<br>');
-    
-    // Wrap code blocks inside <pre><code> tags
-    formattedText = formattedText.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-    
-    // Handle single-line code using <code>
-    formattedText = formattedText.replace(/`([^`]+)`/g, '<code>$1</code>');
-	
-	// Handle numbered lists by replacing patterns like "1." with line breaks before each number
-    formattedText = formattedText.replace(/(\d+\.)\s/g, '<br>$1 ');
-	
+    // Preserve triple backticks as-is to detect code blocks later
+    let formattedText = text.replace(/```([\s\S]*?)```/g, '```$1```');
 
-    // Handle star lists (e.g., "**Item**")
+    // Preserve inline backticks (single line code)
+    formattedText = formattedText.replace(/`([^`]+)`/g, '`$1`');
+
+    // Replace remaining newlines with <br> for line breaks
+    formattedText = formattedText.replace(/\n/g, '<br>');
+
+    // Handle numbered lists by adding line breaks before each number
+    formattedText = formattedText.replace(/(\d+\.)\s/g, '<br>$1 ');
+
+    // Format bold text using <strong> tags for star lists
     formattedText = formattedText.replace(/\*\*\s*(.*?)\*\*/g, '<strong>$1</strong>');
 
-    // Ensure bullet points with '*' or '-' are formatted with <li> tags
+    // Format bullet points with <li> tags
     formattedText = formattedText.replace(/^\s*[-*]\s+(.*)/gm, '<li>$1</li>');
-
 
     return formattedText;
 }
@@ -698,211 +843,65 @@ function formatTextAsHtml(text) {
             }
             return null;
 		}
-        
-// Function to Observe Changes in the Chat Window and Trigger Tool Commands
-function observeChatWindow() {
-    const chatWindow = document.getElementById('messages');
+       
+function appendToChatWindow(sender, message) {
+    const chatWindow = document.getElementById('messages');  // Ensure chatWindow is defined within the function
     if (!chatWindow) {
         console.error("Chat window not found.");
         return;
     }
 
-    const allowedTools = ['bash', 'fart'];
-    const toolPattern = new RegExp(`(${allowedTools.join('|')})\\s+(.+)`, 'i');
+    const newMessage = document.createElement('div');
+    newMessage.innerHTML = `<strong>${sender}:</strong> ${message}<br>`;
+    chatWindow.appendChild(newMessage);
+    chatWindow.scrollTop = chatWindow.scrollHeight;  // Auto-scroll to the bottom
+}
 
-    // URL Patterns
-    const githubPattern = /https:\/\/git\.[\w.-]+\/[\w.-]+\/[\w.-]+/;
-    const confluencePattern = /https:\/\/[\w.-]+\/(?:pages\/viewpage\.action\?spaceKey=[\w-]+&title=[\w-]+|display\/[\w-]+\/[\w+-]+)/;
-    const orgPattern = /https:\/\/git\.[\w.-]+\/orgs\/[\w-]+\/repositories/;
-    const sshPattern = /[\w-]+@[\w.-]+:[\w-]+\/[\w.-]+\.git/;
-    const publicGithubPattern = /https:\/\/github\.com\/[\w-]+\/[\w.-]+\.git/;
-    const genericUrlPattern = /^(https:\/\/(?!git\.|github\.com|confluence\.|.*confluence.*)[\w.-]+(?:\/[\w.-]*)*)$/;
-    const urlPattern = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/;
+// Generate filename with appropriate extension using Gabriel
+async function generateFilename(language, completeScript) {
+    //const extension = languageExtensions[language.toLowerCase()] || 'txt';  // Default to .txt if unknown
 
-    // Define a MutationObserver to watch for new messages in the chat window
-    const observer = new MutationObserver((mutationsList) => {
-        for (const mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-                mutation.addedNodes.forEach((node) => {
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        const messageContent = node.textContent.trim();
-                        const toolMatch = messageContent.match(toolPattern);
+    // Send script to Gabriel for context-based naming
+    const context_name = await nameMe(completeScript);  // Await the response
+    return `${context_name}`;
+}
 
-                        if (toolMatch) {
-                            const toolName = toolMatch[1].toLowerCase();
-                            const toolArgument = toolMatch[2];
-                            console.log("Detected tool:", toolName, "with argument:", toolArgument);
 
-                            // Load allowed bash commands from tools/bash.txt
-                            fetch('/tools/allowed')
-                                .then(response => response.text())
-                                .then(text => {
-                                    const allowedBashCommands = text.split('\n').map(cmd => cmd.trim()).filter(cmd => cmd.length > 0);
+// Modified nameMe function to get context-based filename from Gabriel
+function nameMe(script) {
+    return fetch('/ollama', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            model: 'Gabriel',
+            prompt: `Please read the following script and suggest a contextually appropriate filename: (respond with only the filename) \n\n${script}`,
+            stream: false,
+            options: { num_predict: 10, num_ctx: 4096, history: true }
+        })
+    })
+    .then(response => response.json())
+    .then(data => data.response.trim())  // Ensure proper trimming
+    .catch(error => {
+        console.error('Error fetching filename from Gabriel:', error);
+        return 'default_name';  // Fallback if Gabriel fails
+    });
+}
 
-                                    if (toolName === 'bash' && !allowedBashCommands.includes(toolArgument.split(' ')[0])) {
-                                        //appendToChatWindow('bash observer', `The command "${toolArgument}" is not allowed.`);
-                                        return;
-                                    }
+// ScriptSaver function to save the filename and content
+function ScriptSaver(filename, content) {
+    fetch('/script-saver', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename, content })
+    })
+    .then(response => response.json())
+    //.then(result => appendToChatWindow('ScriptSaver', result.success 
+    //    ? `${result.message}` 
+    //    : `Error: ${result.message}`))
+    .catch(error => appendToChatWindow('ScriptSaver', `Error: ${error.message}`));
+}
 
-                                    // Make request to the corresponding tool endpoint
-                                    fetch(`/tools/${toolName}`, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({
-                                            argument: toolArgument
-                                        })
-                                    })
-                                        .then(response => {
-                                            if (response.ok) {
-                                                return response.json();
-                                            } else {
-                                                throw new Error(`Error: Unable to perform ${toolName} command.`);
-                                            }
-                                        })
-                                        .then(result => {
-                                            appendToChatWindow('tool observer', formatTextAsHtml(`Result from ${toolName}:\n${result.result}`));
-                                        })
-                                        .catch(error => {
-                                            appendToChatWindow('tool observer', `Error: ${error.message}`);
-                                        });
-                                })
-                                .catch(error => {
-                                    appendToChatWindow('tool observer', `Error loading bash commands: ${error.message}`);
-                                });
-                            // Move return here to exit after handling tool command
-                            return;
-                        } else if (
-                            githubPattern.test(messageContent) ||
-                            urlPattern.test(messageContent) ||
-                            confluencePattern.test(messageContent) ||
-                            orgPattern.test(messageContent) ||
-                            sshPattern.test(messageContent) ||
-                            publicGithubPattern.test(messageContent) ||
-                            genericUrlPattern.test(messageContent)
-                        ) {
-                            // Handle URLs
-                            const formData = new FormData();
-
-                            // Handle GitHub HTTPS URL
-                            if (githubPattern.test(messageContent)) {
-                                formData.append('github', messageContent.match(githubPattern)[0]);
-                            }
-
-                            // Handle GitHub SSH URL
-                            if (sshPattern.test(messageContent)) {
-                                formData.append('ssh_url', messageContent.match(sshPattern)[0]);
-                            }
-
-                            if (messageContent.toLowerCase().includes("what time") || messageContent.toLowerCase().includes("weather")) {
-                                appendToChatWindow('time observer', `Looking outside to check the weather...`);
-
-                                fetch('/web-search', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ query: messageContent })
-                                })
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        appendToChatWindow('time observer', `Search result: ${result.response}`);
-                                    })
-                                    .catch(error => {
-                                        appendToChatWindow('time observer', `Error during web search: ${error.message}`);
-                                    });
-                            }
-
-                            if (urlPattern.test(messageContent)) {
-                                handleGenericUrl(messageContent);
-                            }
-
-                            // Handle Public GitHub URL
-                            if (publicGithubPattern.test(messageContent)) {
-                                formData.append('public_github', messageContent.match(publicGithubPattern)[0]);
-                            }
-
-                            // Handle Confluence URL
-                            if (confluencePattern.test(messageContent)) {
-                                const confluenceMatch = messageContent.match(confluencePattern);
-                                formData.append('confluence', confluenceMatch[0]);
-
-                                // Extract space key and title if available
-                                const viewPageMatch = confluenceMatch[0].match(/spaceKey=([\w-]+)&title=([\w-]+)/);
-                                const displayMatch = confluenceMatch[0].match(/display\/([\w-]+)\/([\w+-]+)/);
-                                if (viewPageMatch) {
-                                    formData.append('space_key', viewPageMatch[1]);
-                                    formData.append('title', viewPageMatch[2].replace('+', ' '));
-                                } else if (displayMatch) {
-                                    formData.append('space_key', displayMatch[1]);
-                                    formData.append('title', displayMatch[2].replace('+', ' '));
-                                }
-                            }
-
-                            // Handle Generic URLs (non-reserved)
-                            if (genericUrlPattern.test(messageContent)) {
-                                const genericUrl = messageContent.match(genericUrlPattern)[0];
-                                formData.append('generic_url', genericUrl);
-                            }
-
-                            // Handle GitHub Organization URL
-                            if (orgPattern.test(messageContent)) {
-                                const orgUrl = messageContent.match(orgPattern)[0];
-                                formData.append('org_url', orgUrl);
-                            }
-
-                            console.log("Detected a URL. Auto-submitting for embedding...");
-
-                            fetch('/embed-content', {
-                                method: 'POST',
-                                body: formData
-                            })
-                                .then(response => response.json())
-                                .then(result => {
-                                    appendToChatWindow('embed observer', `${result.result || "Content successfully embedded."}`);
-                                })
-                                .catch(error => {
-                                    appendToChatWindow('embed observer', `Error - ${error.message}`);
-                                });
-
-                        } else if (urlPattern.test(messageContent)) {
-                            // Auto handle URLs by embedding content
-                            handleGenericUrl(messageContent);
-                        } else {
-                            // Handle situations where Alex or other bots need to perform a web search
-                            if (messageContent.toLowerCase().includes("what time") || messageContent.toLowerCase().includes("weather")) {
-                                
-
-                                fetch('/web-search', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ query: messageContent })
-                                })
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        appendToChatWindow('embed observer', `${result.response}`);
-                                    })
-                                    .catch(error => {
-                                        appendToChatWindow('embed observer', `Error during web search: ${error.message}`);
-                                    });
-                            }
-                        }
-                        // Close the 'else if' block properly
-                    } // End of node type check
-                }); // End of addedNodes.forEach
-            } // End of mutation type check
-        } // End of mutationsList loop
-    }); // End of MutationObserver
-
-    // Start observing the chat window for added nodes
-    observer.observe(chatWindow, { childList: true, subtree: true });
-} // End of observeChatWindow function
-
-// Call observeChatWindow() when the document is fully loaded
-document.addEventListener('DOMContentLoaded', function () {
-    observeChatWindow();
-});
-
-    // Function to Handle Sending Messages
+    // Function to Handle USER submitting Messages from USER ONLY
     async function sendMessage() {
         const messageDiv = document.getElementById('messages');
         const message = document.getElementById('user-input').value.trim();
@@ -916,106 +915,26 @@ document.addEventListener('DOMContentLoaded', function () {
             userInput.style.height = 'auto'; // Reset height
             handleBotResponse(message);
 	
-	
-        // Detect any code block pattern: ```language ... ```
-        const codePattern = /```(bash|python|perl|ruby|javascript)?([\s\S]*?)```/gi;
-        let match;
 
-        // Process all code blocks in the message
-        while ((match = codePattern.exec(message)) !== null) {
-            const language = match[1] || 'unknown';
-            const scriptContent = match[2].trim();
-            const filename = generateFilename(language);
-
-            // Call function to save the script using a bash command
-            runBashCommand(`nano tools/${filename}`, scriptContent);
-        }
-		
-
-        // Handle URLs (GitHub, Confluence, Generic, etc.)
-        const githubPattern = /https:\/\/git\.[\w.-]+\/[\w.-]+\/[\w.-]+/;
-        const confluencePattern = /https:\/\/[\w.-]+\/(?:pages\/viewpage\.action\?spaceKey=[\w-]+&title=[\w-]+|display\/[\w-]+\/[\w+-]+)/;
-        const orgPattern = /https:\/\/git\.[\w.-]+\/orgs\/[\w-]+\/repositories/;
-        const sshPattern = /[\w-]+@[\w.-]+:[\w-]+\/[\w.-]+\.git/;
-        const publicGithubPattern = /https:\/\/github\.com\/[\w-]+\/[\w.-]+\.git/;
-        const genericUrlPattern = /^(https:\/\/(?!git\.|github\.com|confluence\.|.*confluence.*)[\w.-]+(?:\/[\w.-]*)*)$/;
-
-        if (githubPattern.test(message) || confluencePattern.test(message) || orgPattern.test(message) || sshPattern.test(message) || publicGithubPattern.test(message) || genericUrlPattern.test(message)) {
-            const formData = new FormData();
-
-            // Handle GitHub HTTPS URL
-            if (githubPattern.test(message)) {
-                formData.append('github', message.match(githubPattern)[0]);
-            }
-
-            // Handle GitHub SSH URL
-            if (sshPattern.test(message)) {
-                formData.append('ssh_url', message.match(sshPattern)[0]);
-            }
-
-            // Handle Public GitHub URL
-            if (publicGithubPattern.test(message)) {
-                formData.append('public_github', message.match(publicGithubPattern)[0]);
-            }
-
-            // Handle Confluence URL
-            if (confluencePattern.test(message)) {
-                const confluenceMatch = message.match(confluencePattern);
-                formData.append('confluence', confluenceMatch[0]);
-
-                // Extract space key and title if available
-                const viewPageMatch = confluenceMatch[0].match(/spaceKey=([\w-]+)&title=([\w-]+)/);
-                const displayMatch = confluenceMatch[0].match(/display\/([\w-]+)\/([\w+-]+)/);
-                if (viewPageMatch) {
-                    formData.append('space_key', viewPageMatch[1]);
-                    formData.append('title', viewPageMatch[2].replace('+', ' '));
-                } else if (displayMatch) {
-                    formData.append('space_key', displayMatch[1]);
-                    formData.append('title', displayMatch[2].replace('+', ' '));
-                }
-            }
-
-            // Handle Generic URLs (non-reserved)
-            if (genericUrlPattern.test(message)) {
-                const genericUrl = message.match(genericUrlPattern)[0];
-                formData.append('generic_url', genericUrl);
-            }
-
-            // Handle GitHub Organization URL
-            if (orgPattern.test(message)) {
-                const orgUrl = message.match(orgPattern)[0];
-                formData.append('org_url', orgUrl);
-            }
-
-            messageDiv.innerHTML += `<p>Handle URLs observer: Detected a URL. Auto-submitting for embedding...</p>`;
-
-            fetch('/embed-content', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(result => {
-                messageDiv.innerHTML += `<p>Handle URLs observer: ${result.result || "Content successfully embedded."}</p>`;
-            })
-            .catch(error => {
-                messageDiv.innerHTML += `<p>Handle URLs observer: Error - ${error.message}</p>`;
-            });
-
-            messageDiv.scrollTop = messageDiv.scrollHeight;
-        } else {        
-            // Handle regular chat conversation with the bot
-            // handleBotResponse(message);
-        }
+        
     }
 	
-// Function to Handle Sending Messages	
+// Function to submit messages to the chat for *AI1. 
+	// All messages are always sent to Gabriel.
+	// Gabriel can be muted. He will still listen, but wont respond.
+	// All questions are always sent to *AI2.
+	// SEND FULL RESPONSE sends all messages to *AI2.
+
 function handleBotResponse(message) {
     const modelAI1 = getCookie('AI1') || 'Alex';
     const modelAI2 = getCookie('AI2') || 'Gemma'; // Add definition for modelAI2
     const gabrielModel = getCookie('gabrielModel') || 'Gabriel';
-    const num_ctx = getCookie('num_ctx') || 'num_ctx';
+    const num_ctx = parseInt(document.getElementById('num_ctx').value) || 2048;
     const messageDiv = document.getElementById('messages'); // Make sure this element exists
     const isAtBottom = messageDiv.scrollTop + messageDiv.clientHeight >= messageDiv.scrollHeight - 10;
+            const maxTokens = parseInt(document.getElementById('max-tokens-input').value) || -2;
+			
+		
 
     // Check if AI1 is muted
     if (!document.getElementById('ai1MuteToggle').checked) {
@@ -1032,7 +951,8 @@ function handleBotResponse(message) {
 				options: {
                     num_predict: maxTokens,
 					temperature: 1,
-					history: "True"
+                    num_ctx: num_ctx,
+						history: true
 					},
             }),
         })
@@ -1069,117 +989,25 @@ function handleBotResponse(message) {
                 // Clear the input field after sending
                 document.getElementById('user-input').value = '';
             })
-            .catch(error => appendToChatWindow('handleBotResponse', `Error: ${error.message}`));
+            .catch(error => appendToChatWindow(formatTextAsHtml('handleBotResponse', `Error: ${error.message}`)));
     }
-}
+}  //  sample script saved to tools/
 
-    // Helper functions (e.g., getCookie, sendTomodelAI2, sendToGabriel) go here...
-	
-// Monitor all messages added to the chat window for tool commands
-function monitorMessagesForTools() {
-    const chatWindow = document.getElementById('messages');
-    const messages = chatWindow.querySelectorAll('.user, .bot');
+// Map of language to file extensions
+const languageExtensions = {
+    python: 'py',
+    bash: 'sh',
+    javascript: 'js',
+    ruby: 'rb',
+    perl: 'pl',
+    java: 'java',
+    go: 'go',
+    c: 'c',
+    cpp: 'cpp',
+    rust: 'rs',
+};
 
-    messages.forEach((messageElement) => {
-        const messageText = messageElement.textContent.trim();
 
-        // Detect any code block pattern: ```language ... ```
-        const codePattern = /```(bash|python|perl|ruby|javascript)?([\s\S]*?)```/gi;
-        let match;
-
-        // Process all code blocks in the message
-        while ((match = codePattern.exec(messageText)) !== null) {
-            const language = match[1] || 'unknown';
-            const scriptContent = match[2].trim();
-            const filename = generateFilename(language);
-
-            // Call function to save the script using a bash command
-            runBashCommand(`nano tools/${filename}`, scriptContent);
-        }
-		
-        // Detect tool command in each message
-        const toolMatch = messageText.match(toolPattern);
-        if (toolMatch) {
-            const toolName = toolMatch[1].toLowerCase();
-            const toolArgument = toolMatch[2];
-
-            // Load the list of allowed bash commands from tools/bash.txt
-            fetch('/tools/bash.txt')
-                .then(response => response.text())
-                .then(text => {
-                    const allowedBashCommands = text.split('\n').map(cmd => cmd.trim()).filter(cmd => cmd.length > 0);
-
-                    // Validate the bash command against the list
-                    if (toolName === 'bash' && !allowedBashCommands.includes(toolArgument.split(' ')[0])) {
-                        appendToChatWindow('monitorMessagesForTools', `Error: The command "${toolArgument}" is not allowed.`);
-                        return;
-                    }
-
-                    // Send request to the corresponding tool endpoint
-                    fetch(`/tools/${toolName}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            argument: toolArgument
-                        })
-                    })
-                        .then(response => response.json())
-                        .then(result => {
-                            if (result.result) {
-                                appendToChatWindow('monitorMessagesForTools', `Result from ${toolName}: ${result.result}`);
-                            } else {
-                                appendToChatWindow('monitorMessagesForTools', `Error: Unable to perform ${toolName} command.`);
-                            }
-                        })
-                        .catch(error => {
-                            appendToChatWindow('monitorMessagesForTools', `Error: ${error.message}`);
-                        });
-                })
-                .catch(error => {
-                    appendToChatWindow('monitorMessagesForTools', `Error loading bash commands: ${error.message}`);
-                });
-        }
-    });
-}
-	
-
-// Generate filename based on the detected language or use a default one
-function generateFilename(language) {
-    const timestamp = new Date().toISOString().replace(/[:.-]/g, '_');
-    return `${language || 'script'}_${timestamp}.sh`;
-}
-
-// Run the bash command to create and write the script file
-function runBashCommand(command, content) {
-    fetch('/run-command', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command, content })
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
-            appendToChatWindow('monitorMessagesForTools', `Script saved successfully: ${result.message}`);
-        } else {
-            appendToChatWindow('monitorMessagesForTools', `Error saving script: ${result.message}`);
-        }
-    })
-    .catch(error => {
-        appendToChatWindow('monitorMessagesForTools', `Error executing command: ${error.message}`);
-    });
-}
-	
-	
-// Append message to chat window
-function appendToChatWindow(sender, message) {
-    const messagesDiv = document.getElementById('messages');
-    const newMessage = document.createElement('div');
-    newMessage.innerHTML = `<strong>${sender}:</strong> ${message}\n`;
-    messagesDiv.appendChild(newMessage);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
             const maxTokens = parseInt(document.getElementById('max-tokens-input').value) || -2;
 
 
@@ -1191,19 +1019,21 @@ function appendToChatWindow(sender, message) {
 
 
         function sendToGabriel(conversation) {
+		model = 'Gabriel'
             fetch('/ollama', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    model: 'Gabriel',
+                    model: model,
                     prompt: conversation,
 					search_embeddings: document.getElementById('searchEmbeddingsToggle')?.checked ? "yes" : "no",
                     stream: false,
 					options: {
                         num_predict: maxTokens,
-                        num_ctx: 4096
+                        num_ctx: 4096,
+						history: true
 						},
                 }),
             })
@@ -1215,12 +1045,12 @@ function appendToChatWindow(sender, message) {
                     //gabrielMessage.textContent = `${data.response}`;
                     //messageDiv.appendChild(gabrielMessage);
 					
-					appendToChatWindow('Gabe', formatTextAsHtml(data.response)); // Bold name
+					appendToChatWindow(model, formatTextAsHtml(data.response)); // Bold name
 					
                 }
             })
             .catch(error => {
-                appendToChatWindow('Error', `Error: ${error.message}`);
+                appendToChatWindow('Error', `${error.message}`);
             });
         }
 
@@ -1232,6 +1062,7 @@ function sendToOtherBots(message, modelAI2, gabrielModel) {
         sendTomodelAI(message, modelAI2);
     }
 
+
     // Always send to Gabriel (no mute toggle for demonstration purposes)
     sendToGabriel(message);
 }
@@ -1242,12 +1073,20 @@ function sendTomodelAI(message, model) {
     fetch('/ollama', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model, prompt: message, stream: false }),
-    })
+        body: JSON.stringify({ 
+                    model: model,  // Use selected model for AI2
+                    prompt: message,
+					search_embeddings: document.getElementById('searchEmbeddingsToggle')?.checked ? "yes" : "no",
+                    stream: false,
+					options: {
+						history: true
+						},
+        }),
+	})
 	
         .then(response => response.json())
         .then(data => {
-            appendToChatWindow(model, data.response);
+            appendToChatWindow(model, formatTextAsHtml(data.response));
 			handleBotResponse(data.response);
 			sendTomodelAI2(data.response, model);
             messageDiv.scrollTop = messageDiv.scrollHeight;
@@ -1277,8 +1116,9 @@ function sendTomodelAI2(message, model) {
                     stream: false,
 					options: {
                         num_predict: maxTokens,
-                        num_ctx: 4096,
-						temperature: 1
+                        num_ctx: num_ctx,
+						temperature: 1,
+						history: true
 						},
                 }),
             })
@@ -1412,7 +1252,7 @@ function triggerJAMbotWorkflow() {
     })
     .then(response => response.json())
     .then(data => {
-        appendToChatWindow('Workflow', `${data.response}`);
+        appendToChatWindow('Workflow', formatTextAsHtml(data.response));
     })
     .catch(error => {
         appendToChatWindow('Workflow', `Error triggering workflow: ${error.message}`);
