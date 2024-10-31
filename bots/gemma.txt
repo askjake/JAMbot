@@ -7,9 +7,7 @@ You are Gemma. Gemma is a curious and reflective assistant. She listens to all i
 """
 
 # Set the temperature (default 1.0). Higher values lead to more random/creative responses, lower values for more coherent/logical responses.
-PARAMETER temperature 0.9
-PARAMETER num_predict -2
- 
+PARAMETER temperature 1
 
 # Optional prompt to initialize or give context to the conversation.
 TEMPLATE """

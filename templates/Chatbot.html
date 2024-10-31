@@ -43,6 +43,25 @@
             border-radius: 5px;
         }
 
+        /* Toggle section styles */
+        #explorer, #web-browser {
+            display: none; /* Hide by default */
+            width: 50%;
+            height: 100%;
+            overflow-y: auto;
+            background-color: #fff;
+            border-left: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Iframe styles for the web browser */
+        #web-browser iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+		
         /* Auto-expanding textarea */
         #editor {
             width: 95%;
@@ -155,32 +174,49 @@
         </div>
     </div>
 	
-<div id="explorer">
-    <h3>Scripts</h3>
-    <div class="controls">
-        <label for="sort-method">Sort by:</label>
-        <select id="sort-method" onchange="fetchFileList()">
-            <option value="name">Name</option>
-            <option value="type">Type</option>
-            <option value="created">Creation Date</option>
-        </select>
+            <!-- Toggle for explorer or web browser -->
+            <div class="toggle-container">
+                <label>View:</label>
+                <select id="view-toggle" onchange="toggleView()">
+                    <option value="none">None</option>
+                    <option value="explorer">Explorer</option>
+                    <option value="web-browser">Web Browser</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Explorer Section -->
+        <div id="explorer">
+            <h3>Scripts</h3>
+            <div class="controls">
+                <label for="sort-method">Sort by:</label>
+                <select id="sort-method" onchange="fetchFileList()">
+                    <option value="name">Name</option>
+                    <option value="type">Type</option>
+                    <option value="created">Creation Date</option>
+                </select>
+            </div>
+
+            <textarea id="editor" placeholder="Select a file to view/edit..."></textarea>
+
+            <div class="editor-controls">
+                <button id="save-button" onclick="saveFile()">Save Changes</button>
+                <button id="run-button" onclick="runScript()">Run Script</button>
+                <button id="refresh-button" onclick="fetchFileList()">Refresh Scripts</button>
+                <button id="delete-button" onclick="deleteSelectedFiles()">Delete Selected</button>
+                <button onclick="fetch('/code-cleaner').then(response => response.json()).then(data => alert(data.message));">Clean and Format Scripts</button>
+            </div>
+            <div id="file-list">Loading...</div>
+        </div>
+
+        <!-- Web Browser Section -->
+        <div id="web-browser">
+            <iframe id="browser-frame" src="https://www.example.com"></iframe>
+        </div>
     </div>
 
-    <textarea id="editor" placeholder="Select a file to view/edit..."></textarea>
+    </html>
 
-    <div class="editor-controls">
-        <button id="save-button" onclick="saveFile()">Save Changes</button>
-        <button id="run-button" onclick="runScript()">Run Script</button>
-        <button id="refresh-button" onclick="fetchFileList()">Refresh Scripts</button>
-        <button id="delete-button" onclick="deleteSelectedFiles()">Delete Selected</button>
-		<button onclick="fetch('/code-cleaner').then(response => response.json()).then(data => alert(data.message));">Clean and Format Scripts</button>
-    </div>
-    <div id="file-list">Loading...</div>
-
-</div>
-</html>
-
-    
     <script>
 	
 function updateWorkflowStep() {
@@ -788,6 +824,16 @@ function promptForCredentials(url, model) {
 }
 
 
+        // Function to toggle the visibility of explorer and web-browser sections
+function toggleView() {
+            const viewToggle = document.getElementById("view-toggle").value;
+            const explorer = document.getElementById("explorer");
+            const webBrowser = document.getElementById("web-browser");
+
+            explorer.style.display = (viewToggle === "explorer") ? "block" : "none";
+            webBrowser.style.display = (viewToggle === "web-browser") ? "block" : "none";
+        }
+		
 // Function to display summaries
 function displaySummary(summaryData) {
     const { model, file, part, summary } = summaryData;
@@ -914,10 +960,8 @@ function ScriptSaver(filename, content) {
             userInput.value = ''; // Clear input
             userInput.style.height = 'auto'; // Reset height
             handleBotResponse(message);
-	
-
-        
     }
+	
 	
 // Function to submit messages to the chat for *AI1. 
 	// All messages are always sent to Gabriel.
@@ -932,9 +976,16 @@ function handleBotResponse(message) {
     const num_ctx = parseInt(document.getElementById('num_ctx').value) || 2048;
     const messageDiv = document.getElementById('messages'); // Make sure this element exists
     const isAtBottom = messageDiv.scrollTop + messageDiv.clientHeight >= messageDiv.scrollHeight - 10;
-            const maxTokens = parseInt(document.getElementById('max-tokens-input').value) || -2;
+    const maxTokens = parseInt(document.getElementById('max-tokens-input').value) || -2;
+
+    const viewToggle = document.getElementById("view-toggle").value;
+    let referenceUrl = null;
 			
-		
+
+    // If web-browser is active, capture the URL for the current iframe page
+    if (viewToggle === "web-browser") {
+        referenceUrl = document.getElementById("browser-frame").src;
+    }
 
     // Check if AI1 is muted
     if (!document.getElementById('ai1MuteToggle').checked) {
@@ -946,6 +997,7 @@ function handleBotResponse(message) {
             body: JSON.stringify({
                 model: modelAI1,
                 prompt: message,
+				referenceUrl: referenceUrl
                 search_embeddings: document.getElementById('searchEmbeddingsToggle')?.checked ? "yes" : "no",
                 stream: false,
 				options: {

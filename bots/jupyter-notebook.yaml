@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jupyter-notebook
+  namespace: bionic-gpt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jupyter-notebook
+  template:
+    metadata:
+      labels:
+        app: jupyter-notebook
+    spec:
+      containers:
+      - name: jupyter-notebook
+        image: jupyter/scipy-notebook:latest
+        ports:
+        - containerPort: 8888
+        env:
+        - name: JUPYTER_NOTEBOOK_PASSWORD
+          value: "mypassword"
+        - name: JUPYTER_NOTEBOOK_PORT
+          value: "8888"
+        volumeMounts:
+        - name: notebook-volume
+          mountPath: /home/jovyan/work
+      volumes:
+      - name: http://localhost:8888/lab?token=05e061edce0cc15c6653f46978feb3164cbf4df8e16265c3
+        persistentVolumeClaim:
+          claimName: notebook-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyter-notebook
+  namespace: bionic-gpt
+spec:
+  selector:
+    app: jupyter-notebook
+  ports:
+  - name: http
+    port: 8888
+    targetPort: 8888
+  type: LoadBalancer
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: notebook-pvc
+  namespace: bionic-gpt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

@@ -1,0 +1,996 @@
+[2024-10-24 12:44:30] Error during code cleanup: name 'is_valid_script' is not defined
+[2024-10-24 12:45:42] Error during code cleanup: name 'is_valid_script' is not defined
+[2024-10-24 12:56:55] Error processing data_processor.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: ip_lookup
+
+
+This
+[2024-10-24 12:56:55] Deleting non-script file: language
+implement_strong_access_
+[2024-10-24 12:56:55] Deleting non-script file: password_checker
+
+Please_provide
+[2024-10-24 12:56:55] Error processing filename.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Error processing fetch_content.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing php_fetch_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing download_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing password_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing language
+validate_password.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: password_checker
+
+Here'
+[2024-10-24 12:56:55] Error processing http_fetcher.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: bash_fetch_php_sh_tools
+[2024-10-24 12:56:55] Error processing fetch_php_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing python_script.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:56:55] Deleting non-script file: language
+fetch_page.php
+[2024-10-24 12:56:55] Error processing bash
+python_factorial.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing greet.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing python_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing factorial_calculation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing filename_run_ip_lookup.sh: Error during formatting: '}'
+[2024-10-24 12:56:55] Error processing list_nginx_files.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:56:55] Error processing python_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing python_script_example.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing error_codes_reference.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing http_response_codes.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing language
+validate_input.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing url_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing geo_api_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: create_html.md
+[2024-10-24 12:56:55] Error processing file_scanner.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing 
+calculate_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: password_checker
+
+This_script
+[2024-10-24 12:56:55] Error processing network_activity_monitoring.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: python_code_checker
+[2024-10-24 12:56:55] Error processing fetch_content_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing save_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing password_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing ip-geolocation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing download_tool.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Error processing get_url_tool.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Error processing move_download_file.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: input_validator_tool
+
+This
+[2024-10-24 12:56:55] Error processing google_curl_test.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:56:55] Error processing python_script_example.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing fetch_page_data.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Error processing gb-ip-tool.sh: Error during formatting: '}'
+[2024-10-24 12:56:55] Error processing TheScript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: password_checker
+[2024-10-24 12:56:55] Deleting non-script file: fetch_page_curl.php
+[2024-10-24 12:56:55] Error processing script_tool.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Error processing fetch_content.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing main.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing git-push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:56:55] Error processing move_file.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:56:55] Error processing my_bash_script.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:56:55] Deleting non-script file: fetch_php.md
+[2024-10-24 12:56:55] Deleting non-script file: script_commands
+[2024-10-24 12:56:55] Error processing error_response.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: password_checker
+
+Your_filename
+[2024-10-24 12:56:55] Error processing resize_256x.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing script_http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing myscript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing calculate_password_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing get_ipinfo.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing ip_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing git_commit_and_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:56:55] Error processing committing_and_pushing.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:56:55] Deleting non-script file: default_name
+[2024-10-24 12:56:55] Error processing eci_instance_tagging.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing black_programming_search.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:56:55] Error processing http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing hello_world.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing cyber_security_plan.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing script_to_save.sh: Error during formatting: '}'
+[2024-10-24 12:56:55] Deleting non-script file: php_fetch_script
+[2024-10-24 12:56:55] Error processing generate_input.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing python_tool_3.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: language
+fetch_php_data
+[2024-10-24 12:56:55] Deleting non-script file: Fetch_PHP_Script
+[2024-10-24 12:56:55] Error processing get_example_com_page.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing get_current_time.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:56:55] Deleting non-script file: fetch_page.php
+[2024-10-24 12:56:55] Error processing fetch_page.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Error processing install_toolkit.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing http_response_codes.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Error processing hello_greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing ip_geolocation.sh: Error during formatting: '}'
+[2024-10-24 12:56:55] Error processing nginx_info.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:56:55] Error processing log_writer.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: language
+auto_moves_and
+[2024-10-24 12:56:55] Error processing download_file.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Error processing secure_cyber_network.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Error processing greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing calculator_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing generate_numbers.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing hello_world.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Deleting non-script file: validate_password
+
+language
+[2024-10-24 12:56:55] Error processing fetch-page-data.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Error processing sample_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing validate_input_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing fact.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: `secure_system.py`
+[2024-10-24 12:56:55] Deleting non-script file: password_checker
+
+
+[2024-10-24 12:56:55] Error processing file_fetcher.sh: Error during formatting: ')'
+[2024-10-24 12:56:55] Error processing script_functions.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:56:55] Error processing greeting_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing file_starts_with_http.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing git_commit_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:56:55] Error processing calc_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing fetch_php.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing script_download.sh: Error during formatting: ']'
+[2024-10-24 12:56:55] Error processing python_script_name.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing calculator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Error processing resize_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:56:55] Deleting non-script file: hasupper-hasnumbers-hasspec
+[2024-10-24 12:56:55] Error processing simple_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing data_processor.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing filename.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing fetch_content.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing php_fetch_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing password_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing language
+validate_password.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing http_fetcher.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing fetch_php_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing python_script.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:57:53] Error processing bash
+python_factorial.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing greet.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing python_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing factorial_calculation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing filename_run_ip_lookup.sh: Error during formatting: '}'
+[2024-10-24 12:57:53] Error processing list_nginx_files.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:57:53] Error processing python_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing python_script_example.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing error_codes_reference.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing http_response_codes.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing language
+validate_input.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing url_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing geo_api_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing file_scanner.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing 
+calculate_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing network_activity_monitoring.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing fetch_content_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing password_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing ip-geolocation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing download_tool.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing get_url_tool.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing move_download_file.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing google_curl_test.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:57:53] Error processing python_script_example.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing fetch_page_data.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing gb-ip-tool.sh: Error during formatting: '}'
+[2024-10-24 12:57:53] Error processing TheScript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing script_tool.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing fetch_content.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing main.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing git-push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:57:53] Error processing move_file.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:57:53] Error processing my_bash_script.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:57:53] Error processing error_response.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing resize_256x.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing script_http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing myscript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing calculate_password_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing get_ipinfo.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing ip_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing git_commit_and_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:57:53] Error processing committing_and_pushing.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:57:53] Error processing eci_instance_tagging.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing black_programming_search.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:57:53] Error processing http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing hello_world.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing cyber_security_plan.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing script_to_save.sh: Error during formatting: '}'
+[2024-10-24 12:57:53] Error processing generate_input.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing python_tool_3.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing get_example_com_page.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing get_current_time.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:57:53] Error processing fetch_page.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing install_toolkit.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing http_response_codes.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing hello_greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing ip_geolocation.sh: Error during formatting: '}'
+[2024-10-24 12:57:53] Error processing nginx_info.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:57:53] Error processing log_writer.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing download_file.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing secure_cyber_network.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing calculator_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing generate_numbers.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing hello_world.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing fetch-page-data.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing sample_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing validate_input_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing fact.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing file_fetcher.sh: Error during formatting: ')'
+[2024-10-24 12:57:53] Error processing script_functions.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:57:53] Error processing greeting_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing file_starts_with_http.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing git_commit_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:57:53] Error processing calc_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing fetch_php.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing script_download.sh: Error during formatting: ']'
+[2024-10-24 12:57:53] Error processing python_script_name.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing calculator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing resize_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:57:53] Error processing simple_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing data_processor.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing filename.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing fetch_content.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing php_fetch_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing password_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing language
+validate_password.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing http_fetcher.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing fetch_php_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing python_script.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:58:31] Error processing bash
+python_factorial.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing greet.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing python_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing factorial_calculation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing filename_run_ip_lookup.sh: Error during formatting: '}'
+[2024-10-24 12:58:31] Error processing list_nginx_files.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:58:31] Error processing python_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing python_script_example.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing error_codes_reference.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing http_response_codes.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing language
+validate_input.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing url_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing geo_api_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing file_scanner.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing 
+calculate_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing network_activity_monitoring.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing fetch_content_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing password_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing ip-geolocation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing download_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing get_url_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing move_download_file.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing google_curl_test.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:58:31] Error processing python_script_example.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing fetch_page_data.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing gb-ip-tool.sh: Error during formatting: '}'
+[2024-10-24 12:58:31] Error processing TheScript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing script_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing fetch_content.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing main.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing git-push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:31] Error processing move_file.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:31] Error processing my_bash_script.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:31] Error processing error_response.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing resize_256x.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing script_http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing myscript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing calculate_password_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing get_ipinfo.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing ip_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing git_commit_and_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:31] Error processing committing_and_pushing.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:31] Error processing eci_instance_tagging.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing black_programming_search.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:31] Error processing http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing hello_world.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing cyber_security_plan.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing script_to_save.sh: Error during formatting: '}'
+[2024-10-24 12:58:31] Error processing generate_input.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing python_tool_3.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing get_example_com_page.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing get_current_time.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:31] Error processing fetch_page.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing install_toolkit.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing http_response_codes.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing hello_greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing ip_geolocation.sh: Error during formatting: '}'
+[2024-10-24 12:58:31] Error processing nginx_info.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:58:31] Error processing log_writer.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing download_file.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing secure_cyber_network.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing calculator_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing generate_numbers.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing hello_world.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing fetch-page-data.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing sample_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing validate_input_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing fact.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing file_fetcher.sh: Error during formatting: ')'
+[2024-10-24 12:58:31] Error processing script_functions.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:31] Error processing greeting_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing file_starts_with_http.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing git_commit_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:31] Error processing calc_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing fetch_php.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing script_download.sh: Error during formatting: ']'
+[2024-10-24 12:58:31] Error processing python_script_name.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing calculator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing resize_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:31] Error processing simple_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing data_processor.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing filename.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing fetch_content.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing php_fetch_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing password_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing language
+validate_password.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing http_fetcher.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing fetch_php_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing python_script.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:58:41] Error processing bash
+python_factorial.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing greet.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing python_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing factorial_calculation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing filename_run_ip_lookup.sh: Error during formatting: '}'
+[2024-10-24 12:58:41] Error processing list_nginx_files.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:58:41] Error processing python_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing python_script_example.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing error_codes_reference.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing http_response_codes.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing language
+validate_input.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing url_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing geo_api_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing file_scanner.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing 
+calculate_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing network_activity_monitoring.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing fetch_content_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing password_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing ip-geolocation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing download_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing get_url_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing move_download_file.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing google_curl_test.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:58:41] Error processing python_script_example.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing fetch_page_data.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing gb-ip-tool.sh: Error during formatting: '}'
+[2024-10-24 12:58:41] Error processing TheScript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing script_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing fetch_content.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing main.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing git-push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:41] Error processing move_file.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:41] Error processing my_bash_script.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:41] Error processing error_response.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing resize_256x.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing script_http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing myscript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing calculate_password_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing get_ipinfo.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing ip_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing git_commit_and_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:41] Error processing committing_and_pushing.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:41] Error processing eci_instance_tagging.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing black_programming_search.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:41] Error processing http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing hello_world.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing cyber_security_plan.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing script_to_save.sh: Error during formatting: '}'
+[2024-10-24 12:58:41] Error processing generate_input.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing python_tool_3.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing get_example_com_page.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing get_current_time.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:41] Error processing fetch_page.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing install_toolkit.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing http_response_codes.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing hello_greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing ip_geolocation.sh: Error during formatting: '}'
+[2024-10-24 12:58:41] Error processing nginx_info.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:58:41] Error processing log_writer.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing download_file.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing secure_cyber_network.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing calculator_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing generate_numbers.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing hello_world.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing fetch-page-data.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing sample_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing validate_input_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing fact.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing file_fetcher.sh: Error during formatting: ')'
+[2024-10-24 12:58:41] Error processing script_functions.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:41] Error processing greeting_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing file_starts_with_http.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing git_commit_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:41] Error processing calc_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing fetch_php.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing script_download.sh: Error during formatting: ']'
+[2024-10-24 12:58:41] Error processing python_script_name.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing calculator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing resize_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:41] Error processing simple_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing data_processor.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing filename.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing fetch_content.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing php_fetch_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing password_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing language
+validate_password.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing http_fetcher.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing fetch_php_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing python_script.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:58:44] Error processing bash
+python_factorial.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing greet.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing python_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing factorial_calculation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing filename_run_ip_lookup.sh: Error during formatting: '}'
+[2024-10-24 12:58:44] Error processing list_nginx_files.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:58:44] Error processing python_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing python_script_example.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing error_codes_reference.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing http_response_codes.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing language
+validate_input.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing url_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing geo_api_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing file_scanner.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing 
+calculate_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing network_activity_monitoring.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing fetch_content_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing password_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing ip-geolocation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing download_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing get_url_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing move_download_file.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing google_curl_test.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:58:44] Error processing python_script_example.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing fetch_page_data.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing gb-ip-tool.sh: Error during formatting: '}'
+[2024-10-24 12:58:44] Error processing TheScript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing script_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing fetch_content.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing main.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing git-push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:44] Error processing move_file.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:44] Error processing my_bash_script.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:44] Error processing error_response.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing resize_256x.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing script_http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing myscript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing calculate_password_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing get_ipinfo.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing ip_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing git_commit_and_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:44] Error processing committing_and_pushing.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:44] Error processing eci_instance_tagging.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing black_programming_search.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:44] Error processing http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing hello_world.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing cyber_security_plan.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing script_to_save.sh: Error during formatting: '}'
+[2024-10-24 12:58:44] Error processing generate_input.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing python_tool_3.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing get_example_com_page.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing get_current_time.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:44] Error processing fetch_page.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing install_toolkit.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing http_response_codes.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing hello_greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing ip_geolocation.sh: Error during formatting: '}'
+[2024-10-24 12:58:44] Error processing nginx_info.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:58:44] Error processing log_writer.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing download_file.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing secure_cyber_network.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing calculator_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing generate_numbers.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing hello_world.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing fetch-page-data.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing sample_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing validate_input_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing fact.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing file_fetcher.sh: Error during formatting: ')'
+[2024-10-24 12:58:44] Error processing script_functions.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:44] Error processing greeting_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing file_starts_with_http.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing git_commit_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:44] Error processing calc_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing fetch_php.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing script_download.sh: Error during formatting: ']'
+[2024-10-24 12:58:44] Error processing python_script_name.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing calculator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing resize_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:44] Error processing simple_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing data_processor.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing filename.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing fetch_content.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing php_fetch_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing password_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing language
+validate_password.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing http_fetcher.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing fetch_php_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing python_script.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:58:45] Error processing bash
+python_factorial.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing greet.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing python_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing factorial_calculation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing filename_run_ip_lookup.sh: Error during formatting: '}'
+[2024-10-24 12:58:45] Error processing list_nginx_files.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:58:45] Error processing python_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing python_script_example.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing error_codes_reference.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing http_response_codes.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing language
+validate_input.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing url_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing geo_api_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing file_scanner.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing 
+calculate_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing network_activity_monitoring.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing fetch_content_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing password_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing ip-geolocation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing download_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing get_url_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing move_download_file.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing google_curl_test.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:58:45] Error processing python_script_example.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing fetch_page_data.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing gb-ip-tool.sh: Error during formatting: '}'
+[2024-10-24 12:58:45] Error processing TheScript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing script_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing fetch_content.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing main.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing git-push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:45] Error processing move_file.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:45] Error processing my_bash_script.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:45] Error processing error_response.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing resize_256x.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing script_http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing myscript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing calculate_password_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing get_ipinfo.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing ip_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing git_commit_and_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:45] Error processing committing_and_pushing.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:45] Error processing eci_instance_tagging.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing black_programming_search.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:45] Error processing http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing hello_world.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing cyber_security_plan.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing script_to_save.sh: Error during formatting: '}'
+[2024-10-24 12:58:45] Error processing generate_input.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing python_tool_3.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing get_example_com_page.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing get_current_time.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:45] Error processing fetch_page.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing install_toolkit.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing http_response_codes.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing hello_greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing ip_geolocation.sh: Error during formatting: '}'
+[2024-10-24 12:58:45] Error processing nginx_info.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:58:45] Error processing log_writer.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing download_file.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing secure_cyber_network.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing calculator_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing generate_numbers.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing hello_world.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing fetch-page-data.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing sample_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing validate_input_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing fact.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing file_fetcher.sh: Error during formatting: ')'
+[2024-10-24 12:58:45] Error processing script_functions.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:45] Error processing greeting_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing file_starts_with_http.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing git_commit_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:45] Error processing calc_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing fetch_php.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing script_download.sh: Error during formatting: ']'
+[2024-10-24 12:58:45] Error processing python_script_name.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing calculator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing resize_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:45] Error processing simple_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing data_processor.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing filename.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing fetch_content.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing php_fetch_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing password_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing language
+validate_password.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing http_fetcher.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing fetch_php_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing python_script.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:58:46] Error processing bash
+python_factorial.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing greet.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing python_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing factorial_calculation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing filename_run_ip_lookup.sh: Error during formatting: '}'
+[2024-10-24 12:58:46] Error processing list_nginx_files.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:58:46] Error processing python_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing python_script_example.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing error_codes_reference.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing http_response_codes.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing language
+validate_input.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing url_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing geo_api_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing file_scanner.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing 
+calculate_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing network_activity_monitoring.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing fetch_content_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing password_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing ip-geolocation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing download_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing get_url_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing move_download_file.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing google_curl_test.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 12:58:46] Error processing python_script_example.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing fetch_page_data.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing gb-ip-tool.sh: Error during formatting: '}'
+[2024-10-24 12:58:46] Error processing TheScript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing script_tool.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing fetch_content.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing main.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing git-push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:46] Error processing move_file.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:46] Error processing my_bash_script.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:46] Error processing error_response.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing resize_256x.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing script_http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing myscript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing calculate_password_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing get_ipinfo.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing ip_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing git_commit_and_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:46] Error processing committing_and_pushing.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:46] Error processing eci_instance_tagging.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing black_programming_search.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:46] Error processing http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing hello_world.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing cyber_security_plan.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing script_to_save.sh: Error during formatting: '}'
+[2024-10-24 12:58:46] Error processing generate_input.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing python_tool_3.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing get_example_com_page.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing get_current_time.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:46] Error processing fetch_page.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing install_toolkit.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing http_response_codes.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing hello_greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing ip_geolocation.sh: Error during formatting: '}'
+[2024-10-24 12:58:46] Error processing nginx_info.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 12:58:46] Error processing log_writer.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing download_file.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing secure_cyber_network.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing calculator_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing generate_numbers.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing hello_world.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing fetch-page-data.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing sample_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing validate_input_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing fact.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing file_fetcher.sh: Error during formatting: ')'
+[2024-10-24 12:58:46] Error processing script_functions.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:46] Error processing greeting_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing file_starts_with_http.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing git_commit_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 12:58:46] Error processing calc_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing fetch_php.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing script_download.sh: Error during formatting: ']'
+[2024-10-24 12:58:46] Error processing python_script_name.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing calculator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing resize_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 12:58:46] Error processing simple_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing data_processor.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing filename.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing fetch_content.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing php_fetch_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing password_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing language
+validate_password.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing http_fetcher.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing fetch_php_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing python_script.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 13:02:15] Error processing bash
+python_factorial.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing greet.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing python_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing factorial_calculation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing filename_run_ip_lookup.sh: Error during formatting: '}'
+[2024-10-24 13:02:15] Error processing list_nginx_files.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 13:02:15] Error processing python_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing python_script_example.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing error_codes_reference.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing http_response_codes.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing language
+validate_input.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing url_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing geo_api_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing file_scanner.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing 
+calculate_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing network_activity_monitoring.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing fetch_content_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing password_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing ip-geolocation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing download_tool.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing get_url_tool.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing move_download_file.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing google_curl_test.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 13:02:15] Error processing python_script_example.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing fetch_page_data.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing gb-ip-tool.sh: Error during formatting: '}'
+[2024-10-24 13:02:15] Error processing TheScript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing script_tool.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing fetch_content.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing main.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing git-push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:15] Error processing move_file.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:15] Error processing my_bash_script.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:15] Error processing error_response.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing resize_256x.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing script_http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing myscript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing calculate_password_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing get_ipinfo.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing ip_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing git_commit_and_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:15] Error processing committing_and_pushing.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:15] Error processing web_scraper.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 13:02:15] Error processing eci_instance_tagging.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing black_programming_search.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:15] Error processing http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing hello_world.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing cyber_security_plan.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing script_to_save.sh: Error during formatting: '}'
+[2024-10-24 13:02:15] Error processing generate_input.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing python_tool_3.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing get_example_com_page.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing get_current_time.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:15] Error processing fetch_page.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing install_toolkit.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing http_response_codes.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing hello_greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing ip_geolocation.sh: Error during formatting: '}'
+[2024-10-24 13:02:15] Error processing nginx_info.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 13:02:15] Error processing log_writer.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing download_file.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing secure_cyber_network.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing calculator_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing generate_numbers.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing hello_world.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing fetch-page-data.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing sample_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing validate_input_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing fact.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing file_fetcher.sh: Error during formatting: ')'
+[2024-10-24 13:02:15] Error processing script_functions.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:15] Error processing greeting_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing file_starts_with_http.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing git_commit_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:15] Error processing calc_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing fetch_php.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing script_download.sh: Error during formatting: ']'
+[2024-10-24 13:02:15] Error processing python_script_name.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing calculator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing resize_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:15] Error processing simple_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing data_processor.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing filename.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing fetch_content.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing php_fetch_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing password_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing language
+validate_password.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing http_fetcher.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing fetch_php_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing python_script.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 13:02:58] Error processing bash
+python_factorial.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing greet.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing python_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing web_scraper.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing factorial_calculation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing filename_run_ip_lookup.sh: Error during formatting: '}'
+[2024-10-24 13:02:58] Error processing list_nginx_files.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 13:02:58] Error processing python_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing python_script_example.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing error_codes_reference.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing http_response_codes.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing language
+validate_input.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing url_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing geo_api_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing file_scanner.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing 
+calculate_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing network_activity_monitoring.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing fetch_content_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing password_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing ip-geolocation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing download_tool.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing get_url_tool.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing move_download_file.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing google_curl_test.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 13:02:58] Error processing python_script_example.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing fetch_page_data.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing gb-ip-tool.sh: Error during formatting: '}'
+[2024-10-24 13:02:58] Error processing TheScript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing script_tool.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing fetch_content.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing main.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing git-push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:58] Error processing move_file.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:58] Error processing my_bash_script.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:58] Error processing error_response.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing resize_256x.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing script_http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing myscript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing calculate_password_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing get_ipinfo.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing ip_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing git_commit_and_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:58] Error processing committing_and_pushing.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:58] Error processing web_scraper.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 13:02:58] Error processing eci_instance_tagging.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing black_programming_search.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:58] Error processing http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing hello_world.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing cyber_security_plan.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing script_to_save.sh: Error during formatting: '}'
+[2024-10-24 13:02:58] Error processing generate_input.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing python_tool_3.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing get_example_com_page.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing get_current_time.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:58] Error processing fetch_page.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing install_toolkit.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing http_response_codes.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing hello_greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing ip_geolocation.sh: Error during formatting: '}'
+[2024-10-24 13:02:58] Deleting non-script file: web_scraper_title
+[2024-10-24 13:02:58] Error processing nginx_info.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 13:02:58] Error processing log_writer.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing download_file.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing secure_cyber_network.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing calculator_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing generate_numbers.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing hello_world.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing fetch-page-data.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing sample_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing validate_input_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing fact.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing file_fetcher.sh: Error during formatting: ')'
+[2024-10-24 13:02:58] Error processing script_functions.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:58] Error processing greeting_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing file_starts_with_http.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing git_commit_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:02:58] Error processing calc_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing fetch_php.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing script_download.sh: Error during formatting: ']'
+[2024-10-24 13:02:58] Error processing python_script_name.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing calculator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing resize_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:02:58] Error processing simple_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing data_processor.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing filename.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing fetch_content.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing php_fetch_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing password_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing language
+validate_password.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing http_fetcher.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing fetch_php_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing python_script.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 13:03:15] Error processing bash
+python_factorial.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing greet.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing python_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing web_scraper.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing factorial_calculation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing filename_run_ip_lookup.sh: Error during formatting: '}'
+[2024-10-24 13:03:15] Error processing list_nginx_files.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 13:03:15] Error processing python_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing python_script_example.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing error_codes_reference.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing http_response_codes.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing language
+validate_input.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing url_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing geo_api_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing file_scanner.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing 
+calculate_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing network_activity_monitoring.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing fetch_content_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing password_validator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing ip-geolocation.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing download_tool.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing get_url_tool.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing move_download_file.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing google_curl_test.sh: Error during formatting: Unmatched quote detected in script.
+[2024-10-24 13:03:15] Error processing python_script_example.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing fetch_page_data.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing gb-ip-tool.sh: Error during formatting: '}'
+[2024-10-24 13:03:15] Error processing TheScript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing script_tool.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing fetch_content.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing main.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing git-push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:03:15] Error processing move_file.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:03:15] Error processing my_bash_script.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:03:15] Error processing error_response.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing resize_256x.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing script_http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing myscript.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing calculate_password_strength.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing get_ipinfo.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing ip_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing git_commit_and_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:03:15] Error processing committing_and_pushing.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:03:15] Error processing web_scraper.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 13:03:15] Error processing eci_instance_tagging.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing black_programming_search.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:03:15] Error processing http_errors.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing hello_world.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing cyber_security_plan.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing script_to_save.sh: Error during formatting: '}'
+[2024-10-24 13:03:15] Error processing generate_input.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing python_tool_3.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing get_example_com_page.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing get_current_time.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:03:15] Error processing fetch_page.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing install_toolkit.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing http_response_codes.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing hello_greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing ip_geolocation.sh: Error during formatting: '}'
+[2024-10-24 13:03:15] Error processing nginx_info.sh: Error during formatting: Unmatched ' detected in script.
+[2024-10-24 13:03:15] Error processing log_writer.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing download_file.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing secure_cyber_network.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing greeting.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing calculator_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing generate_numbers.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing hello_world.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing fetch-page-data.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing sample_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing validate_input_checker.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing fact.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing file_fetcher.sh: Error during formatting: ')'
+[2024-10-24 13:03:15] Error processing script_functions.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:03:15] Error processing greeting_script.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing file_starts_with_http.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing git_commit_push.sh: Error during formatting: Unmatched " detected in script.
+[2024-10-24 13:03:15] Error processing calc_tool.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing fetch_php.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing script_download.sh: Error during formatting: ']'
+[2024-10-24 13:03:15] Error processing python_script_name.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing calculator.py: Error during formatting: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing resize_tool.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'
+[2024-10-24 13:03:15] Error processing simple_script.sh: Error during formatting: Validation failed: 'bytes' object has no attribute 'encode'

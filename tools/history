@@ -1,0 +1,24 @@
+what pins need to be grounded on the obd2 connector of the 2012 ram 1500 for programing mode?
+i know there is a pin than needs to be grounded for 'special' features through the odb port. Like removing the speed limit. explain how to connect to that bus and program settings like tha factory.
+i am using alphaobd to program the tire size. describe the obd2 pinout
+hi
+powershell -Command "Get-Content 'C:Usersjacob.montgomeryDocumentsJAMboreedebugJam.log' -Wait"
+/?
+/set
+/set format json
+/set verbose
+/set parameter
+hi
+/?
+/? shortcuts
+/set
+/set history
+/save Gemma
+hi
+/?
+/show
+/show info
+/show template
+/show parameters
+hi
+hi

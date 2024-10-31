@@ -1,5 +1,5 @@
 # Import necessary modules
-from flask import Flask, request, jsonify, render_template, Response
+from flask import Flask, request, jsonify, render_template, Response, send_from_directory
 import requests
 import numpy as np
 import logging
@@ -8,6 +8,8 @@ import platform
 from web_search import *
 import os
 import subprocess
+import sys
+from pathlib import Path
 import re
 import json
 from sklearn.metrics.pairwise import cosine_similarity
@@ -16,11 +18,15 @@ from functools import lru_cache
 from datetime import datetime  # Add this import
 from datetime import timedelta
 from threading import Timer
-from transformers import BlipProcessor, BlipForConditionalGeneration
+from transformers import BlipProcessor
 from PIL import Image
 from grasshopper_access import *
-
+import paramiko
 from embed_content import *
+import shutil
+from journaler import *
+import git
+import ollama
 
 # Global variables to control AI behavior
 disco_biscuit_active = False
@@ -29,15 +35,26 @@ disco_biscuit_active = False
 session = requests.Session()
 retries = Retry(total=3, backoff_factor=0.3, status_forcelist=[500, 502, 503, 504])
 session.mount('http://', HTTPAdapter(max_retries=retries))
+BASH_DIRECTORY = os.path.join(os.getcwd(), 'bash')
+OLLAMA_ENDPOINT = '/ollama'
+MODEL_NAME = 'Alex'
+
+# SSH Credentials and target machine details
+REMOTE_HOST = '10.79.97.129'
+USERNAME = 'diship'
+PASSWORD = 'Dish1234'
+
+MAX_WORKFLOW_REPEATS = 100  # Set a maximum limit
+workflow_repeats = 0
 
 # Model host mapping for easy IP selection
 MODEL_HOST_MAPPING = {
     "ai1": "10.79.85.40",
     "aqua": "10.79.85.40",
-    "gabriel": "10.79.85.40",
-    "alex": "10.79.85.40",
+    "gabriel": "10.74.139.236",
+    "alex": "10.74.139.236",
     "ai2": "10.79.85.47",
-    "gemma": "10.79.85.47",
+    "gemma": "10.74.139.236",
     "gemma2": "10.79.85.47",
     "avery": "10.79.85.47"    
 }
@@ -54,85 +71,73 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # Allow up to 100MB (adjust as needed)
 
-
-# Load BLIP model and processor
-processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
-
-
-    
-@app.route('/analyze-image', methods=['POST'])
-def analyze_image():
-    try:
-        # Check if an image file is present in the request
-        if 'file' not in request.files:
-            return jsonify({"error": "No file part"}), 400
-        
-        file = request.files['file']
-
-        if file.filename == '':
-            return jsonify({"error": "No selected file"}), 400
-
-        # Save the uploaded image temporarily
-        file_path = os.path.join('/tmp', file.filename)
-        file.save(file_path)
-
-        # Load the image
-        image = Image.open(file_path)
-
-        # Use BLIP to generate caption
-        inputs = processor(image, return_tensors="pt")
-        outputs = model.generate(**inputs)
-        caption = processor.decode(outputs[0], skip_special_tokens=True)
-
-        # Remove the temporary file
-        os.remove(file_path)
-
-        # Return the generated caption
-        return jsonify({"result": caption}), 200
-
-    except Exception as e:
-        logging.error(f"Error analyzing image: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-        
-# Cache embeddings for efficiency
-@lru_cache(maxsize=1000)
-def get_embedding_cache(prompt):
-    """
-    Retrieve or compute the embedding for a given prompt, using caching.
-    """
-    logging.info(f"Fetching cached embedding for prompt: {prompt[:50]}...")
-    host_ip = MODEL_HOST_MAPPING.get("aqua")  # Default to Aqua for embedding
-    try:
-        embedding = embed_query({"prompt": prompt, "model": "Aqua"}, host_ip, store_in_db=False)
-        return embedding
-    except ValueError as e:
-        logging.error(f"Error getting cached embedding: {str(e)}")
-        return None
-
-# Health check endpoint to verify server status
-@app.route('/health', methods=['GET'])
-def health():
-    return jsonify({"status": "OK"}), 200
-
 # Render chat interface
 @app.route('/chat', methods=['GET'])
 def chat():
     return render_template('Chatbot.html')
 
-@app.route('/web-search', methods=['POST'])
-def web_search():
-    data = request.get_json()
-    query = data.get("query")
-    if not query:
-        return jsonify({"error": "Query is required."}), 400
+@app.route('/health', methods=['GET'])
+def health():
+    """Health check endpoint."""
+    return jsonify({"status": "OK"}), 200
 
-    search_result = do_web_search(query)
-    if search_result and not search_result.startswith("An error occurred"):
-        return jsonify({"response": search_result}), 200
-    else:
-        return jsonify({"response": "No results found."}), 200
+# Load BLIP model and processor
+processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
 
+class CLI:
+    """Command Line Interface to manage chat interactions with history tracking."""
+
+    def __init__(self, model_name):
+        self.model_name = model_name
+        self.history = []
+
+    def record_message(self, role, content):
+        """Record each message with timestamp."""
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.history.append({'role': role, 'content': content, 'timestamp': timestamp})
+
+    def chat(self, user_message):
+        """Handle user interaction, call the `/ollama` route, and record conversation history."""
+        self.record_message('user', user_message)
+        response = self._send_request_to_ollama(self.history)
+        system_message = response.get('response', 'No response received.')
+        self.record_message('system', system_message)
+        return system_message
+
+    def _send_request_to_ollama(self, messages):
+        """Send conversation history to the /ollama endpoint."""
+        try:
+            response = requests.post(
+                'http://localhost:5000/ollama',
+                json={"messages": messages},
+                timeout=120
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            logging.error(f"Error connecting to /ollama: {str(e)}")
+            return {"response": "Unable to connect. Please try again later."}
+
+
+    def run(self):
+        """CLI loop to allow continuous user interaction."""
+        print("Enter 'exit' to quit.")
+        while True:
+            user_message = input('>>> ')
+            if user_message.lower() == 'exit':
+                break
+            print(self.chat(user_message))
+
+
+# Initialize CLI instance
+cli = CLI(MODEL_NAME)
+
+################################################################################################################
+##################################################################################################
+#           Conversation managment
+################################################################################################################
+###############################################################################################################
 
 # Handle the chatbot conversation
 @app.route('/ollama', methods=['POST'])
@@ -150,16 +155,19 @@ def handle_conversation():
         # Extract required parameters with default fallbacks
         user_input = data.get("prompt")
         model = data.get("model", "Alex")
+        referenceUrl = data.get("referenceUrl", "")
         search_embeddings = data.get("search_embeddings", "no")
         options = data.get("options", {})  # Ensure 'options' is always a dictionary
         
         # Additional option parsing with defaults
-        num_predict = options.get("num_predict", 50)
+        num_predict = options.get("num_predict", -2)
         temperature = options.get("temperature", 1)
 
         # Validate the presence of user input
         if not user_input:
             return jsonify({"error": "Prompt is required."}), 400
+        
+        last_message = data["messages"][-1]['content'] if data.get("messages") else "Hello"
 
         # Convert input to lowercase for processing
         user_input_lower = user_input.lower()
@@ -169,6 +177,15 @@ def handle_conversation():
         host_ip = MODEL_HOST_MAPPING.get(model_lower)
         if not host_ip:
             return jsonify({"error": f"Unknown model specified: {model}"}), 400
+
+        # Check if a reference URL is provided and fetch its content
+        reference_content = None
+        if reference_url:
+            reference_content = fetch_url_content(reference_url)
+            if reference_content:
+                user_input = f"Context from {reference_url}:\n{reference_content}\n\nUser Input:\n{user_input}"
+            else:
+                logging.warning("Reference URL content could not be retrieved. Proceeding without it.")
 
         # Embed the user query without storing it
         try:
@@ -181,35 +198,35 @@ def handle_conversation():
             return jsonify({"error": f"Failed to embed user input: {str(e)}"}), 500
 
         
-
         # Search embedded logs if enabled
+        if search_embeddings == "yes":
+            log_responses = search_embeddings_in_logs(
+                query_embedding, host_ip, top_k=5, similarity_threshold=0.98
+            )
+            if log_responses:
+                relevant_info = "\n".join([
+                    f"{entry['content']} (similarity: {entry['similarity']:.2f})"
+                    for entry in log_responses
+                ])
+                return jsonify({"response": f"Based on the logs: {relevant_info}"}), 200
         
         # Handle specific queries like current time or weather
         if re.search(r'\bcurrent time\b', user_input_lower):
             current_time = get_current_time()
             return jsonify({"response": current_time}), 200
-
-        elif 'weather' in user_input_lower:
-            location_match = re.search(r'weather in (\w+)', user_input_lower)
-            location = location_match.group(1) if location_match else 'Denver'
-            weather_info = get_weather(location)
-            return jsonify({"response": weather_info}), 200
-
-        #elif "workflow" in user_input_lower:
-            #return jsonify({"response": "Would you like me to initiate the workflow? Click to proceed."}), 200
-
+            
         # Handle general web search requests
         if any(keyword in user_input_lower for keyword in ['search for', 'find', 'look up']):
             search_query = extract_search_query(user_input)
             search_result = do_web_search(search_query)
             if search_result:
-                return jsonify({"response": f"I found: {search_result}"}), 200
+                return jsonify({"response": f"{search_result}"}), 200
             else:
                 return jsonify({"response": "Couldn't find any information on that topic."}), 200
 
         # Generate response from the model
         response = generate(
-            user_input, model=model, host_ip=host_ip,
+            last_message, model=model, host_ip=host_ip,
             num_predict=num_predict, temperature=temperature
         )
         logging.info(f"Model response: {response}")
@@ -219,6 +236,78 @@ def handle_conversation():
         logging.exception(f"An error occurred: {str(e)}")
         return jsonify({"error": "An unexpected error occurred."}), 500
  
+@app.route('/chat', methods=['POST'])
+def chat():
+    """Handle chat interaction via HTTP request."""
+    try:
+        data = request.get_json()
+        user_message = data.get('message')
+        if not user_message:
+            return jsonify({"error": "Message is required."}), 400
+
+        response_message = cli.chat(user_message)
+        return jsonify({"response": response_message}), 200
+
+    except Exception as e:
+        logging.error(f"Error in chat endpoint: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/analyze-image', methods=['POST'])
+def analyze_image():
+    """Analyze an uploaded image using the BLIP model."""
+    try:
+        if 'file' not in request.files:
+            return jsonify({"error": "No file part"}), 400
+
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+
+        file_path = os.path.join('/tmp', file.filename)
+        file.save(file_path)
+
+        image = Image.open(file_path)
+        inputs = processor(image, return_tensors="pt")
+        outputs = model.generate(**inputs)
+        caption = processor.decode(outputs[0], skip_special_tokens=True)
+
+        os.remove(file_path)
+        return jsonify({"result": caption}), 200
+
+    except Exception as e:
+        logging.error(f"Error analyzing image: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+def generate(prompt, model="Alex", host_ip="10.79.85.40", num_predict=-2, temperature=1):
+    """Send request to generate API."""
+    url = f'http://{host_ip}:11434/api/generate'
+    headers = {'Content-Type': 'application/json'}
+    data = {
+        "model": model,
+        "prompt": prompt,
+        "options": {
+            "temperature": temperature,
+            "num_predict": num_predict
+        },
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=data, timeout=120)
+        if response.status_code == 200:
+            return response.json().get('response', 'No response received')
+        else:
+            logging.error(f"API error: {response.status_code}")
+            return None
+
+    except requests.RequestException as e:
+        logging.error(f"Error connecting to API: {str(e)}")
+        return None
+
+################################################################################################################
+#           BOT MANAGMENT
+###############################################################################################################
+
 # Logic to determine if Gabriel should ensure complete answers
 def should_gemma_intervene(user_input, model_response):
     """
@@ -239,26 +328,14 @@ def should_gemma_intervene(user_input, model_response):
         logging.info("Gemma intervention triggered due to user query.")
         return True
     return False
-    
-# Analyze log for relevance
-def analyze_log_for_relevance(log_content, user_input):
-    """
-    Analyze the content of the log to extract information relevant to the current user input.
-    """
-    # Basic analysis to determine which parts of the log are relevant
-    relevant_sentences = []
-    user_keywords = user_input.lower().split()
+            
+        
+################################################################################################################
+###############################################################################################################
+#           EMBEDDINGS and logs 
+################################################################################################################
+###############################################################################################################
 
-    for line in log_content.splitlines():
-        if any(keyword in line.lower() for keyword in user_keywords):
-            relevant_sentences.append(line)
-
-    if relevant_sentences:
-        logging.debug(f"Relevant log information found: {' '.join(relevant_sentences)}")
-        return ' '.join(relevant_sentences)
-    else:
-        logging.debug("No specific details were directly applicable, providing general context.")
-        return "No specific details were directly applicable, but the context suggests that the issue might be related."
 
 # Embedding query function
 def embed_query(query, host_ip, store_in_db=True):
@@ -299,6 +376,26 @@ def embed_query(query, host_ip, store_in_db=True):
         logging.error(f"Error connecting to Embedding API: {str(e)}")
         raise ValueError(f"Error connecting to Embedding API: {str(e)}")
         
+# Analyze log for relevance
+def analyze_log_for_relevance(log_content, user_input):
+    """
+    Analyze the content of the log to extract information relevant to the current user input.
+    """
+    # Basic analysis to determine which parts of the log are relevant
+    relevant_sentences = []
+    user_keywords = user_input.lower().split()
+
+    for line in log_content.splitlines():
+        if any(keyword in line.lower() for keyword in user_keywords):
+            relevant_sentences.append(line)
+
+    if relevant_sentences:
+        logging.debug(f"Relevant log information found: {' '.join(relevant_sentences)}")
+        return ' '.join(relevant_sentences)
+    else:
+        logging.debug("No specific details were directly applicable, providing general context.")
+        return "No specific details were directly applicable, but the context suggests that the issue might be related."
+
 
 # Store embedding in the database or locally
 def store_embedding(embedding, query, host_ip=None):
@@ -357,55 +454,6 @@ def save_embedding_locally(embedding, query, directory="local_embeddings"):
         json.dump([metadata], f, indent=4)
 
     logging.debug(f"Stored embedding locally at {file_path}")
-
-def generate(prompt, model="Alex", host_ip="10.79.85.40", template=None, context=None, stream=False, num_predict=-2, temperature=1, system=None):
-    """
-    Sends a request to the specified model.
-    Modify behavior if Disco Biscuit mode is active.
-    """
-    global disco_biscuit_active
-
-    if disco_biscuit_active:
-        if model.lower() == "aqua" or model.lower() == "ai1":
-            # Modify prompt or template for AI1 to act drunk
-            prompt = f"You're feeling a little tipsy and carefree: {prompt}"
-            template = "Drunk mode enabled"
-        elif model.lower() == "gemma" or model.lower() == "ai2":
-            # Modify prompt or template for AI2 to act like they are on THC
-            prompt = f"You're super chill and seeing things differently: {prompt}"
-            template = "THC mode enabled"
-
-    url = f'http://{host_ip}:11434/api/generate'
-    headers = {'Content-Type': 'application/json'}
-    data = {
-        "model": model,
-        "prompt": prompt,
-        "template": template,
-        "system": system,
-        "stream": stream,
-        "context": context,
-        "options": {
-            "temperature": temperature,
-            "num_predict": num_predict
-            },
-        "save": model,
-        "verbose": True,
-        "num_predict": num_predict
-    }
-
-    try:
-        logging.debug(f"Sending request to generate API at {url}")
-        response = requests.post(url, headers=headers, json=data, timeout=120)
-        if response.status_code == 200:
-            response_data = response.json()
-            return response_data.get('response', 'No response received')
-        else:
-            logging.error(f"Generate API returned status code: {response.status_code}")
-            return None
-    except requests.RequestException as e:
-        logging.error(f"Error connecting to Generate API: {str(e)}")
-        return None
-        
 
 # Function to search logs for relevant entries
 def search_logs(model, query, brainbase):
@@ -923,6 +971,12 @@ def embed_content():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+################################################################################################################
+###############################################################################################################
+#           FUN
+################################################################################################################
+###############################################################################################################
+
 @app.route('/disco_biscuit', methods=['POST'])
 def disco_biscuit():
     """
@@ -956,6 +1010,52 @@ def disco_biscuit_status():
     """
     return jsonify({"active": disco_biscuit_active}), 200
 
+################################################################################################################
+###############################################################################################################
+#           TOOLS
+################################################################################################################
+###############################################################################################################
+
+# Function to fetch and clean content from a URL
+def fetch_url_content(reference_url):
+    """Fetch content from a specified URL and return as cleaned text."""
+    try:
+        response = requests.get(reference_url, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        return soup.get_text(separator="\n").strip()
+    except requests.RequestException as e:
+        logging.error(f"Failed to fetch content from {reference_url}: {str(e)}")
+        return None
+        
+@app.route('/web-search', methods=['POST'])
+def web_search():
+    data = request.get_json()
+    query = data.get("query")
+    if not query:
+        return jsonify({"error": "Query is required."}), 400
+
+    search_result = do_web_search(query)
+    if search_result and not search_result.startswith("An error occurred"):
+        return jsonify({"response": search_result}), 200
+    else:
+        return jsonify({"response": "No results found."}), 200
+
+# Cache embeddings for efficiency
+@lru_cache(maxsize=1000)
+def get_embedding_cache(prompt):
+    """
+    Retrieve or compute the embedding for a given prompt, using caching.
+    """
+    logging.info(f"Fetching cached embedding for prompt: {prompt[:50]}...")
+    host_ip = MODEL_HOST_MAPPING.get("aqua")  # Default to Aqua for embedding
+    try:
+        embedding = embed_query({"prompt": prompt, "model": "Aqua"}, host_ip, store_in_db=False)
+        return embedding
+    except ValueError as e:
+        logging.error(f"Error getting cached embedding: {str(e)}")
+        return None
+
 @app.route('/tools/<tool>', methods=['GET', 'POST'])
 def tools(tool):
     if tool == 'allowed':
@@ -982,8 +1082,7 @@ def tools(tool):
             return jsonify({'result': result})
 
         elif tool == 'fart':
-            # Assuming dart is another tool that requires specific processing
-            result = run_dart_command(argument)  # Example function
+            result = run_dart_command(argument)  # Example function for another tool
             return jsonify({'result': result})
 
         else:
@@ -1008,37 +1107,32 @@ def ping_ip(ip_address):
     except Exception as e:
         return f"Error pinging IP address: {str(e)}"
 
-@app.route('/run-command', methods=['POST'])
-def run_command():
-    data = request.get_json()
-    command = data.get('command')
-    content = data.get('content')
-
-    if command and content:
-        try:
-            # Create and write to the file using nano
-            with open(command.split(' ')[1], 'w') as f:
-                f.write(content)
-            return jsonify({"success": True, "message": f"{command} executed successfully."})
-        except Exception as e:
-            return jsonify({"success": False, "message": str(e)})
-    else:
-        return jsonify({"success": False, "message": "Invalid command or content."})
-        
-
 def run_bash_command(command):
-    """Run a bash command for Linux and Windows environments."""
+    """Run a bash command from the bash/ directory."""
     try:
-        os_name = platform.system().lower()
-        
-        if 'windows' in os_name:
-            # For Windows, use PowerShell or cmd
-            result = subprocess.run(['powershell', '-Command', command], capture_output=True, text=True, shell=True)
-        else:
-            # For Linux, use bash directly
-            result = subprocess.run(command, capture_output=True, text=True, shell=True)
+        # Ensure the bash/ directory exists
+        if not os.path.exists(BASH_DIRECTORY):
+            return f"Error: Directory '{BASH_DIRECTORY}' not found."
 
-        return result.stdout if result.returncode == 0 else result.stderr
+        # Determine the shell to use based on the operating system
+        os_name = platform.system().lower()
+        shell = 'powershell' if 'windows' in os_name else 'bash'
+
+        # Run the command from within the bash/ directory
+        result = subprocess.run(
+            command,  # This can be any bash command
+            capture_output=True,
+            text=True,
+            shell=True,
+            cwd=BASH_DIRECTORY  # Set the working directory to 'bash/'
+        )
+
+        # Check if the command was successful and return output or error
+        if result.returncode == 0:
+            return result.stdout
+        else:
+            return f"Command failed with error:\n{result.stderr}"
+
     except Exception as e:
         return f"Error running bash command: {str(e)}"
 
@@ -1058,15 +1152,34 @@ def run_dart_command(argument):
     except Exception as e:
         return f"Error running Dart command: {str(e)}"
         
+################################################################################################################
+###############################################################################################################
+#           workflow
+################################################################################################################
+###############################################################################################################
+        
 @app.route('/trigger-workflow', methods=['POST'])
-def trigger_workflow():
+def trigger_workflow():    
     """
     Trigger the process where JAMbot generates instructions, gathers resources,
     runs commands, and embeds content.
     """
+    global workflow_repeats
+
+    # Increment the counter to track repetitions
+    workflow_repeats += 1
+    print(f"Workflow triggered {workflow_repeats} times.")
+
+    # Optional: Check if the workflow has exceeded the max repeats
+    if workflow_repeats > MAX_WORKFLOW_REPEATS:
+        return jsonify({"error": "Maximum workflow repeats reached. Stopping workflow."}), 401
+
     data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid request, JSON data missing."}), 402
+
     task_description = data.get("task_description", "Generate data and predictions.")
-    original_request = data.get("original_request")
+    original_request = data.get("original_request", "No original request provided.")
 
     try:
         # Step 1: Write instructions
@@ -1080,10 +1193,27 @@ def trigger_workflow():
 
         # Step 4: Process the data for embedding and conversation handling
         process_data_for_embedding(data_filename, original_request)
+        
 
-        return jsonify({"response": f"Workflow completed successfully. Data stored in {data_filename}."}), 200
+        # Step 5: Display the contents of instruction/workflow.instruct
+        workflow_file_path = 'instructions/workflow.instruct'
+        try:
+            with open(workflow_file_path, 'r') as workflow_file:
+                workflow_content = workflow_file.read()
+                print(f"Contents of {workflow_file_path}:\n{workflow_content}")
+        except FileNotFoundError:
+            workflow_content = "The workflow.instruct file was not found."
+            print(workflow_content)
+
+        # Return a success response with the generated data filename and workflow contents
+        return jsonify({
+            "response": f"Workflow completed successfully. Data stored in {data_filename}.",
+            "workflow_content": workflow_content
+        }), 200
+
 
     except Exception as e:
+        # Log the error and return a failure response
         logging.error(f"Workflow failed: {e}")
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
@@ -1255,7 +1385,292 @@ def process_data_for_embedding(data_filename, original_request):
             trigger_workflow()
     except FileNotFoundError:
         print("No more resources to process. Workflow completed.")
+        # Purge the .data file
+        try:
+            os.remove(f"instructions/{data_filename}")
+            print(f"{data_filename} purged.")
+        except Exception as e:
+            print(f"Error purging {data_filename}: {e}")
+
+################################################################################################################
+###############################################################################################################
+#         bot scripts  #
+################################################################################################################
+###############################################################################################################
 
 
+# Track the current sort state (Optional: Can be handled on the frontend too)
+sort_state = {'method': 'name', 'direction': 'asc'}
+
+@app.route('/script-saver', methods=['POST'])
+def script_saver():
+    try:
+        data = request.get_json()
+        filename = data.get('filename')
+        content = data.get('content')
+
+        if not filename or not content:
+            return jsonify({"success": False, "message": "Invalid filename or content."}), 400
+
+        # Sanitize filename to remove backslashes and other unwanted characters
+        safe_filename = (
+            filename.strip()
+            .replace('..', '')  # Prevent directory traversal
+            .replace(' ', '_')  # Replace spaces with underscores
+            .replace('```', '')  # Remove backticks (if any)
+            .replace(':', '')  # Remove colons
+            .replace('\\', '')  # Remove backslashes
+        )
+
+        # Write content to the file in the 'bash' directory
+        with open(f"bash/{safe_filename}", 'w') as f:
+            f.write(content)
+
+        return jsonify({"success": True, "message": f"Script {safe_filename} saved successfully."}), 200
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+        
+@app.route('/list-files', methods=['GET'])
+def list_files():
+    global sort_state
+
+    sort_method = request.args.get('sort', 'name')
+    # Flip direction if the same sort method is selected again
+    if sort_method == sort_state['method']:
+        sort_state['direction'] = 'desc' if sort_state['direction'] == 'asc' else 'asc'
+    else:
+        sort_state = {'method': sort_method, 'direction': 'asc'}
+
+    try:
+        files = [
+            {'name': f, 'created': os.path.getctime(f"bash/{f}")}
+            for f in os.listdir('bash/')
+        ]
+
+        if sort_method == 'name':
+            files.sort(key=lambda x: x['name'].lower(), reverse=(sort_state['direction'] == 'desc'))
+        elif sort_method == 'type':
+            files.sort(key=lambda x: x['name'].split('.')[-1].lower(), reverse=(sort_state['direction'] == 'desc'))
+        elif sort_method == 'created':
+            files.sort(key=lambda x: x['created'], reverse=(sort_state['direction'] == 'desc'))
+
+        return jsonify({'files': [f['name'] for f in files]})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/read-file/<filename>', methods=['GET'])
+def read_file(filename):
+    try:
+        with open(os.path.join(BASH_DIRECTORY, filename), 'r') as f:
+            content = f.read()
+        return content, 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/save-file', methods=['POST'])
+def save_file():
+    data = request.get_json()
+    filename = data.get('filename')
+    content = data.get('content')
+
+    try:
+        with open(os.path.join(BASH_DIRECTORY, filename), 'w') as f:
+            f.write(content)
+        return jsonify({"message": f"{filename} saved successfully."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+        
+@app.route('/delete-files', methods=['POST'])
+def delete_files():
+    data = request.get_json()
+    files = data.get('files', [])
+
+    try:
+        for filename in files:
+            os.remove(f"bash/{filename}")
+        return jsonify({'message': 'Files deleted successfully.'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/run-script/<filename>', methods=['GET'])
+def run_script(filename):
+    try:
+        script_path = os.path.join(BASH_DIRECTORY, filename)
+        result = os.popen(f'bash {script_path}').read()
+        return jsonify({"output": result}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+        
+
+def run_remote_command(arg):
+    """Executes a remote bash command via SSH with the provided argument."""
+    try:
+        # Establish SSH connection
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(REMOTE_HOST, username=USERNAME, password=PASSWORD)
+
+        # Construct and run the command with the provided argument
+        command = f'bash /ccshare/linux/c_files/cdeal/search_filter/log_scraper.9 {arg}'
+        stdin, stdout, stderr = ssh.exec_command(command)
+
+        # Get the output and errors
+        output = stdout.read().decode()
+        error = stderr.read().decode()
+
+        # Close the SSH connection
+        ssh.close()
+
+        if error:
+            return {"success": False, "error": error.strip()}
+        return {"success": True, "output": output.strip()}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@app.route('/log-scraper', methods=['POST'])
+def log_scraper():
+    """API endpoint to run the log scraper command with a dynamic argument."""
+    data = request.get_json()
+    arg = data.get('arg')
+
+    if not arg:
+        return jsonify({"success": False, "message": "Argument 'arg' is required."}), 400
+
+    # Run the remote command with the given argument
+    result = run_remote_command(arg)
+    status_code = 200 if result["success"] else 500
+    return jsonify(result), status_code        
+        
+#########################################################
+#   CODE CLEANUP
+##########################################################
+        
+def is_valid_script(filename):
+    """Check if the file has a valid script extension."""
+    valid_extensions = ['.sh', '.py', '.js', '.rb', '.pl']
+    return any(filename.endswith(ext) for ext in valid_extensions)
+
+def validate_shell_script(content):
+    """Validate shell script syntax using bash -n."""
+    try:
+        result = subprocess.run(['bash', '-n'], input=content.encode('utf-8'), capture_output=True, text=True)
+        if result.returncode != 0:
+            raise Exception(f"Shell syntax error: {result.stderr}")
+    except Exception as e:
+        raise Exception(f"Validation failed: {str(e)}")
+
+def check_for_unmatched_symbols(content):
+    """Check for unmatched quotes, parentheses, or brackets."""
+    open_symbols = {'(': 0, '{': 0, '[': 0, "'": 0, '"': 0}
+
+    for char in content:
+        if char in open_symbols:
+            open_symbols[char] += 1
+        elif char in [')', '}', ']']:
+            open_symbols[{'(': ')', '{': '}', '[': ']'}[char]] -= 1
+
+    # Ensure quotes are balanced (even counts)
+    if open_symbols["'"] % 2 != 0 or open_symbols['"'] % 2 != 0:
+        raise Exception("Unmatched quote detected in script.")
+
+    # Ensure brackets and parentheses are balanced
+    for symbol, count in open_symbols.items():
+        if count != 0:
+            raise Exception(f"Unmatched {symbol} detected in script.")
+
+def auto_format(content, extension):
+    """Auto-format script content based on the file type."""
+    try:
+        normalized_content = content.strip() + "\n"
+
+        if extension == '.py':
+            result = subprocess.run(
+                ['black', '--quiet', '-'], input=normalized_content.encode('utf-8'),
+                capture_output=True, text=True
+            )
+        elif extension == '.sh':
+            check_for_unmatched_symbols(content)  # Check symbols
+            validate_shell_script(content)        # Validate syntax
+            result = subprocess.run(
+                ['shfmt'], input=normalized_content.encode('utf-8'),
+                capture_output=True, text=True
+            )
+        else:
+            return normalized_content  # Fallback
+
+        if result.returncode == 0:
+            return result.stdout
+        else:
+            raise Exception(f"Formatting failed: {result.stderr}")
+
+    except FileNotFoundError as e:
+        raise Exception(f"Formatter not found: {str(e)}")
+    except Exception as e:
+        raise Exception(f"Error during formatting: {str(e)}")
+
+def get_commented_code(script_content):
+    """Get commented code from Alex via /generate API."""
+    try:
+        commented_code = generate(
+            prompt=f"Insert appropriate comments into the following script:\n\n{script_content}",
+            model="Alex",
+            host_ip="10.79.85.40",
+            num_predict=200,
+            temperature=1
+        )
+        if commented_code:
+            return commented_code.strip()
+        else:
+            raise Exception("No response from Alex.")
+    except Exception as e:
+        raise Exception(f"Error generating commented code: {str(e)}")
+
+@app.route('/code-cleaner', methods=['POST', 'GET'])
+def code_cleaner():
+    """Main function to clean and process scripts."""
+    try:
+        files = os.listdir('bash/')
+        for filename in files:
+            file_path = os.path.join('bash', filename)
+
+            if filename.startswith('.') or not os.access(file_path, os.R_OK):
+                log_activity(f"Skipped hidden or inaccessible file: {filename}")
+                continue
+
+            if not is_valid_script(filename):
+                log_activity(f"Deleting non-script file: {filename}")
+                os.remove(file_path)
+                continue
+
+            try:
+                with open(file_path, 'r') as f:
+                    content = f.read()
+
+                extension = os.path.splitext(filename)[1]
+
+                # Auto-format -> Add Comments -> Auto-format
+                formatted_content = auto_format(content, extension)
+                commented_content = get_commented_code(formatted_content)
+                final_content = auto_format(commented_content, extension)
+
+                with open(file_path, 'w') as f:
+                    f.write(final_content)
+
+                log_activity(f"Processed and saved: {filename}")
+
+            except Exception as e:
+                log_activity(f"Error processing {filename}: {e}")
+
+        # Check if log file needs to be summarized and archived
+        check_log_size()
+        return jsonify({"success": True, "message": "All scripts processed successfully."})
+
+    except Exception as e:
+        log_activity(f"Error during code cleanup: {e}")
+        return jsonify({"success": False, "message": str(e)}), 500
+        
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+    cli().run()
