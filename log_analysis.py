@@ -2,11 +2,13 @@ import os
 import re
 import glob
 import argparse
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from bertopic import BERTopic
 from sklearn.feature_extraction.text import CountVectorizer
 from sentence_transformers import SentenceTransformer
+from sklearn.preprocessing import normalize
 
 def parse_log_line(line):
     """
@@ -23,28 +25,30 @@ def parse_log_line(line):
     else:
         return None, None
 
-def read_logs(log_dir):
+def read_logs_in_chunks(log_files, chunk_size=100000):
     """
-    Reads all log files from the specified directory and returns a list of log messages.
+    Generator that yields chunks of log messages.
     """
     log_messages = []
-    log_files = glob.glob(os.path.join(log_dir, "*.*"))
-    print(f"Found {len(log_files)} log files.")
-
+    total_messages = 0
     for log_file in log_files:
         with open(log_file, 'r', encoding='utf-8', errors='ignore') as f:
             for line in f:
                 _, message = parse_log_line(line)
                 if message:
                     log_messages.append(message)
-    print(f"Extracted {len(log_messages)} log messages.")
-    return log_messages
+                    total_messages += 1
+                    if len(log_messages) >= chunk_size:
+                        yield log_messages
+                        log_messages = []
+    if log_messages:
+        yield log_messages
+    print(f"Total log messages processed: {total_messages}")
 
 def preprocess_messages(messages):
     """
     Preprocesses log messages for topic modeling.
     """
-    # Basic preprocessing: you can expand this as needed
     preprocessed = []
     for msg in messages:
         # Remove IP addresses and numbers to generalize patterns
@@ -53,23 +57,13 @@ def preprocess_messages(messages):
         preprocessed.append(msg)
     return preprocessed
 
-def generate_embeddings(messages, model_name='all-MiniLM-L6-v2'):
+def generate_embeddings(messages, model):
     """
     Generates embeddings for the messages using a sentence transformer model.
     """
-    model = SentenceTransformer(model_name)
     embeddings = model.encode(messages, show_progress_bar=True)
+    embeddings = normalize(embeddings)
     return embeddings
-
-def perform_topic_modeling(messages, embeddings):
-    """
-    Performs topic modeling using BERTopic and returns the model and topics.
-    """
-    # You can customize the vectorizer and other parameters
-    vectorizer_model = CountVectorizer(ngram_range=(1, 2), stop_words='english')
-    topic_model = BERTopic(vectorizer_model=vectorizer_model)
-    topics, probs = topic_model.fit_transform(messages, embeddings)
-    return topic_model, topics, probs
 
 def save_visualizations(topic_model, output_dir):
     """
@@ -78,15 +72,33 @@ def save_visualizations(topic_model, output_dir):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
+    # Visualize topics
     topics_fig = topic_model.visualize_topics()
     topics_fig.write_html(os.path.join(output_dir, 'topics.html'))
 
-    hierarchy_fig = topic_model.visualize_hierarchy()
-    hierarchy_fig.write_html(os.path.join(output_dir, 'hierarchy.html'))
+    # Visualize hierarchy with error handling
+    try:
+        hierarchy_fig = topic_model.visualize_hierarchy(distance_function='euclidean')
+        hierarchy_fig.write_html(os.path.join(output_dir, 'hierarchy.html'))
+    except ValueError as e:
+        print(f"Could not generate hierarchy visualization: {e}")
+        print("Attempting to visualize hierarchy with a sample of the data...")
+        # Use a smaller sample
+        sample_size = 10000
+        indices = np.random.choice(len(topic_model.documents), size=sample_size, replace=False)
+        sample_embeddings = topic_model.embedding_model.transform([topic_model.documents[i] for i in indices])
+        sample_embeddings = normalize(sample_embeddings)
+        sample_topic_model = BERTopic()
+        sample_topics, _ = sample_topic_model.fit_transform([topic_model.documents[i] for i in indices], sample_embeddings)
+        # Visualize hierarchy on the sample
+        hierarchy_fig = sample_topic_model.visualize_hierarchy(distance_function='euclidean')
+        hierarchy_fig.write_html(os.path.join(output_dir, 'hierarchy.html'))
 
+    # Visualize heatmap
     heatmap_fig = topic_model.visualize_heatmap()
     heatmap_fig.write_html(os.path.join(output_dir, 'heatmap.html'))
 
+    # Visualize barchart
     barchart_fig = topic_model.visualize_barchart()
     barchart_fig.write_html(os.path.join(output_dir, 'barchart.html'))
 
@@ -97,19 +109,50 @@ def main():
     parser.add_argument('--log_dir', type=str, required=True, help='Directory containing log files')
     parser.add_argument('--output_dir', type=str, default='output', help='Directory to save visualizations')
     parser.add_argument('--model_name', type=str, default='all-MiniLM-L6-v2', help='SentenceTransformer model name')
+    parser.add_argument('--chunk_size', type=int, default=100000, help='Number of log messages per chunk')
     args = parser.parse_args()
 
+    # Initialize variables
+    all_embeddings = []
+    all_messages = []
+
     print("Reading log files...")
-    messages = read_logs(args.log_dir)
+    log_files = glob.glob(os.path.join(args.log_dir, "*.*"))
+    print(f"Found {len(log_files)} log files.")
 
-    print("Preprocessing messages...")
-    preprocessed_messages = preprocess_messages(messages)
+    model = SentenceTransformer(args.model_name)
 
-    print("Generating embeddings...")
-    embeddings = generate_embeddings(preprocessed_messages, model_name=args.model_name)
+    # Process logs in chunks
+    chunk_generator = read_logs_in_chunks(log_files, chunk_size=args.chunk_size)
+    chunk_count = 0
+    for messages in chunk_generator:
+        chunk_count += 1
+        print(f"Processing chunk {chunk_count} with {len(messages)} messages...")
+
+        # Preprocess messages
+        preprocessed_messages = preprocess_messages(messages)
+
+        # Generate embeddings
+        embeddings = generate_embeddings(preprocessed_messages, model)
+
+        # Append to all embeddings and messages
+        all_embeddings.append(embeddings)
+        all_messages.extend(preprocessed_messages)
+
+        # Optional: Free memory if necessary
+        del messages, preprocessed_messages, embeddings
+
+    # Concatenate all embeddings
+    all_embeddings = np.vstack(all_embeddings)
+
+    print(f"Total messages collected: {len(all_messages)}")
+    print(f"Total embeddings shape: {all_embeddings.shape}")
 
     print("Performing topic modeling...")
-    topic_model, topics, probs = perform_topic_modeling(preprocessed_messages, embeddings)
+    # You can customize the vectorizer and other parameters
+    vectorizer_model = CountVectorizer(ngram_range=(1, 2), stop_words='english')
+    topic_model = BERTopic(vectorizer_model=vectorizer_model)
+    topics, probs = topic_model.fit_transform(all_messages, all_embeddings)
 
     print("Saving visualizations...")
     save_visualizations(topic_model, args.output_dir)
