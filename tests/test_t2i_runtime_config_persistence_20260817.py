@@ -204,7 +204,7 @@ def test_agent_package_bootstraps_before_app_settings_instantiation() -> None:
     assert first_agent_import < settings_materialization
 
 
-def test_real_python_import_loads_config_without_shell_sourcing(tmp_path: Path) -> None:
+def test_non_backend_import_does_not_mutate_process_env(tmp_path: Path) -> None:
     path = _write_config(tmp_path)
     env = dict(os.environ)
     for key in T2I_RUNTIME_KEYS:
@@ -216,6 +216,33 @@ def test_real_python_import_loads_config_without_shell_sourcing(tmp_path: Path) 
             "-c",
             (
                 "import os, app.agent; "
+                "print(int(app.agent.T2I_RUNTIME_BOOTSTRAP is None), "
+                "os.environ.get('NIGHTLY_RCA_T2I_SELECTIVE_CONTEXT_ENABLED', 'UNSET'))"
+            ),
+        ],
+        cwd=REPO_ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert proc.stdout.strip() == "1 UNSET"
+
+def test_real_python_import_loads_config_without_shell_sourcing(tmp_path: Path) -> None:
+    path = _write_config(tmp_path)
+    env = dict(os.environ)
+    for key in T2I_RUNTIME_KEYS:
+        env.pop(key, None)
+    env[CONFIG_PATH_ENV] = str(path)
+    proc = subprocess.run(
+        [
+            os.sys.executable,
+            "-c",
+            (
+                "import os, sys; "
+                "sys.argv=['uvicorn', 'app.main:app']; "
+                "import app.agent; "
                 "r=app.agent.T2I_RUNTIME_BOOTSTRAP; "
                 "print(int(r.file_loaded), int(r.selective_enabled), "
                 "r.allowlist_count, r.max_events, "
