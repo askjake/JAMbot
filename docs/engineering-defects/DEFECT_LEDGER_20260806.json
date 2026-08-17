@@ -1,0 +1,982 @@
+{
+  "alias_records": [
+    {
+      "defect_id": "ARGUMENT-CONTEXT-ID-SUBSTITUTED-INTO-SCENE-ID",
+      "duplicate_of": "TYPED-ID-ARGUMENT-PROVENANCE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "AUTH-BINDING-LOSS-DURING-IMPLEMENTATION",
+      "duplicate_of": "BIND-DYNAMIC-MCP-EXACT-TOOL-NOT-PROMOTED",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "AUTH-PRIVILEGED-TOOL-BINDING-NOT-STICKY",
+      "duplicate_of": "BIND-DYNAMIC-MCP-EXACT-TOOL-NOT-PROMOTED",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "CRON-TIMEZONE-INFERENCE-OVERSTATED",
+      "duplicate_of": "CONFIG-EFFECTIVE-MODE-SOURCE-HIDDEN",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "CRON-TIMEZONE-MISINTERPRETED",
+      "duplicate_of": "CONFIG-EFFECTIVE-MODE-SOURCE-HIDDEN",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "EVIDENCE-FROZEN-REPLAY-DESCRIBED-AS-LIVE",
+      "duplicate_of": "EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "EVIDENCE-NO-CAPSULES-AS-NO-ANALYSIS",
+      "duplicate_of": "EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "EVIDENCE-S3-COVERAGE-CONFLATED-WITH-GRASSHOPPER-PLAN",
+      "duplicate_of": "EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE-RECURRENCE",
+      "duplicate_of": "EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "GH-PROFILE-NAMESPACE-MISMATCH",
+      "duplicate_of": "PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "GIT-KNOWN-PUSH-TARGET-REASKED",
+      "duplicate_of": "GIT-AUTHORITATIVE-WORKTREE-CONTEXT-LOST",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "GIT-PUSH-PROTOCOL-STATE-NOT-STICKY",
+      "duplicate_of": "GIT-AUTHORITATIVE-WORKTREE-CONTEXT-LOST",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "GRASSHOPPER-HARDCODED-AUTH-SECRET",
+      "duplicate_of": "SEC-GRASSHOPPER-SOURCE-TLS-CONTAINMENT",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "GRASSHOPPER-LEGACY-DEPLOYMENT-DRIFT",
+      "duplicate_of": "SEC-GRASSHOPPER-SOURCE-TLS-CONTAINMENT",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "GRASSHOPPER-TLS-VERIFY-DISABLED",
+      "duplicate_of": "SEC-GRASSHOPPER-SOURCE-TLS-CONTAINMENT",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "IDENTIFIER-SEMANTIC-VALIDATION-MISSING",
+      "duplicate_of": "TYPED-ID-ARGUMENT-PROVENANCE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "LEGACY-TRACKER-ID-PROVENANCE-ABSENT",
+      "duplicate_of": "TRACKER-REQUEST-ID-PROVENANCE-MISSING",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "NIGHTLY-CURRENT-COVERAGE-NOT-VERIFIED",
+      "duplicate_of": "EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "NIGHTLY-NOT-SUBMITTED-REPORTED-NOT-ACCEPTED",
+      "duplicate_of": "PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "NIGHTLY-STALE-TRACKER-STATE-PRESENTED-AS-CURRENT",
+      "duplicate_of": "TRACKER-REQUEST-ID-PROVENANCE-MISSING",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "NIGHTLY-SUBMIT-SKIPPED-REASON-NOT-EXPOSED",
+      "duplicate_of": "PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "OBS-GRASSHOPPER-MCP-MISIDENTIFIED-AS-S3-TOOLCHAIN",
+      "duplicate_of": "EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "OBS-MCP-FAMILY-HEALTH-CONFLATED-WITH-TOOL-BINDING",
+      "duplicate_of": "BIND-DYNAMIC-MCP-EXACT-TOOL-NOT-PROMOTED",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "OBSERVABILITY-TOOL-ENDPOINT-HOST-UNATTRIBUTED",
+      "duplicate_of": "ORCH-ENVIRONMENT-IDENTITY-DRIFT",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-AUTHORITATIVE-TARGET-OVERRIDDEN-BY-INFERENCE",
+      "duplicate_of": "ORCH-ENVIRONMENT-IDENTITY-DRIFT",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-BLOCKED-PHASE-CONTINUES-WITH-SUBSTITUTES",
+      "duplicate_of": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-CHILD-CAPABILITY-MISMATCH-REPRO",
+      "duplicate_of": "ORCH-CAPABILITY-PREFLIGHT-MISSING",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-EXECUTION-TASK-STOPPED-FOR-SCOPE-CHOICE",
+      "duplicate_of": "TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-EXPLICIT-STOP-CONDITION-IGNORED",
+      "duplicate_of": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-GRASSHOPPER-WRITE-REQUEST-SUBSTITUTED-BY-S3-READ",
+      "duplicate_of": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-HEALTH-VS-FUNCTIONAL-TEST-CONFLATION",
+      "duplicate_of": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-IMPLEMENTATION-TASK-CONVERTED-TO-EXPLANATION",
+      "duplicate_of": "TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-KNOWN-RECEIVER-ID-REASKED",
+      "duplicate_of": "GIT-AUTHORITATIVE-WORKTREE-CONTEXT-LOST",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-MISSING-TERMINAL-BLOCKED-STATE",
+      "duplicate_of": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-PHASE-GATE-BYPASS",
+      "duplicate_of": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-PHASE0-IDENTITY-GATE-BYPASS",
+      "duplicate_of": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-PRIVATE-SOURCE-PUBLIC-SEARCH-FALLBACK",
+      "duplicate_of": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-SELF-LOCATION-INFERRED-FROM-TOOL-ENDPOINT",
+      "duplicate_of": "ORCH-ENVIRONMENT-IDENTITY-DRIFT",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-UNBOUNDED-PARALLEL-SEARCH",
+      "duplicate_of": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-UNRELATED-FALLBACK-SUBSTITUTION",
+      "duplicate_of": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-UPLOAD-CAPABILITY-NOT-DISCOVERED",
+      "duplicate_of": "BIND-DYNAMIC-MCP-EXACT-TOOL-NOT-PROMOTED",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ORCH-USER-ORDERING-CONSTRAINT-IGNORED",
+      "duplicate_of": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "PATCH-CROSS-REPO-WORKTREE-CONFLATION",
+      "duplicate_of": "TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "PATCH-INCOMPLETE-BRANCH-PRESENTED-FOR-PUSH",
+      "duplicate_of": "TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "PATCH-SCOPE-DROPS-VERIFIED-DEFECTS",
+      "duplicate_of": "TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "PATCH-UNIT-TESTED-BUT-NOT-WIRED",
+      "duplicate_of": "TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "PROFILE-ALIAS-PROPOSED-AS-CANONICAL-FIX",
+      "duplicate_of": "PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "REPORT-EVIDENCE-COUNT-INCONSISTENT",
+      "duplicate_of": "TRACKER-REQUEST-ID-PROVENANCE-MISSING",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "REPORT-INTERMEDIATE-HYPOTHESIS-NOT-CLEARED",
+      "duplicate_of": "ORCH-EVIDENCELESS-PROGRESS-NARRATION",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "REPORT-RECORD-SCOPE-COUNT-AMBIGUITY",
+      "duplicate_of": "TRACKER-REQUEST-ID-PROVENANCE-MISSING",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "ROOT-CAUSE-FALSE-STATUS-NORMALIZATION",
+      "duplicate_of": "PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "SCENE-CLASSIFICATION-SILENT-ZERO",
+      "duplicate_of": "INCIDENT-SCENE-CONTRACT-RENDER-BOUNDS",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "SCENE-EPHEMERAL-ARTIFACT-LOSS",
+      "duplicate_of": "INCIDENT-SCENE-CONTRACT-RENDER-BOUNDS",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "SCENE-EXPANSION-WINDOW-NULL",
+      "duplicate_of": "INCIDENT-SCENE-CONTRACT-RENDER-BOUNDS",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "SCENE-GLOBAL-TIME-AXIS-COLLAPSE",
+      "duplicate_of": "INCIDENT-SCENE-CONTRACT-RENDER-BOUNDS",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "SCENE-LARGE-INLINE-SVG",
+      "duplicate_of": "INCIDENT-SCENE-CONTRACT-RENDER-BOUNDS",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "SCENE-QUERY-PAGINATION-MISSING",
+      "duplicate_of": "INCIDENT-SCENE-CONTRACT-RENDER-BOUNDS",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "SCENE-RELATIONSHIP-GROWTH",
+      "duplicate_of": "INCIDENT-SCENE-CONTRACT-RENDER-BOUNDS",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "SCENE-RENDER-COUNTS-MISSING",
+      "duplicate_of": "INCIDENT-SCENE-CONTRACT-RENDER-BOUNDS",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "STATUS-DISTINCT-BLOCKERS-COLLAPSED",
+      "duplicate_of": "PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "TEST-BASELINE-CONTRADICTION-UNRESOLVED",
+      "duplicate_of": "TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "TEST-FAILURES-LABELED-PREEXISTING-WITHOUT-PROOF",
+      "duplicate_of": "TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "TEST-FIXTURE-GRASSHOPPER-CONTRACT-DRIFT",
+      "duplicate_of": "PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION",
+      "status": "VERIFIED_DUPLICATE"
+    },
+    {
+      "defect_id": "TRACKER-PROLIFERATION-POSSIBLE-DUPLICATES",
+      "duplicate_of": "TRACKER-REQUEST-ID-PROVENANCE-MISSING",
+      "status": "VERIFIED_DUPLICATE"
+    }
+  ],
+  "canonical_defect_count": 21,
+  "canonical_entries": [
+    {
+      "acceptance_tests": [
+        "tests/test_continuity_scope_ordering_hardening.py"
+      ],
+      "aliases": [],
+      "candidate_files": [
+        "app/agent/continuity_policy.py",
+        "app/agent/tool_execution_policy.py",
+        "app/agent/tool_policy_state.py",
+        "app/agent/agents/agentic_rag.py"
+      ],
+      "component": "Jake-Bot agent continuity",
+      "defect_id": "ORCH-CROSS-DOMAIN-CONTEXT-CONTAMINATION",
+      "deferred_reason": "",
+      "deployment_scope": "Jake local/dev first",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Wrong methodology, lost plan, repeated questions, and cross-domain actions.",
+      "proposed_owner": "Jake-Bot agent platform",
+      "reproduction": "Explicit Incident Scene task with stale repo checkpoint; then same-chat Steps 3-5 continuation after compression.",
+      "rollback": "Revert continuity commit; checkpoint fields are backward-safe defaults.",
+      "runtime_evidence": "Stale repo_checkout_local_deploy state displaced Incident Scene work and a later turn was described as a new conversation.",
+      "safety_risk": "Can redirect operational work to the wrong workflow.",
+      "severity": "P1",
+      "source_evidence": "Typed continuity state is now checkpointed and restored only for content-free continuations in the same authoritative environment.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Current-turn task and methodology displaced by stale checkpoint state"
+    },
+    {
+      "acceptance_tests": [
+        "tests/test_dynamic_activation_intent_hardening.py"
+      ],
+      "aliases": [
+        "AUTH-BINDING-LOSS-DURING-IMPLEMENTATION",
+        "AUTH-PRIVILEGED-TOOL-BINDING-NOT-STICKY",
+        "OBS-MCP-FAMILY-HEALTH-CONFLATED-WITH-TOOL-BINDING",
+        "ORCH-UPLOAD-CAPABILITY-NOT-DISCOVERED"
+      ],
+      "candidate_files": [
+        "app/agent/tool_activation_intent.py",
+        "app/agent/tool_policy_transition.py",
+        "app/agent/tool_policy_state.py",
+        "app/agent/tool_profiles.py",
+        "app/agent/agents/agentic_rag.py",
+        "app/agent/agents/tools/management.py"
+      ],
+      "component": "Jake-Bot tool binding",
+      "defect_id": "BIND-DYNAMIC-MCP-EXACT-TOOL-NOT-PROMOTED",
+      "deferred_reason": "",
+      "deployment_scope": "Jake local/dev first",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Authorized tools disappear, forcing false capability blocks and unrelated fallbacks.",
+      "proposed_owner": "Jake-Bot agent platform",
+      "reproduction": "Synthetic healthy dynamic family, exact qualified tools, same-turn bind, management-result merge, two-turn persistence, revoke/restore.",
+      "rollback": "Revert activation commits; facade remains truthful/read-only.",
+      "runtime_evidence": "Healthy live-discovered Grasshopper family and true authorization flags still produced no model-facing plan/upload tools after a turn or restart.",
+      "safety_risk": "Can cause missed or misdirected operational mutations.",
+      "severity": "P1",
+      "source_evidence": "Request-only management facade output was not merged into checkpoint policy; exact dynamic names were not resolved early enough.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Dynamic MCP activation requests were not promoted or persisted"
+    },
+    {
+      "acceptance_tests": [
+        "tests/test_child_capability_preflight_hardening.py"
+      ],
+      "aliases": [
+        "ORCH-CHILD-CAPABILITY-MISMATCH-REPRO"
+      ],
+      "candidate_files": [
+        "app/agent_mode/task_capability_plan.py",
+        "app/agent_mode/child_conversation.py",
+        "app/agent_mode/mcop_tools.py"
+      ],
+      "component": "Jake-Bot MCOP",
+      "defect_id": "ORCH-CAPABILITY-PREFLIGHT-MISSING",
+      "deferred_reason": "",
+      "deployment_scope": "Jake local/dev first",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Invented execution, wasted turns, orphaned results, and policy confusion.",
+      "proposed_owner": "Jake-Bot MCOP",
+      "reproduction": "Declare write/repository/shell requirements against insufficient and sufficient synthetic bindings.",
+      "rollback": "Revert MCOP capability-plan commit.",
+      "runtime_evidence": "File-writing and repository-inspection children were launched without writer or shell/filesystem tools.",
+      "safety_risk": "A child must not widen capabilities or imply execution it cannot perform.",
+      "severity": "P1",
+      "source_evidence": "Child narrowing was called without declared required tools/toolsets/capabilities and prompts named agent_run_python unconditionally.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Child tasks could start without a sufficient usable capability binding"
+    },
+    {
+      "acceptance_tests": [
+        "test_parent_only_turn_prevents_all_spawn_entrypoints"
+      ],
+      "aliases": [],
+      "candidate_files": [
+        "app/agent_mode/mcop_tools.py",
+        "app/agent/agents/agentic_rag.py"
+      ],
+      "component": "Jake-Bot orchestration",
+      "defect_id": "ORCH-PARENT-ONLY-VIOLATION-RECURRENCE",
+      "deferred_reason": "Source-level durable parent_only state was not safely introduced without the unavailable full LangGraph runtime suite.",
+      "deployment_scope": "Future focused Jake patch",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Violates user execution topology and can reproduce the defects under repair.",
+      "proposed_owner": "Jake-Bot agent platform",
+      "reproduction": "Requires an authoritative live parent/child orchestration replay with a parent-only turn.",
+      "rollback": "N/A until implemented.",
+      "runtime_evidence": "The debug corpus records child spawning after repeated parent-only instructions.",
+      "safety_risk": "May create unauthorized delegation or provenance ambiguity.",
+      "severity": "P1",
+      "source_evidence": "The child capability schema now prevents incapable children, but no dedicated durable parent_only checkpoint field was added.",
+      "status": "DEFERRED_WITH_REASON",
+      "title": "Explicit parent-only execution constraint was not represented as durable policy"
+    },
+    {
+      "acceptance_tests": [
+        "tests/test_no_progress_and_evidence_status_hardening.py"
+      ],
+      "aliases": [
+        "ORCH-BLOCKED-PHASE-CONTINUES-WITH-SUBSTITUTES",
+        "ORCH-EXPLICIT-STOP-CONDITION-IGNORED",
+        "ORCH-GRASSHOPPER-WRITE-REQUEST-SUBSTITUTED-BY-S3-READ",
+        "ORCH-HEALTH-VS-FUNCTIONAL-TEST-CONFLATION",
+        "ORCH-MISSING-TERMINAL-BLOCKED-STATE",
+        "ORCH-PHASE-GATE-BYPASS",
+        "ORCH-PHASE0-IDENTITY-GATE-BYPASS",
+        "ORCH-PRIVATE-SOURCE-PUBLIC-SEARCH-FALLBACK",
+        "ORCH-UNBOUNDED-PARALLEL-SEARCH",
+        "ORCH-UNRELATED-FALLBACK-SUBSTITUTION",
+        "ORCH-USER-ORDERING-CONSTRAINT-IGNORED"
+      ],
+      "candidate_files": [
+        "app/agent/no_progress_controller.py",
+        "app/agent/agents/agentic_rag.py"
+      ],
+      "component": "Jake-Bot orchestration",
+      "defect_id": "ORCH-NO-PROGRESS-TOOL-THRASH",
+      "deferred_reason": "",
+      "deployment_scope": "Jake local/dev first",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Long stalls, wrong environment, fabricated progress, and turn timeouts.",
+      "proposed_owner": "Jake-Bot agent platform",
+      "reproduction": "Required tool blocked; one exact activation allowed at most once; two no-progress results terminate.",
+      "rollback": "Revert no-progress controller integration.",
+      "runtime_evidence": "Grasshopper failure led to S3 reads, children, web, EKS, ArgoCD, dashboards, ports, and other unrelated surfaces.",
+      "safety_risk": "Capability gates must not be routed around.",
+      "severity": "P1",
+      "source_evidence": "A semantic no-progress controller now consumes only authoritative tool-result envelopes and is called before further orchestration.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Missing required capability caused phase bypass and unrelated fallback loops"
+    },
+    {
+      "acceptance_tests": [
+        "tests/test_operational_identity_and_host_attribution_hardening.py"
+      ],
+      "aliases": [
+        "OBSERVABILITY-TOOL-ENDPOINT-HOST-UNATTRIBUTED",
+        "ORCH-AUTHORITATIVE-TARGET-OVERRIDDEN-BY-INFERENCE",
+        "ORCH-SELF-LOCATION-INFERRED-FROM-TOOL-ENDPOINT"
+      ],
+      "candidate_files": [
+        "app/agent/operational_identity.py",
+        "app/agent/audited_tool_node.py",
+        "app/agent/tool_execution_audit.py"
+      ],
+      "component": "Jake-Bot operational identity",
+      "defect_id": "ORCH-ENVIRONMENT-IDENTITY-DRIFT",
+      "deferred_reason": "",
+      "deployment_scope": "Jake local/dev first",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Wrong repository, logs, config, and deployment target.",
+      "proposed_owner": "Jake-Bot agent platform",
+      "reproduction": "Pinned .35 plus verified hostname; inject MCP, HTTP, client, and repository-origin hosts and assert no self-location override.",
+      "rollback": "Revert host-attribution integration.",
+      "runtime_evidence": "The agent moved among .35, .47, EKS, ArgoCD, dashboards, and MCP/HTTP endpoints despite an explicit pinned target.",
+      "safety_risk": "High operational risk.",
+      "severity": "P1",
+      "source_evidence": "Operational identity separates pinned target/runtime hostname from typed remote endpoint fields.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Remote endpoints could be mistaken for the agent or repository host"
+    },
+    {
+      "acceptance_tests": [
+        "tests/test_no_progress_and_evidence_status_hardening.py",
+        "tests/test_tool_execution_gate_v1.py"
+      ],
+      "aliases": [
+        "EVIDENCE-FROZEN-REPLAY-DESCRIBED-AS-LIVE",
+        "EVIDENCE-NO-CAPSULES-AS-NO-ANALYSIS",
+        "EVIDENCE-S3-COVERAGE-CONFLATED-WITH-GRASSHOPPER-PLAN",
+        "EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE-RECURRENCE",
+        "NIGHTLY-CURRENT-COVERAGE-NOT-VERIFIED",
+        "OBS-GRASSHOPPER-MCP-MISIDENTIFIED-AS-S3-TOOLCHAIN"
+      ],
+      "candidate_files": [
+        "app/agent/evidence_status.py",
+        "app/agent/tool_execution_gate.py"
+      ],
+      "component": "Jake-Bot evidence semantics",
+      "defect_id": "EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE",
+      "deferred_reason": "",
+      "deployment_scope": "Jake local/dev first",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "False RCA conclusions and incorrect upload decisions.",
+      "proposed_owner": "Jake-Bot agent platform",
+      "reproduction": "Executor error, not-found, empty successful result, and positive result fixtures.",
+      "rollback": "Revert outcome normalization.",
+      "runtime_evidence": "S3/tool transport failures were described as proving no logs or no artifacts.",
+      "safety_risk": "Evidence gates can be silently weakened.",
+      "severity": "P1",
+      "source_evidence": "Normalized tool outcomes separate execution result, coverage, and negative-conclusion permission.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Tool execution errors were converted into negative evidence"
+    },
+    {
+      "acceptance_tests": [
+        "tests/test_typed_identifier_provenance_hardening.py"
+      ],
+      "aliases": [
+        "ARGUMENT-CONTEXT-ID-SUBSTITUTED-INTO-SCENE-ID",
+        "IDENTIFIER-SEMANTIC-VALIDATION-MISSING"
+      ],
+      "candidate_files": [
+        "app/agent/identifier_validation.py",
+        "app/agent/tool_execution_gate.py",
+        "app/agent/audited_tool_node.py"
+      ],
+      "component": "Jake-Bot execution gate",
+      "defect_id": "TYPED-ID-ARGUMENT-PROVENANCE",
+      "deferred_reason": "",
+      "deployment_scope": "Jake local/dev first",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Calls target the wrong object and audit trails become misleading.",
+      "proposed_owner": "Jake-Bot agent platform",
+      "reproduction": "Cross-type chat/workspace UUID to scene_id; valid scene/receiver IDs; invalid semantic shapes.",
+      "rollback": "Revert identifier gate integration.",
+      "runtime_evidence": "A chat/workspace UUID was supplied as scene_id and UUID shape alone passed.",
+      "safety_risk": "Potential reads or writes against unintended domain objects.",
+      "severity": "P1",
+      "source_evidence": "Domain identifier validators and source/type audit records now run before executor invocation.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Context identifiers could populate domain identifier arguments"
+    },
+    {
+      "acceptance_tests": [
+        "tests/test_child_capability_preflight_hardening.py",
+        "tests/test_scene_persistence_policy_e1.py"
+      ],
+      "aliases": [],
+      "candidate_files": [
+        "app/agent_mode/child_conversation.py",
+        "app/agent/no_progress_controller.py",
+        "app/agent/tool_execution_gate.py",
+        "app/agent/tool_execution_audit.py"
+      ],
+      "component": "Jake-Bot MCOP/audit",
+      "defect_id": "ORCH-RESULT-ORPHANING",
+      "deferred_reason": "",
+      "deployment_scope": "Jake local/dev first",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Parent conclusions detach from actual execution and turns time out.",
+      "proposed_owner": "Jake-Bot MCOP",
+      "reproduction": "Blocked child packet, partial packet, assistant-authored JSON, and fallback ToolMessage pairing.",
+      "rollback": "Revert child packet/audit changes.",
+      "runtime_evidence": "Children were reported completed despite blocked packets; assistant-authored tool-like JSON was mixed with execution evidence; large repeated reports amplified.",
+      "safety_risk": "False claims of execution or persistence.",
+      "severity": "P1",
+      "source_evidence": "Child results preserve blocked/partial status, include audit IDs, and bound aggregation; no-progress recognizes only typed tool records.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Blocked/partial child packets and executed-tool evidence lost status or provenance"
+    },
+    {
+      "acceptance_tests": [
+        "test_progress_event_requires_evidence_reference"
+      ],
+      "aliases": [
+        "REPORT-INTERMEDIATE-HYPOTHESIS-NOT-CLEARED"
+      ],
+      "candidate_files": [
+        "app/agent/tool_execution_audit.py",
+        "app/message/*"
+      ],
+      "component": "Jake-Bot progress/UI contract",
+      "defect_id": "ORCH-EVIDENCELESS-PROGRESS-NARRATION",
+      "deferred_reason": "A safe fix requires the missing streaming progress-event consumer; a brittle lexical ban was intentionally not added.",
+      "deployment_scope": "Future full-stack Jake patch",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Operators cannot distinguish real progress from narration.",
+      "proposed_owner": "Jake-Bot UI/orchestration",
+      "reproduction": "Requires the production streaming/UI progress path, absent from the clean-room runtime.",
+      "rollback": "N/A until implemented.",
+      "runtime_evidence": "Found/confirmed/verified language appeared without a tool result, source line, request ID, or artifact.",
+      "safety_risk": "Can mask blocked or failed operations.",
+      "severity": "P1",
+      "source_evidence": "Tool audit and typed evidence records now exist, but no end-to-end progress-event schema consumer is present in the uploaded backend.",
+      "status": "DEFERRED_WITH_REASON",
+      "title": "Progress claims were not structurally tied to load-bearing evidence"
+    },
+    {
+      "acceptance_tests": [
+        "tests/test_incident_scene_contract_hardening.py",
+        "tests/test_incident_scene_persistence_tools_v1.py"
+      ],
+      "aliases": [
+        "SCENE-LARGE-INLINE-SVG",
+        "SCENE-GLOBAL-TIME-AXIS-COLLAPSE",
+        "SCENE-CLASSIFICATION-SILENT-ZERO",
+        "SCENE-QUERY-PAGINATION-MISSING",
+        "SCENE-EXPANSION-WINDOW-NULL",
+        "SCENE-RENDER-COUNTS-MISSING",
+        "SCENE-RELATIONSHIP-GROWTH",
+        "SCENE-EPHEMERAL-ARTIFACT-LOSS"
+      ],
+      "candidate_files": [
+        "app/scenes/query.py",
+        "app/scenes/render_svg.py",
+        "app/scenes/tools.py",
+        "app/scenes/persistence.py"
+      ],
+      "component": "S3 STB Logs Incident Scene",
+      "defect_id": "INCIDENT-SCENE-CONTRACT-RENDER-BOUNDS",
+      "deferred_reason": "",
+      "deployment_scope": "S3 dev first; production manual",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Turn timeouts, invalid inline SVG, misleading zero results, and lost artifacts.",
+      "proposed_owner": "S3 STB Logs",
+      "reproduction": "Existing/new Scene unit fixtures; no live persisted Scene mutation.",
+      "rollback": "Revert Scene commit; persisted canonical Scene files remain unchanged.",
+      "runtime_evidence": "~47.8 MB SVG, 53,278 default relationships, mixed 2024/2026 axis, silent invalid classifications, missing totals/cursors/counts, null expansion windows.",
+      "safety_risk": "Large output can destabilize orchestration; bad filters can create false negatives.",
+      "severity": "P1",
+      "source_evidence": "Query and renderer now expose validation, pagination, canonical windows, deterministic slices, caps, omissions, hashes, and artifact-only delivery.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Incident Scene query, expansion, and rendering contracts were incomplete and unbounded"
+    },
+    {
+      "acceptance_tests": [
+        "tests/test_s3_resumable_fetch_hardening.py"
+      ],
+      "aliases": [],
+      "candidate_files": [
+        "app/s3_resumable_fetch.py",
+        "app/server.py"
+      ],
+      "component": "S3 STB Logs transfer",
+      "defect_id": "INFRA-S3-ARTIFACT-FETCH-NONRESILIENT",
+      "deferred_reason": "",
+      "deployment_scope": "S3 dev first; production manual",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Lost artifacts and incorrect missing-object conclusions.",
+      "proposed_owner": "S3 STB Logs",
+      "reproduction": "Interrupted synthetic range download resumes without corruption; transport closure distinct from not found.",
+      "rollback": "Revert transfer helper commit.",
+      "runtime_evidence": "head-object/cp and session closure interrupted artifact reads.",
+      "safety_risk": "Read-only helper; no signed URL logging.",
+      "severity": "P2",
+      "source_evidence": "Bounded ranged download supports retry, resume, temporary integrity, final length, checksum/ETag validation, and typed errors.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "S3 artifact fetches were single-shot and transport failures were misclassified"
+    },
+    {
+      "acceptance_tests": [
+        "apps/nightly_rca/tests/test_grasshopper_call_path_hardening.py",
+        "tests/test_grasshopper_profile_contract_hardening.py"
+      ],
+      "aliases": [
+        "GH-PROFILE-NAMESPACE-MISMATCH",
+        "NIGHTLY-NOT-SUBMITTED-REPORTED-NOT-ACCEPTED",
+        "NIGHTLY-SUBMIT-SKIPPED-REASON-NOT-EXPOSED",
+        "PROFILE-ALIAS-PROPOSED-AS-CANONICAL-FIX",
+        "ROOT-CAUSE-FALSE-STATUS-NORMALIZATION",
+        "STATUS-DISTINCT-BLOCKERS-COLLAPSED",
+        "TEST-FIXTURE-GRASSHOPPER-CONTRACT-DRIFT"
+      ],
+      "candidate_files": [
+        "apps/nightly_rca/grasshopper_contract.py",
+        "apps/nightly_rca/phases.py",
+        "app/issue_profile_registry.py"
+      ],
+      "component": "Jake Nightly RCA / S3 profile catalog",
+      "defect_id": "PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION",
+      "deferred_reason": "",
+      "deployment_scope": "Jake local/dev and S3 dev first",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Zero-file plans, incorrect retry/safety state, missing external IDs, and misleading notifications.",
+      "proposed_owner": "Nightly RCA + S3 STB Logs",
+      "reproduction": "Real-name synthetic catalog and nested response fixtures exercise production call path.",
+      "rollback": "Revert Nightly/S3 integration commits together.",
+      "runtime_evidence": "atv_reboot_instability was sent literally; nested selected counts and request IDs were lost; zero files and unattempted upload collapsed into generic coverage messages.",
+      "safety_risk": "Could submit wrong files or duplicate requests.",
+      "severity": "P1",
+      "source_evidence": "S3 maps issue taxonomy to atv_core; Jake propagates canonical profile, file families, caps, and parses nested plan/upload layers in the production Phase 5/6 path.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Nightly RCA dropped S3 profile metadata and misread nested Grasshopper contracts"
+    },
+    {
+      "acceptance_tests": [
+        "tests/test_profile_contract_hardening.py"
+      ],
+      "aliases": [],
+      "candidate_files": [
+        "app/server.py"
+      ],
+      "component": "Grasshopper MCP",
+      "defect_id": "GH-UNKNOWN-PROFILE-RETURNS-SUCCESS-ZERO",
+      "deferred_reason": "",
+      "deployment_scope": "Grasshopper dev first; production manual",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Submission skipped without a diagnostic; upstream reports false absence.",
+      "proposed_owner": "Grasshopper MCP",
+      "reproduction": "Known canonical, known alias, and unknown profile pure-function/server fixtures.",
+      "rollback": "Revert profile-validation commit.",
+      "runtime_evidence": "Unknown atv_reboot_instability value was treated as a physical log type and returned success with zero selected files.",
+      "safety_risk": "Prevents accidental broad or meaningless upload selection.",
+      "severity": "P1",
+      "source_evidence": "Canonical catalog/alias resolution validates before network and returns INVALID_PROFILE with valid vocabulary.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Grasshopper treated unknown profile names as successful zero-file plans"
+    },
+    {
+      "acceptance_tests": [
+        "apps/nightly_rca/tests/test_effective_config_and_tracker_provenance_hardening.py",
+        "apps/nightly_rca/tests/test_grasshopper_call_path_hardening.py"
+      ],
+      "aliases": [
+        "LEGACY-TRACKER-ID-PROVENANCE-ABSENT",
+        "NIGHTLY-STALE-TRACKER-STATE-PRESENTED-AS-CURRENT",
+        "REPORT-EVIDENCE-COUNT-INCONSISTENT",
+        "REPORT-RECORD-SCOPE-COUNT-AMBIGUITY",
+        "TRACKER-PROLIFERATION-POSSIBLE-DUPLICATES"
+      ],
+      "candidate_files": [
+        "apps/nightly_rca/state.py",
+        "apps/nightly_rca/phases.py",
+        "apps/nightly_rca/report.py",
+        "apps/nightly_rca/notify.py"
+      ],
+      "component": "Jake Nightly RCA",
+      "defect_id": "TRACKER-REQUEST-ID-PROVENANCE-MISSING",
+      "deferred_reason": "",
+      "deployment_scope": "Jake local/dev first",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Duplicate submissions, bad receipt reconciliation, and contradictory reports.",
+      "proposed_owner": "Nightly RCA",
+      "reproduction": "Typed current row, historical row, legacy opaque request ID, duplicate physical tracker rows.",
+      "rollback": "Revert tracker provenance changes; retain backup of pending ledger.",
+      "runtime_evidence": "Legacy July rows appeared current; request-like IDs lacked source; counts mixed direct/cross-reference/logical/physical scopes.",
+      "safety_risk": "Idempotency and external mutation tracking depend on correct identity.",
+      "severity": "P1",
+      "source_evidence": "Pending ledger normalizes typed identifiers, origin run/currentness, physical identity, and explicit count scope; reports expose provenance.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Tracker, local correlation, external request IDs, currentness, and count scope were conflated"
+    },
+    {
+      "acceptance_tests": [
+        "apps/nightly_rca/tests/test_effective_config_and_tracker_provenance_hardening.py"
+      ],
+      "aliases": [
+        "CRON-TIMEZONE-INFERENCE-OVERSTATED",
+        "CRON-TIMEZONE-MISINTERPRETED"
+      ],
+      "candidate_files": [
+        "apps/nightly_rca/config.py",
+        "apps/nightly_rca/run.py",
+        "apps/nightly_rca/run_nightly.sh",
+        "apps/nightly_rca/report.py",
+        "apps/nightly_rca/notify.py"
+      ],
+      "component": "Jake Nightly RCA config",
+      "defect_id": "CONFIG-EFFECTIVE-MODE-SOURCE-HIDDEN",
+      "deferred_reason": "",
+      "deployment_scope": "Jake local/dev first",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Operators cannot know what mode ran or when cron actually fires.",
+      "proposed_owner": "Nightly RCA",
+      "reproduction": "CLI commit, env bootstrap, direct CRON_TZ, absent timezone, safe report/notification.",
+      "rollback": "Revert config-provenance commit.",
+      "runtime_evidence": "Base config showed writes false while launcher injected true; 02:30 was labeled UTC without direct timezone evidence.",
+      "safety_risk": "Write-mode provenance is a mutation safety requirement.",
+      "severity": "P2",
+      "source_evidence": "Effective configuration records CLI/env/bootstrap source without values; cron timezone is DIRECT only from CRON_TZ/TZ, otherwise UNKNOWN.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Effective commit mode and cron timezone provenance were hidden or overstated"
+    },
+    {
+      "acceptance_tests": [
+        "tests/test_security_containment_hardening.py"
+      ],
+      "aliases": [
+        "GRASSHOPPER-HARDCODED-AUTH-SECRET",
+        "GRASSHOPPER-TLS-VERIFY-DISABLED",
+        "GRASSHOPPER-LEGACY-DEPLOYMENT-DRIFT"
+      ],
+      "candidate_files": [
+        "app/grasshopper_client.py",
+        "app/server.py",
+        "deploy.sh"
+      ],
+      "component": "Grasshopper MCP security",
+      "defect_id": "SEC-GRASSHOPPER-SOURCE-TLS-CONTAINMENT",
+      "deferred_reason": "",
+      "deployment_scope": "Grasshopper dev first; rotation separately approved",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Credential compromise and man-in-the-middle exposure.",
+      "proposed_owner": "Grasshopper MCP + security operations",
+      "reproduction": "Secret/TLS source scan and pure-function security tests; no credential value emitted.",
+      "rollback": "Rollback source only after restoring secure secret retrieval/TLS; never restore the legacy literal.",
+      "runtime_evidence": "Uploaded source contained one raw legacy auth literal and verify=False calls; deployment script targeted a stale model.",
+      "safety_risk": "P0 containment; live rotation still required.",
+      "severity": "P0",
+      "source_evidence": "Final source retrieves secrets server-side, verifies TLS by default, supports CA bundle and explicit audited emergency override, and quarantines legacy deploy script.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Legacy Grasshopper source exposed a credential and disabled TLS verification"
+    },
+    {
+      "acceptance_tests": [
+        "clean-room test evidence",
+        "baseline/post-patch evidence comparison"
+      ],
+      "aliases": [
+        "ORCH-EXECUTION-TASK-STOPPED-FOR-SCOPE-CHOICE",
+        "ORCH-IMPLEMENTATION-TASK-CONVERTED-TO-EXPLANATION",
+        "PATCH-CROSS-REPO-WORKTREE-CONFLATION",
+        "PATCH-INCOMPLETE-BRANCH-PRESENTED-FOR-PUSH",
+        "PATCH-SCOPE-DROPS-VERIFIED-DEFECTS",
+        "PATCH-UNIT-TESTED-BUT-NOT-WIRED",
+        "TEST-BASELINE-CONTRADICTION-UNRESOLVED",
+        "TEST-FAILURES-LABELED-PREEXISTING-WITHOUT-PROOF"
+      ],
+      "candidate_files": [
+        "apps/nightly_rca/tests/test_grasshopper_call_path_hardening.py",
+        "docs/engineering-defects/*"
+      ],
+      "component": "Cross-repository engineering process",
+      "defect_id": "TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE",
+      "deferred_reason": "",
+      "deployment_scope": "Process and CI",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Incomplete patches are pushed or deployed as complete.",
+      "proposed_owner": "Engineering/release process",
+      "reproduction": "Feature adapter unit test passes while Phase 5 metadata is absent; collection failure with missing langchain_core.",
+      "rollback": "Revert source commits; evidence artifacts remain immutable.",
+      "runtime_evidence": "119 passing tests were presented as completion while production Phase 5 was unwired; contradictory 101/1 vs 69/33 baselines were not reconciled; failures were called pre-existing without proof.",
+      "safety_risk": "Can put untested mutation paths into production.",
+      "severity": "P1",
+      "source_evidence": "This program added failing-before production-path tests, recorded dependency-blocked suites honestly, ran complete relevant suites, and validated hash-gated clean-room application.",
+      "status": "FIXED_AND_VERIFIED",
+      "title": "Green unit tests and baseline failures were overstated without environment/call-path proof"
+    },
+    {
+      "acceptance_tests": [
+        "test_multi_repository_execution_plan_persists_across_push_turn"
+      ],
+      "aliases": [
+        "GIT-KNOWN-PUSH-TARGET-REASKED",
+        "GIT-PUSH-PROTOCOL-STATE-NOT-STICKY",
+        "ORCH-KNOWN-RECEIVER-ID-REASKED"
+      ],
+      "candidate_files": [
+        "app/agent/continuity_policy.py",
+        "app/agent/tool_policy_state.py"
+      ],
+      "component": "Jake-Bot repository execution planning",
+      "defect_id": "GIT-AUTHORITATIVE-WORKTREE-CONTEXT-LOST",
+      "deferred_reason": "A typed multi-repository plan must be designed with the unavailable full runtime/checkpoint suite; no fake generic-workspace memory was added.",
+      "deployment_scope": "Future focused Jake patch",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Edits wrong checkout, loses test lineage, or conflates repositories.",
+      "proposed_owner": "Jake-Bot repository workflow",
+      "reproduction": "Requires a two-turn multi-repository push workflow with exact worktrees/branches and no repeated details.",
+      "rollback": "N/A until implemented.",
+      "runtime_evidence": "The agent ignored established /tmp worktrees, searched a generic workspace, and re-asked which repository/branch to push.",
+      "safety_risk": "High risk for shared repositories.",
+      "severity": "P1",
+      "source_evidence": "Task scope and authoritative environment are now durable, but the uploaded backend has no typed multi-repository execution-plan checkpoint.",
+      "status": "DEFERRED_WITH_REASON",
+      "title": "Known repositories, worktrees, branches, and push targets were not durable across turns"
+    },
+    {
+      "acceptance_tests": [
+        "bounded dev NAL functional canary"
+      ],
+      "aliases": [],
+      "candidate_files": [],
+      "component": "Nightly RCA / Grasshopper runtime",
+      "defect_id": "NAL-CURRENT-PLAN-TEST-INCOMPLETE",
+      "deferred_reason": "",
+      "deployment_scope": "Dev runtime only after security clearance",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "End-to-end production behavior remains unproven.",
+      "proposed_owner": "Nightly RCA + Grasshopper operators",
+      "reproduction": "After credential rotation and dev deployment: bounded plan for R1955706171, duplicate preflight, at most one authorized upload, one tracker write, one receipt check.",
+      "rollback": "No source rollback; cancel/close test tracker per runbook.",
+      "runtime_evidence": "Historical S3 NAL files exist, but no current Grasshopper plan, duplicate preflight, upload request, tracker write, or receipt canary was completed.",
+      "safety_risk": "Mutation canary must not run with exposed credentials or without explicit authorization.",
+      "severity": "P2",
+      "source_evidence": "Source and clean-room contract tests pass; runtime mutation was intentionally not attempted.",
+      "status": "RUNTIME_EVIDENCE_NEEDED",
+      "title": "Current Grasshopper NAL plan/upload canary has not been executed"
+    },
+    {
+      "acceptance_tests": [
+        "post-rotation authentication canary",
+        "secret scan"
+      ],
+      "aliases": [],
+      "candidate_files": [],
+      "component": "Operational security",
+      "defect_id": "SEC-CREDENTIALS-PASTED-IN-CONVERSATION",
+      "deferred_reason": "Rotation/revocation requires operator approval and was explicitly outside this environment.",
+      "deployment_scope": "Approved credential rotation",
+      "duplicate_of": null,
+      "first_observed": "2026-08-05/2026-08-06 debug corpus",
+      "impact": "Credential must be assumed exposed.",
+      "proposed_owner": "Security operations / credential owner",
+      "reproduction": "Not repeated.",
+      "rollback": "Rotation rollback follows secret-management procedure, never source history.",
+      "runtime_evidence": "The supplied transcript contains credential material.",
+      "safety_risk": "Unauthorized access until rotation/revocation.",
+      "severity": "P0",
+      "source_evidence": "No value was copied into patches, reports, or archives; deliverables use [REDACTED_GRASSHOPPER_AUTH_SECRET].",
+      "status": "DEFERRED_WITH_REASON",
+      "title": "Raw credentials were pasted into the conversation transcript"
+    }
+  ],
+  "generated_date": "2026-08-06",
+  "named_updated_debug_duplicate_count": 51,
+  "named_updated_debug_id_count": 69,
+  "schema": "engineering_defect_ledger.v1",
+  "summary": {
+    "deferred_count": 4,
+    "duplicate_count": 51,
+    "fixed_and_verified_count": 16,
+    "runtime_evidence_needed_count": 1,
+    "verified_defect_count": 20
+  }
+}

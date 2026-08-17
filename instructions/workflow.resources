@@ -1,2 +1,0 @@
-Task 1,\n**Tool: boto3 Python package**,*Description:* Required for connecting and interacting with AWS services through a python script. The specific information needed includes access keys, secret key etc., *Command to install :*, pip install --upgrade awscli ;pip -m ensurep IP
-URLs (http://):    http:/ /aws-blog..........

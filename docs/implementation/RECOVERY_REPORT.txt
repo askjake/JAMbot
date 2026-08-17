@@ -1,0 +1,199 @@
+
+═══════════════════════════════════════════════════════════════════════════
+    SERVICE RECOVERY COMPLETE - Rollback Successful
+═══════════════════════════════════════════════════════════════════════════
+
+STATUS: ✅ SERVICE RESTORED AND RUNNING
+
+PID: 2566431
+Status: Responding normally
+URL: http://10.79.85.35:8000
+
+───────────────────────────────────────────────────────────────────────────
+WHAT WENT WRONG
+───────────────────────────────────────────────────────────────────────────
+
+TWO CRITICAL ISSUES:
+
+1. INTERCEPTOR DECORATOR PROBLEM
+   - @interceptor was used incorrectly (it's an instance, not a callable)
+   - Error: TypeError: 'ThoughtInterceptor' object is not callable
+   - Location: app/tools/internal_tools.py line 24
+
+2. PYDANTIC VALIDATION ERRORS
+   - Environment variables added to .env.local were not defined in Settings class
+   - Pydantic's extra_forbidden setting rejected unknown variables
+   - 12 validation errors for new environment variables
+   - Location: app/config.py Settings class
+
+───────────────────────────────────────────────────────────────────────────
+ACTIONS TAKEN TO RECOVER
+───────────────────────────────────────────────────────────────────────────
+
+✅ Step 1: Restored .env.local from backup
+   - Removed all new environment variables
+   - Backup: .env.local.backup-20260227-144354
+
+✅ Step 2: Fixed internal_tools.py
+   - Removed @interceptor decorators
+   - Removed interceptor import
+
+✅ Step 3: Restored registry.py from backup
+   - Removed dish_internal tool set registration
+   - Backup: registry.py.backup-20260227-144128
+
+✅ Step 4: Restored agentic_rag.py from backup
+   - Removed dish_internal tool loading
+   - Backup: agentic_rag.py.backup-20260227-144317
+
+✅ Step 5: Restarted service
+   - Service started successfully (PID: 2566431)
+   - API responding normally
+
+───────────────────────────────────────────────────────────────────────────
+CURRENT STATE
+───────────────────────────────────────────────────────────────────────────
+
+SERVICE STATUS:
+  ✅ Backend running (PID: 2566431)
+  ✅ API responding
+  ✅ No errors in logs
+  ✅ PostgreSQL connected
+  ✅ AWS tokens refreshed
+
+FILES RESTORED:
+  ✅ app/agent/agents/tools/registry.py (original version)
+  ✅ app/agent/agentic_rag.py (original version)
+  ✅ .env.local (original version)
+
+FILES REMAINING (not causing issues):
+  ⚠️  app/tools/internal_tools.py (modified but not imported)
+  ℹ️  INTERNAL_TOOLS_README.md (documentation)
+  ℹ️  DEPLOYMENT_SUMMARY.md (documentation)
+  ℹ️  internal_tools.env (template)
+
+───────────────────────────────────────────────────────────────────────────
+WHY THE DEPLOYMENT FAILED
+───────────────────────────────────────────────────────────────────────────
+
+ROOT CAUSES:
+
+1. MISSING DEPENDENCIES
+   - langchain_core not installed in Jakes-agent venv
+   - Tools require langchain_core.tools.tool decorator
+   - Should have checked venv packages first
+
+2. DIFFERENT PYDANTIC CONFIGURATION
+   - Jakes-agent uses Pydantic with extra='forbid'
+   - New env vars must be declared in Settings class
+   - Can't just add variables to .env.local
+
+3. INTERCEPTOR USAGE DIFFERENCE
+   - Interceptor is used differently in Jakes-agent
+   - Should have examined existing tool patterns first
+   - Decorator usage was incorrect
+
+───────────────────────────────────────────────────────────────────────────
+HOW TO PROPERLY IMPLEMENT INTERNAL TOOLS
+───────────────────────────────────────────────────────────────────────────
+
+CORRECT PROCEDURE:
+
+1. CHECK DEPENDENCIES
+   cd ~/Jakes-agent
+   source .venv/bin/activate
+   pip list | grep langchain
+
+2. EXAMINE EXISTING TOOL PATTERNS
+   cat app/tools/web_search.py
+   cat app/tools/cluster_inspect.py
+   # Match the decorator/import patterns used
+
+3. UPDATE SETTINGS CLASS FIRST
+   # Edit app/config.py
+   # Add new environment variables to Settings class:
+   
+   class Settings(BaseSettings):
+       # ... existing fields ...
+       
+       # Internal tools config
+       NETRA_BASE_URL: Optional[str] = "http://netra.internal.dish.com/api"
+       NETRA_API_KEY: Optional[str] = None
+       # ... etc for all variables
+
+4. THEN ADD TO .env.local
+   # Only after Settings class is updated
+
+5. CREATE TOOLS MATCHING EXISTING PATTERN
+   # Use same imports and decorators as existing tools
+
+6. TEST IMPORT BEFORE REGISTERING
+   python3 -c "from app.tools.internal_tools import netra_search"
+
+7. UPDATE REGISTRY
+   # Only after successful import test
+
+8. RESTART AND TEST
+   ./restart-dishchat.sh
+
+───────────────────────────────────────────────────────────────────────────
+RECOMMENDED NEXT STEPS
+───────────────────────────────────────────────────────────────────────────
+
+IF YOU WANT TO RE-IMPLEMENT INTERNAL TOOLS:
+
+1. Study existing tools pattern:
+   less ~/Jakes-agent/app/tools/web_search.py
+   less ~/Jakes-agent/app/tools/cluster_inspect.py
+
+2. Check what's in the venv:
+   cd ~/Jakes-agent && source .venv/bin/activate && pip list
+
+3. Create tools matching the exact pattern used in web_search.py
+
+4. Update config.py Settings class with all new env vars
+
+5. Test imports before registering
+
+OR KEEP CURRENT WORKING STATE:
+
+The service is fully functional without internal tools. The existing
+tools (search, agent_mode, log_assist, aws) are all working fine.
+
+Internal tools can be added later following the correct procedure.
+
+───────────────────────────────────────────────────────────────────────────
+FILES YOU CAN SAFELY DELETE
+───────────────────────────────────────────────────────────────────────────
+
+These files are not being used and can be removed:
+
+cd ~/Jakes-agent
+rm app/tools/internal_tools.py
+rm INTERNAL_TOOLS_README.md
+rm DEPLOYMENT_SUMMARY.md  
+rm FINAL_DEPLOYMENT_REPORT.txt
+rm internal_tools.env
+rm deploy_internal_tools.sh
+
+Or keep them for reference but they won't affect the running system.
+
+───────────────────────────────────────────────────────────────────────────
+LESSON LEARNED
+───────────────────────────────────────────────────────────────────────────
+
+Before deploying code to a system:
+1. Understand the existing code patterns
+2. Check all dependencies are available
+3. Understand configuration system (Pydantic settings)
+4. Test imports before registering
+5. Make incremental changes with verification
+6. Always have rollback plan ready
+
+═══════════════════════════════════════════════════════════════════════════
+
+CURRENT STATUS: ✅ SYSTEM FULLY OPERATIONAL
+SERVICE: RUNNING NORMALLY
+NO ACTION REQUIRED
+
+═══════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,40 @@
+Content-Aware Tool Compression Verification
+Generated: 2026-07-06
+
+Jake-Bot checks from fresh baseline + patch:
+  git apply --check /mnt/data/content_aware_tool_compression_jake_bot.patch
+  PASS
+
+  git apply /mnt/data/content_aware_tool_compression_jake_bot.patch
+  PASS
+
+  python -m py_compile \
+    app/message/tool_message_compressor.py \
+    app/tools/tool_result_compressor.py \
+    app/tools/progressive_tool_memory.py \
+    app/message/token_efficiency_adapter.py \
+    app/agent/agents/agentic_rag.py \
+    tests/test_content_aware_tool_compression.py
+  PASS
+
+  python -m pytest -q tests/test_content_aware_tool_compression.py
+  ....ss [100%]
+  4 passed, 2 skipped in 0.08s
+
+  Note: the 2 skipped tests require langchain_core, which is not installed in this sandbox.
+  They are runtime integration checks for token_efficiency_adapter/progressive_tool_memory.
+  The pure content-aware compressor tests executed and passed locally.
+
+MCP server checks from fresh baseline + patch:
+  git apply --check /mnt/data/mcp_content_type_meta_hint.patch
+  PASS
+
+  git apply /mnt/data/mcp_content_type_meta_hint.patch
+  PASS
+
+  python -m py_compile app/response_compaction.py app/token_efficient_validation.py app/server.py tests/test_content_type_meta_hints.py
+  PASS
+
+  python -m pytest -q tests/test_content_type_meta_hints.py
+  .... [100%]
+  4 passed in 0.09s

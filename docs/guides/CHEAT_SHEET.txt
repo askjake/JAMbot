@@ -1,0 +1,132 @@
+╔══════════════════════════════════════════════════════════════════╗
+║     DISH-CHAT METHODOLOGY & POLISH - QUICK REFERENCE             ║
+╚══════════════════════════════════════════════════════════════════╝
+
+📍 REMOTE SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Host: 10.79.85.35
+  Location: ~/dish-chat
+
+🚀 DEPLOYMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Deploy to remote
+  ./deploy_methodology_update.sh
+
+📚 METHODOLOGY FILE  
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # View on remote
+  ssh 10.79.85.35 "cat ~/dish-chat/.dish-chat-agent-methodology.md"
+
+🔧 ENHANCED SCRIPTS (on remote system)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  cd ~/dish-chat
+  
+  # Deploy fixes with backups
+  ./deploy_fixes.sh
+  
+  # Validate installation
+  ./validate_fixes.sh
+
+✅ PROPER PROCEDURE CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ☐ Work in sandbox (/tmp/dish_chat_agent/)
+  ☐ Test syntax (bash -n script.sh)
+  ☐ Test functionality
+  ☐ Verbosely annotate scripts
+  ☐ Create auto-backup
+  ☐ Create auto-rollback
+  ☐ Document everything
+  ☐ Double-check before deploy
+
+📝 SCRIPT ANNOTATION REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✓ Header block (name, purpose, usage, requirements)
+  ✓ Section separators
+  ✓ Explain WHY (not just WHAT)
+  ✓ Document functions
+  ✓ Comment variables
+  ✓ Note assumptions
+  ✓ Reference docs
+
+🔄 ROLLBACK (if needed)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # On remote system
+  ssh 10.79.85.35
+  bash ~/dish-chat/backups/methodology_update_*/rollback.sh
+
+📊 WHAT GOT POLISHED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✓ Added methodology file
+  ✓ Enhanced deploy_fixes.sh with verbose annotations
+  ✓ Enhanced validate_fixes.sh
+  ✓ Added comprehensive documentation
+  ✓ Added quick reference (this file)
+  ✓ Improved error messages
+  ✓ Better color-coded output
+
+🎯 WHY THIS MATTERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  • Safety - No production accidents
+  • Reliability - Tested before deploy
+  • Reversible - Easy rollback
+  • Maintainable - Clear code
+  • Professional - Production-ready
+
+╔══════════════════════════════════════════════════════════════════╗
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔀 MCOP — MULTI-CONVERSATION ORCHESTRATION PROTOCOL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Protocol ID: mcop | Doc: docs/MCOP_METHODOLOGY.md
+
+  SPAWN WHEN (all must be true):
+    ✓ 3+ independent sub-tasks
+    ✓ Each is self-contained (no shared intermediate reasoning)
+    ✓ Each generates heavy output (files, shell output, analysis)
+
+  DO NOT SPAWN WHEN:
+    ✗ Fewer than 3 sub-tasks
+    ✗ Step B needs Step A's reasoning (not just its output file)
+    ✗ Task is conversational or trivial
+
+  TOOLS:
+    agent_spawn_task(chat_id, task_id, prompt, timeout)
+      → spawn one child; returns {"status": "started"}
+
+    agent_spawn_parallel(chat_id, tasks=[{task_id, prompt, timeout}])
+      → spawn 2-5 children simultaneously
+
+    agent_check_tasks(chat_id, task_ids=[...])
+      → poll status; blocks until all complete or timeout
+
+    agent_read_task_result(chat_id, task_id)
+      → read full result text from a completed child
+
+  CHILD PROMPT RULES:
+    ✓ Fully self-contained — no "as discussed above"
+    ✓ Include all paths, repo names, branch, chat_id
+    ✓ State the exact expected output and where to save it
+    ✗ Never reference parent conversation state
+
+  LIMITS:
+    Max concurrent children:  5  (prefer 3)
+    Max child iterations:     5
+    No recursive spawning:    children cannot spawn children
+
+  WORKSPACE:
+    All children share /tmp/dish_chat_agent/<chat_id>/
+    Pre-clone before parallel spawn if children share a repo
+    Artifacts from children are readable by parent + siblings
+
+  SYNTHESIS:
+    1. State what was orchestrated and what completed/failed
+    2. Present each child result in logical order
+    3. Integrate cross-child findings
+    4. Summarize — do not dump raw child output verbatim
+    5. Report failures explicitly; never silently skip them
+
+╔══════════════════════════════════════════════════════════════════╗
+║  Protocol docs: docs/MCOP_METHODOLOGY.md  |  v1.0  2026-06-23  ║
+╚══════════════════════════════════════════════════════════════════╝

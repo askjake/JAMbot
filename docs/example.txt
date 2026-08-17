@@ -1,0 +1,913 @@
+POST /api/v1/chats
+Request body: None
+Response body:
+{
+  "chat_id": "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987",
+  "title": "New chat 1",
+  "created_at": "2024-01-15T08:30:00Z",
+  "owner_id": "john.doe@dish.com",
+  "last_message_at": "2024-01-15T08:30:00Z"
+}
+
+GET /api/v1/chats?page=1&limit=50
+Request body: None
+Response body:
+{
+  "docs": [
+    {
+      "chat_id": "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987",
+      "title": "New chat 1",
+      "created_at": "2024-01-15T08:30:00Z",
+      "owner_id": "john.doe@dish.com",
+      "last_message_at": null
+    },
+    {
+      "chat_id": "f5bce2d2-53e4-4b45-8c4e-ga8e1e150998",
+      "title": "Project Discussion",
+      "created_at": "2024-01-14T15:20:00Z",
+      "owner_id": "john.doe@dish.com",
+      "last_message_at": "2024-01-15T11:30:00Z"
+    }
+  ],
+  "totalDocs": 2,
+  "limit": 50,
+  "totalPages": 1,
+  "page": 1,
+  "hasPrevPage": false,
+  "hasNextPage": false,
+  "prevPage": null,
+  "nextPage": null
+}
+
+GET /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987
+Request body: None
+Response body:
+{
+  "chat_id": "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987",
+  "title": "New chat 1",
+  "created_at": "2024-01-15T08:30:00Z",
+  "owner_id": "john.doe@dish.com",
+  "last_message_at": null,
+  "messages": []
+}
+
+POST /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987/messages
+Request body:
+{
+  "content": "Hi! Can you help me write a Python function to calculate the factorial of a number?"
+}
+
+Response (SSE stream):
+event: message_start
+data: {"type": "message_start", "message": {"input_message_id": "7c8f8037-e14e-494f-b175-c55b3fbc3ba2", "response_message_id": "9d9e9f38-f25f-4c56-c286-d66c4ged4cb3", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+event: content_block_start
+data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "I'll"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " help"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " you"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " write"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " a"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " factorial"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " function"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "."}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " Here's"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " a"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " simple"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " implementation:\n\n```python"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\ndef"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " factorial"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "(n):"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n    if"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " <"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " 0:"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n        raise"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " ValueError"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "('n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " must"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " be"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " non-negative')"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n    if"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " in"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " [0,"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " 1]:"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n        return"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " 1"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n    return"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " *"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " factorial"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "(n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " -"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " 1)"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n```"}}
+
+event: content_block_stop
+data: {"type": "content_block_stop", "index": 0}
+
+event: message_delta
+data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": "Python Factorial Function Implementation"}}
+
+event: message_stop
+data: {"type": "message_stop"}
+
+GET /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987
+Request body: None
+Response body:
+{
+  "chat_id": "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987",
+  "title": "Python Factorial Function Implementation",
+  "created_at": "2024-01-15T08:30:00Z",
+  "owner_id": "john.doe@dish.com",
+  "last_message_at": "2024-01-15T08:30:05Z",
+  "messages": [
+    {
+      "message_id": "7c8f8037-e14e-494f-b175-c55b3fbc3ba2",
+      "content": "Hi! Can you help me write a Python function to calculate the factorial of a number?",
+      "role": "user",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:30:00Z"
+    },
+    {
+      "message_id": "9d9e9f38-f25f-4c56-c286-d66c4ged4cb3",
+      "content": "I'll help you write a factorial function. Here's a simple implementation:\n\n```python\ndef factorial(n):\n    if n < 0:\n        raise ValueError('n must be non-negative')\n    if n in [0, 1]:\n        return 1\n    return n * factorial(n - 1)\n```",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:30:05Z"
+    }
+  ]
+}
+
+POST /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987/messages
+Request body:
+{
+  "content": "Thanks! Could you add some type hints and a docstring to make the function more maintainable?"
+}
+
+Response (SSE stream):
+
+event: message_start
+data: {"type": "message_start", "message": {"input_message_id": "2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6", "response_message_id": "3b4c5d6e-7f8g-9h0i-1j2k-l3m4n5o6p7q8", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+event: content_block_start
+data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Here's"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " the"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " enhanced"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " version"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " with"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " type"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " hints"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " and"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " documentation:\n\n```python"}}
+
+event: ping
+data: {"type": "ping"}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\ndef"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " factorial"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "(n:"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " int)"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " ->"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " int:"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n    \"\"\""}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Calculate"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " the"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " factorial"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " of"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " a"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " non-negative"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " integer"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": ".\n\n    "}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Args:"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n        n:"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " The"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " number"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " to"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " calculate"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " factorial"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " for"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n\n    "}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Returns:"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n        "}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "The"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " factorial"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " of"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n\n    "}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Raises:"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n        "}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "ValueError:"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " If"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " is"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " negative"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n    \"\"\""}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n    if"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " <"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " 0:"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n        raise"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " ValueError"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "('n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " must"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " be"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " non-negative')"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n    if"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " in"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " [0,"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " 1]:"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n        return"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " 1"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n    return"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " *"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " factorial"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "(n"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " -"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " 1)"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "\n```"}}
+
+event: content_block_stop
+data: {"type": "content_block_stop", "index": 0}
+
+event: message_delta
+data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": null}}
+
+event: message_stop
+data: {"type": "message_stop"}
+
+
+GET /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987
+Request body: None
+Response body:
+{
+  "chat_id": "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987",
+  "title": "Python Factorial Function Implementation",
+  "created_at": "2024-01-15T08:30:00Z",
+  "owner_id": "john.doe@dish.com",
+  "last_message_at": "2024-01-15T08:31:05Z",
+  "messages": [
+    {
+      "message_id": "7c8f8037-e14e-494f-b175-c55b3fbc3ba2",
+      "content": "Hi! Can you help me write a Python function to calculate the factorial of a number?",
+      "role": "user",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:30:00Z"
+    },
+    {
+      "message_id": "9d9e9f38-f25f-4c56-c286-d66c4ged4cb3",
+      "content": "I'll help you write a factorial function. Here's a simple implementation:\n\n```python\ndef factorial(n):\n    if n < 0:\n        raise ValueError('n must be non-negative')\n    if n in [0, 1]:\n        return 1\n    return n * factorial(n - 1)\n```",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:30:05Z"
+    },
+    {
+      "message_id": "2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+      "content": "Thanks! Could you add some type hints and a docstring to make the function more maintainable?",
+      "role": "user",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:31:00Z"
+    },
+    {
+      "message_id": "3b4c5d6e-7f8g-9h0i-1j2k-l3m4n5o6p7q8",
+      "content": "Here's the enhanced version with type hints and documentation:\n\n```python\ndef factorial(n: int) -> int:\n    \"\"\"Calculate the factorial of a non-negative integer.\n\n    Args:\n        n: The number to calculate factorial for\n\n    Returns:\n        The factorial of n\n\n    Raises:\n        ValueError: If n is negative\n    \"\"\"\n    if n < 0:\n        raise ValueError('n must be non-negative')\n    if n in [0, 1]:\n        return 1\n    return n * factorial(n - 1)\n```",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:31:05Z"
+    }
+  ]
+}
+
+POST /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987/messages
+Request body:
+{
+  "content": "Here's a test case I wrote. Could you check if it looks correct?",
+  "attachments": [
+    {
+      "attachment_id": "5d6e7f8g-9h0i-1j2k-3l4m-n5o6p7q8r9s0"
+    }
+  ]
+}
+
+Response (SSE stream):
+event: message_start
+data: {"type": "message_start", "message": {"input_message_id": "4c5d6e7f-8g9h-0i1j-2k3l-m4n5o6p7q8r", "response_message_id": "5d6e7f8g-9h0i-1j2k-3l4m-n5o6p7q8r9s", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+event: content_block_start
+data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Yes"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": ","}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " your"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " test"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " case"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " looks"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " good"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " The"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " assertions"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " are"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " correct"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "."}}
+
+event: content_block_stop
+data: {"type": "content_block_stop", "index": 0}
+
+event: message_delta
+data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": null}}
+
+event: message_stop
+data: {"type": "message_stop"}
+
+GET /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987
+
+Response body:
+
+{
+  "chat_id": "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987",
+  "title": "Python Factorial Function Implementation",
+  "created_at": "2024-01-15T08:30:00Z",
+  "owner_id": "john.doe@dish.com",
+  "last_message_at": "2024-01-15T08:32:05Z",
+  "messages": [
+    {
+      "message_id": "7c8f8037-e14e-494f-b175-c55b3fbc3ba2",
+      "content": "Hi! Can you help me write a Python function to calculate the factorial of a number?",
+      "role": "user",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:30:00Z"
+    },
+    {
+      "message_id": "9d9e9f38-f25f-4c56-c286-d66c4ged4cb3",
+      "content": "I'll help you write a factorial function. Here's a simple implementation:\n\n```python\ndef factorial(n):\n    if n < 0:\n        raise ValueError('n must be non-negative')\n    if n in [0, 1]:\n        return 1\n    return n * factorial(n - 1)\n```",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:30:05Z"
+    },
+    {
+      "message_id": "2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+      "content": "Thanks! Could you add some type hints and a docstring to make the function more maintainable?",
+      "role": "user",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:31:00Z"
+    },
+    {
+      "message_id": "3b4c5d6e-7f8g-9h0i-1j2k-l3m4n5o6p7q8",
+      "content": "Here's the enhanced version with type hints and documentation:\n\n```python\ndef factorial(n: int) -> int:\n    \"\"\"Calculate the factorial of a non-negative integer.\n\n    Args:\n        n: The number to calculate factorial for\n\n    Returns:\n        The factorial of n\n\n    Raises:\n        ValueError: If n is negative\n    \"\"\"\n    if n < 0:\n        raise ValueError('n must be non-negative')\n    if n in [0, 1]:\n        return 1\n    return n * factorial(n - 1)\n```",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:31:05Z"
+    },
+    {
+      "message_id": "4c5d6e7f-8g9h-0i1j-2k3l-m4n5o6p7q8r",
+      "content": "Here's a test case I wrote. Could you check if it looks correct?",
+      "role": "user",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:32:00Z",
+      "attachments": [
+        {
+          "attachment_id": "5d6e7f8g-9h0i-1j2k-3l4m-n5o6p7q8r9s0"
+        }
+      ]
+    },
+    {
+      "message_id": "5d6e7f8g-9h0i-1j2k-3l4m-n5o6p7q8r9s",
+      "content": "Yes, your test case looks good! The assertions are correct.",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:32:05Z"
+    }
+  ]
+}
+
+GET /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987/messages/2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6
+Request body: None
+Response body:
+{
+  "message_id": "2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+  "content": "Thanks! Could you add some type hints and a docstring to make the function more maintainable?",
+  "role": "user",
+  "version_count": 1,
+  "version_index": 0,
+  "created_at": "2024-01-15T08:31:00Z"
+}
+
+POST /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987/messages/2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6/versions
+Request body:
+{
+  "content": "Thank you so much! Can you suggest me a book for learning Python?"
+}
+
+Response (SSE stream):
+event: message_start
+data: {"type": "message_start", "message": {"input_message_id": "2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6", "response_message_id": "6e7f8g9h-0i1j-2k3l-4m5n-o6p7q8r9s0t", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+event: content_block_start
+data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "I"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " recommend"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " 'Python"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " Crash"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " Course'"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " by"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " Eric"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " Matthes"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "."}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " It's"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " great"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " for"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": " beginners"}}
+
+event: content_block_delta
+data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "."}}
+
+event: content_block_stop
+data: {"type": "content_block_stop", "index": 0}
+
+event: message_delta
+data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": null}}
+
+event: message_stop
+data: {"type": "message_stop"}
+
+GET /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987/messages/2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6
+Response body:
+{
+  "message_id": "2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+  "content": "Thank you so much! Can you suggest me a book for learning Python?",
+  "role": "user",
+  "version_count": 2,
+  "version_index": 1,
+  "created_at": "2024-01-15T08:31:00Z"
+}
+
+GET /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987/messages/2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6/versions
+Request body: None
+Response body:
+{
+  "versions": [
+    {
+      "version_index": 0,
+      "content": "Thanks! Could you add some type hints and a docstring to make the function more maintainable?",
+      "created_at": "2024-01-15T08:31:00Z"
+    },
+    {
+      "version_index": 1,
+      "content": "Thank you so much! Can you suggest me a book for learning Python?",
+      "created_at": "2024-01-15T08:33:00Z"
+    }
+  ],
+  "total_versions": 2
+}
+
+GET /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987
+Request body: None
+Response body:
+{
+  "chat_id": "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987",
+  "title": "Python Factorial Function Implementation",
+  "created_at": "2024-01-15T08:30:00Z",
+  "owner_id": "john.doe@dish.com",
+  "last_message_at": "2024-01-15T08:33:05Z",
+  "messages": [
+    {
+      "message_id": "7c8f8037-e14e-494f-b175-c55b3fbc3ba2",
+      "content": "Hi! Can you help me write a Python function to calculate the factorial of a number?",
+      "role": "user",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:30:00Z"
+    },
+    {
+      "message_id": "9d9e9f38-f25f-4c56-c286-d66c4ged4cb3",
+      "content": "I'll help you write a factorial function. Here's a simple implementation:\n\n```python\ndef factorial(n):\n    if n < 0:\n        raise ValueError('n must be non-negative')\n    if n in [0, 1]:\n        return 1\n    return n * factorial(n - 1)\n```",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:30:05Z"
+    },
+    {
+      "message_id": "2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+      "content": "Thank you so much! Can you suggest me a book for learning Python?",
+      "role": "user",
+      "version_count": 2,
+      "version_index": 1,
+      "created_at": "2024-01-15T08:31:00Z"
+    },
+    {
+      "message_id": "6e7f8g9h-0i1j-2k3l-4m5n-o6p7q8r9s0t",
+      "content": "I recommend 'Python Crash Course' by Eric Matthes. It's great for beginners.",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:33:05Z"
+    }
+  ]
+}
+
+PUT /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987/messages/2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6/versions
+Request body:
+{
+  "version_index": 0
+}
+
+Response body:
+{
+  "active_message": {
+    "message_id": "2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+    "content": "Thanks! Could you add some type hints and a docstring to make the function more maintainable?",
+    "role": "user",
+    "version_count": 2,
+    "version_index": 0,
+    "created_at": "2024-01-15T08:31:00Z"
+  },
+  "branched_history": [
+    {
+      "message_id": "3b4c5d6e-7f8g-9h0i-1j2k-l3m4n5o6p7q8",
+      "content": "Here's the enhanced version with type hints and documentation:\n\n```python\ndef factorial(n: int) -> int:\n    \"\"\"Calculate the factorial of a non-negative integer.\n\n    Args:\n        n: The number to calculate factorial for\n\n    Returns:\n        The factorial of n\n\n    Raises:\n        ValueError: If n is negative\n    \"\"\"\n    if n < 0:\n        raise ValueError('n must be non-negative')\n    if n in [0, 1]:\n        return 1\n    return n * factorial(n - 1)\n```",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:31:05Z"
+    },
+    {
+      "message_id": "4c5d6e7f-8g9h-0i1j-2k3l-m4n5o6p7q8r",
+      "content": "Here's a test case I wrote. Could you check if it looks correct?",
+      "role": "user",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:32:00Z",
+      "attachments": [
+        {
+          "attachment_id": "5d6e7f8g-9h0i-1j2k-3l4m-n5o6p7q8r9s0"
+        }
+      ]
+    },
+    {
+      "message_id": "5d6e7f8g-9h0i-1j2k-3l4m-n5o6p7q8r9s",
+      "content": "Yes, your test case looks good! The assertions are correct.",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:32:05Z"
+    }
+  ]
+}
+
+GET /api/v1/chats/e4adfbe1-42d3-4a34-9b3d-fb7d0d049987
+Request body: None
+Response body:
+{
+  "chat_id": "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987",
+  "title": "Python Factorial Function Implementation",
+  "created_at": "2024-01-15T08:30:00Z",
+  "owner_id": "john.doe@dish.com",
+  "last_message_at": "2024-01-15T08:32:05Z",
+  "messages": [
+    {
+      "message_id": "7c8f8037-e14e-494f-b175-c55b3fbc3ba2",
+      "content": "Hi! Can you help me write a Python function to calculate the factorial of a number?",
+      "role": "user",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:30:00Z"
+    },
+    {
+      "message_id": "9d9e9f38-f25f-4c56-c286-d66c4ged4cb3",
+      "content": "I'll help you write a factorial function. Here's a simple implementation:\n\n```python\ndef factorial(n):\n    if n < 0:\n        raise ValueError('n must be non-negative')\n    if n in [0, 1]:\n        return 1\n    return n * factorial(n - 1)\n```",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:30:05Z"
+    },
+    {
+      "message_id": "2a1b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+      "content": "Thanks! Could you add some type hints and a docstring to make the function more maintainable?",
+      "role": "user",
+      "version_count": 2,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:31:00Z"
+    },
+    {
+      "message_id": "3b4c5d6e-7f8g-9h0i-1j2k-l3m4n5o6p7q8",
+      "content": "Here's the enhanced version with type hints and documentation:\n\n```python\ndef factorial(n: int) -> int:\n    \"\"\"Calculate the factorial of a non-negative integer.\n\n    Args:\n        n: The number to calculate factorial for\n\n    Returns:\n        The factorial of n\n\n    Raises:\n        ValueError: If n is negative\n    \"\"\"\n    if n < 0:\n        raise ValueError('n must be non-negative')\n    if n in [0, 1]:\n        return 1\n    return n * factorial(n - 1)\n```",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:31:05Z"
+    },
+    {
+      "message_id": "4c5d6e7f-8g9h-0i1j-2k3l-m4n5o6p7q8r",
+      "content": "Here's a test case I wrote. Could you check if it looks correct?",
+      "role": "user",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:32:00Z",
+      "attachments": [
+        {
+          "attachment_id": "5d6e7f8g-9h0i-1j2k-3l4m-n5o6p7q8r9s0"
+        }
+      ]
+    },
+    {
+      "message_id": "5d6e7f8g-9h0i-1j2k-3l4m-n5o6p7q8r9s",
+      "content": "Yes, your test case looks good! The assertions are correct.",
+      "role": "assistant",
+      "version_count": 1,
+      "version_index": 0,
+      "created_at": "2024-01-15T08:32:05Z"
+    }
+  ]
+}

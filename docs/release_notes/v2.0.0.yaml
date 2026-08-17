@@ -1,0 +1,11 @@
+title: "Dish Chat V2"
+date: "2025-09-16"
+changes:
+  - "Message editing capability - edit your previous messages to explore alternative directions"
+  - "Enhanced document support for better file processing"
+  - "Image support - upload and discuss images with AI"
+  - "Chat organization features: mark favorite chats, group conversations, and search chat by titles"
+  - "Removed chat length limitations for longer conversations"
+  - "Improved performance and reduced response times"
+  - "New flexible architecture enabling future agent integrations"
+  - "We deeply apologize for a critical error during our deployment process that resulted in the permanent loss of all previous chat data. We deleted the old system resources before completing user data migration, and despite our best efforts, this data cannot be recovered. We know how frustrating this must be, especially if you had important conversations saved. We take full responsibility for this mistake and have immediately implemented comprehensive data protection protocols and redundancy measures to ensure this never happens again in any of our future deployments."

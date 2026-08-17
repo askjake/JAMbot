@@ -1,0 +1,57 @@
+# Static grep snapshot after hardening
+## provider config
+83:    PLLM_PROVIDER: Literal["aws-bedrock", "openai", "anthropic", "ollama"] = "ollama"
+## requirements
+5:langchain-ollama>=0.3.0
+## ChatOllama
+app/core/llm/chat_models.py:150:    """Create a ChatOllama instance for a resolved model role."""
+app/core/llm/chat_models.py:152:        from langchain_ollama import ChatOllama
+app/core/llm/chat_models.py:175:    return ChatOllama(**kwargs)
+## get_model definitions
+app/core/llm/__init__.py:7:    def get_model(*args, **kwargs):  # type: ignore[no-untyped-def]
+app/core/llm/chat_models.py:293:def get_model(
+## active get_model(model_arn
+## active use_opus/should_use_opus
+app/agent/complexity_detector.py:535:def should_use_opus_for_context(content, session_id: str = None) -> bool:
+app/core/llm/chat_models.py:203:def _legacy_role(efficient: bool, use_opus: bool, role: str | None) -> str:
+app/core/llm/chat_models.py:206:    if use_opus:
+app/core/llm/chat_models.py:296:    use_opus: bool = False,
+app/core/llm/chat_models.py:302:    `efficient` and `use_opus` remain compatibility shims. `model_arn` is a
+app/core/llm/chat_models.py:305:    selected_role = _legacy_role(efficient=efficient, use_opus=use_opus, role=role)
+app/core/llm/chat_models.py:328:    use_opus: bool = False,
+app/core/llm/chat_models.py:340:        selected_role = _legacy_role(efficient=efficient, use_opus=use_opus, role=None)
+app/core/llm/chat_models.py:348:    selected_role = _legacy_role(efficient=efficient, use_opus=False, role=role)
+app/core/llm/chat_models.py:375:    selected_role = _legacy_role(efficient=efficient, use_opus=False, role=role)
+## active prompt identity names
+## active hardcoded bearer literal suspects
+## packets
+app/agent_mode/orchestration_packets.py:23:class ToolEvidencePacket:
+app/agent_mode/orchestration_packets.py:41:class AnalysisPacket:
+app/agent_mode/orchestration_packets.py:57:class VerifierReport:
+app/agent_mode/orchestration_packets.py:84:    write_json(run_dir / "RUN_STATE.json", {
+app/agent_mode/orchestration_packets.py:102:    (run_dir / "EVIDENCE_LEDGER.jsonl").write_text("")
+app/agent_mode/orchestration_packets.py:103:    write_json(run_dir / "VERIFIER_REPORT.json", VerifierReport())
+app/agent_mode/orchestration_packets.py:109:    path = Path(run_dir) / "RUN_STATE.json"
+app/agent_mode/orchestration_packets.py:118:    path = Path(run_dir) / "EVIDENCE_LEDGER.jsonl"
+app/agent_mode/orchestration_packets.py:126:def write_tool_evidence_packet(run_dir: Path, packet: ToolEvidencePacket | dict[str, Any]) -> Path:
+app/agent_mode/orchestration_packets.py:127:    data = asdict(packet) if isinstance(packet, ToolEvidencePacket) else dict(packet)
+app/agent_mode/orchestration_packets.py:138:def write_analysis_packet(run_dir: Path, packet: AnalysisPacket | dict[str, Any], *, name: str = "analysis") -> Path:
+app/agent_mode/orchestration_packets.py:139:    data = asdict(packet) if isinstance(packet, AnalysisPacket) else dict(packet)
+app/agent_mode/orchestration_packets.py:163:def write_verifier_report(run_dir: Path, report: VerifierReport | dict[str, Any]) -> Path:
+app/agent_mode/orchestration_packets.py:164:    data = asdict(report) if isinstance(report, VerifierReport) else dict(report)
+app/agent_mode/orchestration_packets.py:173:def normalize_worker_packet_from_summary(*, task_id: str, summary: str, status: str = "partial", artifacts: Iterable[str] = (), error: str | None = None) -> ToolEvidencePacket:
+app/agent_mode/orchestration_packets.py:180:    return ToolEvidencePacket(task_id=task_id, status=status, raw_artifacts=list(artifacts), facts=facts, gaps=gaps, errors=errors, next_recommended_step="Review packet gaps before synthesis.")
+app/agent_mode/orchestration_packets.py:183:def try_parse_tool_evidence_packet(text: str, task_id: str) -> ToolEvidencePacket | None:
+app/agent_mode/orchestration_packets.py:195:            allowed = ToolEvidencePacket.__dataclass_fields__
+app/agent_mode/orchestration_packets.py:196:            return ToolEvidencePacket(**{k: v for k, v in data.items() if k in allowed})
+app/agent_mode/orchestration_packets.py:200:def analysis_from_tool_packets(packets: Iterable[dict[str, Any]]) -> AnalysisPacket:
+app/agent_mode/orchestration_packets.py:214:    return AnalysisPacket(source_task_ids=[s for s in source_ids if s], status=status, executive_summary=f"Normalized {len(packet_list)} tool evidence packet(s).", confirmed_facts=facts, likely_inferences=inferences, missing_evidence=gaps, recommended_next_steps=["Address gaps before final synthesis"] if gaps or errors else [], confidence="low" if errors else ("medium" if gaps else "high"))
+app/agent_mode/orchestration_packets.py:217:def verify_final_answer_against_packets(final_answer: str, packets: Iterable[dict[str, Any]], acceptance_criteria: Iterable[str] = ()) -> VerifierReport:
+app/agent_mode/orchestration_packets.py:224:    return VerifierReport(verdict=verdict, unsupported_claims=unsupported, missing_required_steps=missing, verification_gaps=gaps, recommended_fix="Remove unsupported claims or gather missing packet evidence." if verdict == "FAIL" else "")
+app/agent_mode/orchestration_packets.py:229:    packet_path = write_tool_evidence_packet(run_dir, ToolEvidencePacket(task_id="selftest_worker", status="complete", facts=[{"claim": "packet write/read works", "source": "selftest", "reference": str(run_dir), "confidence": "high"}]))
+app/agent_mode/child_conversation.py:338:        "Your final response must be JSON for a ToolEvidencePacket with fields: "
+app/agent_mode/orchestrator.py:9:    ToolEvidencePacket,
+app/agent_mode/orchestrator.py:57:        packet = ToolEvidencePacket(task_id=self.task_id, status=status, tool_families_used=self.tool_families, raw_artifacts=raw_artifacts or [], facts=facts or [], inferences=inferences or [], gaps=gaps or [], errors=errors or [], next_recommended_step=next_recommended_step)
+## selftest endpoint
+app/health/router.py:59:@router.get("/health/ollama-agent-selftest", tags=["health"])
+## sidecars

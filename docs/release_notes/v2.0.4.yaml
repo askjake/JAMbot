@@ -1,0 +1,5 @@
+title: "Minor bug fixes"
+date: "2025-10-29"
+changes:
+  - "Limit on number of chats an user can have is increase."
+  - "Bug fix: resolved an UI bug where the left sidebar would become stuck on loading when the browser window is of a certain size."

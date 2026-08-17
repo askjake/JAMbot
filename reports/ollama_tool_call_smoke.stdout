@@ -1,0 +1,68 @@
+{
+  "base_url": "http://127.0.0.1:11434",
+  "results": [
+    {
+      "acceptance": false,
+      "bound_tool_count": 1,
+      "error": "ModuleNotFoundError: No module named 'langchain_ollama'",
+      "model_name": "llama3.2:latest",
+      "model_role": "tool_worker_smoke"
+    },
+    {
+      "acceptance": false,
+      "bound_tool_count": 5,
+      "error": "ModuleNotFoundError: No module named 'langchain_ollama'",
+      "model_name": "llama3.2:latest",
+      "model_role": "tool_worker_smoke"
+    },
+    {
+      "acceptance": false,
+      "bound_tool_count": 20,
+      "error": "ModuleNotFoundError: No module named 'langchain_ollama'",
+      "model_name": "llama3.2:latest",
+      "model_role": "tool_worker_smoke"
+    },
+    {
+      "acceptance": false,
+      "bound_tool_count": 1,
+      "error": "ModuleNotFoundError: No module named 'langchain_ollama'",
+      "model_name": "qwen3",
+      "model_role": "tool_worker_smoke"
+    },
+    {
+      "acceptance": false,
+      "bound_tool_count": 5,
+      "error": "ModuleNotFoundError: No module named 'langchain_ollama'",
+      "model_name": "qwen3",
+      "model_role": "tool_worker_smoke"
+    },
+    {
+      "acceptance": false,
+      "bound_tool_count": 20,
+      "error": "ModuleNotFoundError: No module named 'langchain_ollama'",
+      "model_name": "qwen3",
+      "model_role": "tool_worker_smoke"
+    },
+    {
+      "acceptance": false,
+      "bound_tool_count": 1,
+      "error": "ModuleNotFoundError: No module named 'langchain_ollama'",
+      "model_name": "qwen2.5",
+      "model_role": "tool_worker_smoke"
+    },
+    {
+      "acceptance": false,
+      "bound_tool_count": 5,
+      "error": "ModuleNotFoundError: No module named 'langchain_ollama'",
+      "model_name": "qwen2.5",
+      "model_role": "tool_worker_smoke"
+    },
+    {
+      "acceptance": false,
+      "bound_tool_count": 20,
+      "error": "ModuleNotFoundError: No module named 'langchain_ollama'",
+      "model_name": "qwen2.5",
+      "model_role": "tool_worker_smoke"
+    }
+  ]
+}

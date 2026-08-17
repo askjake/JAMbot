@@ -1,0 +1,27 @@
+name: dishchat-postgres
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: dishchat-postgres
+    environment:
+      POSTGRES_USER: dev_user
+      POSTGRES_PASSWORD: dev123
+      POSTGRES_DB: dishchat
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata_dishchat:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev_user -d dishchat"]
+      interval: 5s
+      timeout: 30s
+      retries: 5
+    stop_grace_period: 30s
+    shm_size: 256mb
+
+volumes:
+  pgdata_dishchat:
+    name: dishchat-postgres_pgdata_dishchat
+    external: true

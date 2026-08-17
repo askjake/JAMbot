@@ -1,0 +1,183 @@
+include:
+  - local: 'templates/.buildpush.yml'
+  - local: 'templates/.update_img_tag.yml'
+
+
+default:
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - docker info
+    - apk add --no-cache curl jq python3 py3-pip aws-cli
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_REGISTRY
+    - aws --version
+
+
+# GITLAB_PAT must be provided as a masked/protected GitLab CI variable.
+
+stages:
+ - build:dev
+ - deploy:dev
+ - build:prod
+
+# build-chat:
+#   stage: build:dev
+#   tags:
+#     - dev-deploy
+#   extends: 
+#     - .buildpushdocker
+#   variables:
+#     DOCKERFILE: "Dockerfile"
+#     IMG_TAG: $CI_COMMIT_SHA
+#     CI_REGISTRY_IMAGE: "233532778289.dkr.ecr.us-west-2.amazonaws.com/dish-dash-chat"
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+# # variables:
+
+
+
+build_and_push:
+  tags:
+    - dind
+  stage: build:dev
+  variables:
+    ECR_REGISTRY: 233532778289.dkr.ecr.us-west-2.amazonaws.com
+    ECR_REPO: dish-dash-chat
+    IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+    APP_NAME: dish-dash-chat
+  script:
+    - |
+      docker build \
+        -t $ECR_REPO:$IMAGE_TAG .
+      docker tag $ECR_REPO:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+      docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
+
+
+deploy-dev:
+  stage: deploy:dev
+  tags:
+    - dind
+  variables:
+    CI_USERNAME: gitlabci-dishchat
+    CI_PUSH_TOKEN: $GITLAB_PAT
+    CI_REPO: gitlab.com/dish-cloud/dt/sse/datasolutions/ds-kubernetes-configs/chat-bot.git
+    CI_BRANCH: main
+    CI_REGISTRY_IMAGE: 233532778289.dkr.ecr.us-west-2.amazonaws.com/dish-dash-chat
+    IMG_TAG: $CI_COMMIT_SHORT_SHA
+    ENV: dev
+    PROJ_PATH: app/overlays/apps/dev
+  before_script:
+    - apk add --no-cache git curl bash
+    - curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+    - mv kustomize /usr/local/bin/
+    - git clone https://${CI_USERNAME}:${CI_PUSH_TOKEN}@${CI_REPO} 
+    - cd chat-bot
+    - git config --global user.email "david.fox@dish.com"
+    - git config --global user.name "GitLab CI/CD"
+    - git remote -v
+  script:
+    - pwd
+    - cd ${PROJ_PATH}
+    - echo BEFORE...
+    - cat kustomization.yaml
+    - echo AFTER...
+    - kustomize edit set image $CI_REGISTRY_IMAGE:$IMG_TAG
+    - cat kustomization.yaml
+    - git commit -am "Upgraded image $CI_REGISTRY_IMAGE with the tag $IMG_TAG"
+    - git push origin main
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
+
+
+
+
+
+
+deploy:
+  tags:
+    - dind
+  stage: build:prod
+  variables:
+    IMAGE_TAG: $CI_COMMIT_TAG  # will now pick up the tag
+    ECR_REGISTRY: 233532778289.dkr.ecr.us-west-2.amazonaws.com
+    ECR_REPO: dish-dash-chat
+
+    CI_USERNAME: chatbot-backend
+    CI_PUSH_TOKEN: $GITLAB_PAT
+    CI_REPO: gitlab.com/dish-cloud/dt/sse/datasolutions/ds-kubernetes-configs/chat-bot.git
+    CI_BRANCH: main
+    CI_REGISTRY_IMAGE: 233532778289.dkr.ecr.us-west-2.amazonaws.com/dish-dash-chat
+    PROJ_PATH: app/overlays/apps/prod
+
+  script: 
+    - docker build -t $ECR_REPO:$IMAGE_TAG . 
+    - docker tag $ECR_REPO:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+    - docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+
+    - apk add --no-cache git curl bash
+    - curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+    - mv kustomize /usr/local/bin/
+
+    # Update Kubernetes config
+    - git clone https://${CI_USERNAME}:${CI_PUSH_TOKEN}@${CI_REPO}
+    - cd chat-bot
+    - git config --global user.email "david.fox@dish.com"
+    - git config --global user.name "GitLab CI/CD"
+    - cd ${PROJ_PATH}
+    - echo "BEFORE..."
+    - cat kustomization.yaml
+    - kustomize edit set image $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - echo "AFTER..."
+    - cat kustomization.yaml
+    - git commit -am "Upgraded image $CI_REGISTRY_IMAGE with tag $IMAGE_TAG"
+    - git push origin main
+
+  rules:
+    - if: $CI_COMMIT_TAG  # triggers only when the pipeline is for a tag
+
+
+
+
+
+# deploy-dev:
+#   stage: deploy:prod
+
+#   tags:
+#     - dind
+#   variables:
+#     CI_USERNAME: gitlabci-dishchat
+#     CI_PUSH_TOKEN: $GITLAB_PAT
+#     CI_REPO: gitlab.com/dish-cloud/dt/sse/datasolutions/ds-kubernetes-configs/chat-bot.git
+#     CI_BRANCH: main
+#     CI_REGISTRY_IMAGE: 233532778289.dkr.ecr.us-west-2.amazonaws.com/dish-dash-chat
+#     IMG_TAG: $CI_COMMIT_SHORT_SHA
+#     ENV: dev
+#     PROJ_PATH: apps/chat-bot/overlays/dev
+#   before_script:
+#     - apk add --no-cache git curl bash
+#     - curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+#     - mv kustomize /usr/local/bin/
+#     - git clone https://${CI_USERNAME}:${CI_PUSH_TOKEN}@${CI_REPO} 
+#     - cd chat-bot
+#     - git config --global user.email "david.fox@dish.com"
+#     - git config --global user.name "GitLab CI/CD"
+#     - git remote -v
+#   script:
+#     - pwd
+#     - cd ${PROJ_PATH}
+#     - echo BEFORE...
+#     - cat kustomization.yaml
+#     - echo AFTER...
+#     - kustomize edit set image $CI_REGISTRY_IMAGE:$IMG_TAG
+#     - cat kustomization.yaml
+#     - git commit -am "Upgraded image $CI_REGISTRY_IMAGE with the tag $IMG_TAG"
+#     - git push origin main
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+#       when: manual

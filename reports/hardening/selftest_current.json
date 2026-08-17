@@ -1,0 +1,256 @@
+{
+  "provider_config": {
+    "PLLM_PROVIDER": "ollama",
+    "ELLM_PROVIDER": "ollama",
+    "pure_ollama_chat_mode": true
+  },
+  "ollama_base_url_reachability": {
+    "reachable": false,
+    "models": [],
+    "error": "All connection attempts failed"
+  },
+  "available_local_models": [],
+  "role_provider_model_mapping": {
+    "primary": {
+      "role": "primary",
+      "provider": "ollama",
+      "model_name": "deepseek-r1:32b",
+      "base_url": "http://10.79.85.35:11434",
+      "context_length": 65536,
+      "max_output_tokens": 8000,
+      "temperature": 0.6,
+      "reasoning": false,
+      "tool_capable": false,
+      "cache_key": [
+        "ollama",
+        "primary",
+        "deepseek-r1:32b",
+        "http://10.79.85.35:11434",
+        65536,
+        8000
+      ]
+    },
+    "efficient": {
+      "role": "efficient",
+      "provider": "ollama",
+      "model_name": "deepseek-r1:32b",
+      "base_url": "http://10.79.85.35:11434",
+      "context_length": 65536,
+      "max_output_tokens": 4096,
+      "temperature": 0.6,
+      "reasoning": false,
+      "tool_capable": false,
+      "cache_key": [
+        "ollama",
+        "efficient",
+        "deepseek-r1:32b",
+        "http://10.79.85.35:11434",
+        65536,
+        4096
+      ]
+    },
+    "complex": {
+      "role": "complex",
+      "provider": "ollama",
+      "model_name": "deepseek-r1:70b",
+      "base_url": "http://10.79.85.35:11434",
+      "context_length": 65536,
+      "max_output_tokens": 8000,
+      "temperature": 0.6,
+      "reasoning": false,
+      "tool_capable": false,
+      "cache_key": [
+        "ollama",
+        "complex",
+        "deepseek-r1:70b",
+        "http://10.79.85.35:11434",
+        65536,
+        8000
+      ]
+    },
+    "tool_worker": {
+      "role": "tool_worker",
+      "provider": "ollama",
+      "model_name": "llama3.2:latest",
+      "base_url": "http://10.79.85.35:11434",
+      "context_length": 65536,
+      "max_output_tokens": 4096,
+      "temperature": 0.6,
+      "reasoning": false,
+      "tool_capable": true,
+      "cache_key": [
+        "ollama",
+        "tool_worker",
+        "llama3.2:latest",
+        "http://10.79.85.35:11434",
+        65536,
+        4096
+      ]
+    },
+    "analyst": {
+      "role": "analyst",
+      "provider": "ollama",
+      "model_name": "deepseek-r1:32b",
+      "base_url": "http://10.79.85.35:11434",
+      "context_length": 65536,
+      "max_output_tokens": 8000,
+      "temperature": 0.6,
+      "reasoning": false,
+      "tool_capable": false,
+      "cache_key": [
+        "ollama",
+        "analyst",
+        "deepseek-r1:32b",
+        "http://10.79.85.35:11434",
+        65536,
+        8000
+      ]
+    },
+    "verifier": {
+      "role": "verifier",
+      "provider": "ollama",
+      "model_name": "deepseek-r1:32b",
+      "base_url": "http://10.79.85.35:11434",
+      "context_length": 65536,
+      "max_output_tokens": 4096,
+      "temperature": 0.0,
+      "reasoning": false,
+      "tool_capable": false,
+      "cache_key": [
+        "ollama",
+        "verifier",
+        "deepseek-r1:32b",
+        "http://10.79.85.35:11434",
+        65536,
+        4096
+      ]
+    },
+    "title": {
+      "role": "title",
+      "provider": "ollama",
+      "model_name": "deepseek-r1:32b",
+      "base_url": "http://10.79.85.35:11434",
+      "context_length": 65536,
+      "max_output_tokens": 512,
+      "temperature": 0.2,
+      "reasoning": false,
+      "tool_capable": false,
+      "cache_key": [
+        "ollama",
+        "title",
+        "deepseek-r1:32b",
+        "http://10.79.85.35:11434",
+        65536,
+        512
+      ]
+    },
+    "summary": {
+      "role": "summary",
+      "provider": "ollama",
+      "model_name": "deepseek-r1:32b",
+      "base_url": "http://10.79.85.35:11434",
+      "context_length": 65536,
+      "max_output_tokens": 4096,
+      "temperature": 0.3,
+      "reasoning": false,
+      "tool_capable": false,
+      "cache_key": [
+        "ollama",
+        "summary",
+        "deepseek-r1:32b",
+        "http://10.79.85.35:11434",
+        65536,
+        4096
+      ]
+    }
+  },
+  "langchain_ollama_import_status": {
+    "module": "langchain_ollama",
+    "available": false
+  },
+  "primary_model_bind_status": {
+    "role": "primary",
+    "status": "skipped",
+    "reason": "langchain-ollama import unavailable"
+  },
+  "tool_worker_model_bind_status": {
+    "role": "tool_worker",
+    "status": "skipped",
+    "reason": "langchain-ollama import unavailable"
+  },
+  "verifier_structured_output_status": {
+    "verdict": "PASS",
+    "unsupported_claims": [],
+    "missing_required_steps": [],
+    "contradictions": [],
+    "tool_misuse": [],
+    "verification_gaps": [],
+    "recommended_fix": "",
+    "schema_version": "2026-07-09",
+    "created_at": "2026-07-09T16:30:26.849537+00:00"
+  },
+  "tool_registry_duplicate_status": {
+    "status": "unverified",
+    "error": "tool registry selftest: No module named 'langchain_core'"
+  },
+  "prompt_identity_status": {
+    "status": "pass",
+    "identity_leaks": [],
+    "contract_present": true
+  },
+  "methodology_selector_status": {
+    "status": "pass",
+    "expected": [
+      "artifact_generation",
+      "backend_runtime_debug",
+      "dva_stb_firmware_workflow",
+      "epg_schedule_metadata_check",
+      "generic_engineering",
+      "qos_switchback_investigation",
+      "repo_code_review",
+      "web_internal_research"
+    ],
+    "observed": [
+      "artifact_generation",
+      "backend_runtime_debug",
+      "dva_stb_firmware_workflow",
+      "epg_schedule_metadata_check",
+      "generic_engineering",
+      "qos_switchback_investigation",
+      "repo_code_review",
+      "web_internal_research"
+    ]
+  },
+  "mcop_packet_status": {
+    "status": "pass",
+    "run_dir": "/tmp/ollama_packet_selftest_f9ib7xo9/run_8b25edc40b08",
+    "packet_path": "/tmp/ollama_packet_selftest_f9ib7xo9/run_8b25edc40b08/packets/selftest_worker.tool_evidence.json",
+    "analysis_path": "/tmp/ollama_packet_selftest_f9ib7xo9/run_8b25edc40b08/packets/analysis.analysis.json",
+    "verdict": "PASS"
+  },
+  "evidence_ledger_write_read_status": {
+    "status": "pass",
+    "run_dir": "/tmp/ollama_packet_selftest_f9ib7xo9/run_8b25edc40b08",
+    "packet_path": "/tmp/ollama_packet_selftest_f9ib7xo9/run_8b25edc40b08/packets/selftest_worker.tool_evidence.json",
+    "analysis_path": "/tmp/ollama_packet_selftest_f9ib7xo9/run_8b25edc40b08/packets/analysis.analysis.json",
+    "verdict": "PASS"
+  },
+  "context_budget_status": {
+    "status": "pass",
+    "missing": [],
+    "budget": {
+      "model_role": "primary",
+      "provider": "ollama",
+      "model_name": "deepseek-r1:32b",
+      "configured_context": 65536,
+      "reserved_system_tool_output_budget": 22745,
+      "reserved_output_budget": 8000,
+      "reserved_system_budget": 6553,
+      "reserved_tool_schema_budget": 8192,
+      "history_budget": 42791,
+      "tool_result_budget": 2674
+    }
+  },
+  "aws_refresh_disabled_or_skipped_for_pure_ollama": true,
+  "backend_startup_status": "selftest_route_loaded"
+}

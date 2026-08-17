@@ -1,0 +1,26 @@
+curl -X POST http://localhost:8000/rest/api/v1/chats
+
+curl -X GET http://localhost:8000/rest/api/v1/chats
+
+curl -X POST http://localhost:8000/rest/api/v1/chats/5b5644c2-91b4-4daa-93d2-79f5e1d2e08d/messages \
+  -H "Content-Type: application/json" \
+  -d '{"content": "What is the capital of France?"}'
+
+curl -X GET http://localhost:8000/rest/api/v1/chats/5b5644c2-91b4-4daa-93d2-79f5e1d2e08d
+
+curl -X POST http://localhost:8000/rest/api/v1/chats/5b5644c2-91b4-4daa-93d2-79f5e1d2e08d/messages \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message_config": {"reasoning": true},
+    "content": "Tell me a one sentence fact."
+  }'
+
+curl -X GET http://localhost:8000/rest/api/v1/chats/5b5644c2-91b4-4daa-93d2-79f5e1d2e08d/token_usage
+curl -X GET "http://localhost:8000/rest/api/v1/token_usage?start_date=2025-08-19&end_date=2025-08-21"
+
+curl -X GET "http://localhost:8000/rest/api/v1/releases"
+
+curl -X GET http://localhost:8000/rest/api/v1/chats?namespace=beta_report/androidtv
+curl -X POST http://localhost:8000/rest/api/v1/chats?namespace=beta_report/androidtv
+
+curl -X GET "http://localhost:8000/rest/api/v1/chats/5b5644c2-91b4-4daa-93d2-79f5e1d2e08d/messages?limit=5&page=1"

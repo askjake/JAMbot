@@ -1,0 +1,232 @@
+
+═══════════════════════════════════════════════════════════════════════════════
+                        DUPLICATE TOOL FIX - INVESTIGATION REPORT
+═══════════════════════════════════════════════════════════════════════════════
+
+DATE: 2026-05-08 09:33:49
+SERVER: 10.79.85.35 (jakebot@10.79.85.35)
+APPLICATION: /home/jakebot/Jakes-agent/
+
+═══════════════════════════════════════════════════════════════════════════════
+                                  PROBLEM DIAGNOSIS
+═══════════════════════════════════════════════════════════════════════════════
+
+ERROR MESSAGE:
+--------------
+ValidationException: The tool search_jira is already defined at toolConfig.tools.14
+
+ROOT CAUSE:
+-----------
+In /home/jakebot/Jakes-agent/app/agent/agents/agentic_rag.py, tools were being
+loaded from multiple sources that contained duplicates:
+
+BEFORE (BROKEN):
+    tools = (
+        get_tools_set("search") + 
+        get_tools_set("agent_mode") +
+        get_tools_set("jira_mcp") +          # ← 4 JIRA tools
+        get_tools_set("confluence_mcp") +    # ← 3 Confluence tools
+        get_tools_set("netra_mcp") +         # ← 7 tools (4 JIRA + 3 Confluence) DUPLICATE!
+        get_tools_set("beta_report")
+    )
+
+The issue: INTERNAL_TOOLS_MCP_CONFIG (loaded as "netra_mcp") already includes
+both jira_mcp and confluence_mcp servers, resulting in duplicate tool names
+being passed to AWS Bedrock's ConverseStream API.
+
+CONFIG ANALYSIS:
+----------------
+From /home/jakebot/Jakes-agent/app/config.py:
+
+INTERNAL_TOOLS_MCP_CONFIG includes:
+  - jira_mcp: https://nxfg5xzy3tqfoiowauaycxlbim0lzrmm.lambda-url.us-west-2.on.aws/mcp
+  - confluence_mcp: https://zkuyopzgcra6gsxceqclqbjtma0gfxlj.lambda-url.us-west-2.on.aws/mcp
+
+Standalone configs that were being loaded separately:
+  - JIRA_MCP_CONFIG (same URL as above)
+  - CONFLUENCE_MCP_CONFIG (same URL as above)
+
+Registry loading sequence (from tools/registry.py):
+  1. beta_report: 10 tools
+  2. viewership: 7 tools
+  3. netra_mcp: 7 tools (4 JIRA + 3 Confluence)
+  4. jira_mcp: 4 tools (DUPLICATE!)
+  5. confluence_mcp: 3 tools (DUPLICATE!)
+
+═══════════════════════════════════════════════════════════════════════════════
+                                    SOLUTION APPLIED
+═══════════════════════════════════════════════════════════════════════════════
+
+FIX IMPLEMENTED:
+----------------
+Removed duplicate tool set calls from TWO locations in agentic_rag.py:
+
+1. call_model() function (line 176-183)
+2. get_graph() function (line 218-225)
+
+AFTER (FIXED):
+    tools = (
+        get_tools_set("search") + 
+        get_tools_set("agent_mode") +
+        get_tools_set("netra_mcp") +         # ← Already includes JIRA + Confluence
+        get_tools_set("beta_report")
+    )
+
+FILES MODIFIED:
+---------------
+✅ /home/jakebot/Jakes-agent/app/agent/agents/agentic_rag.py
+   - Original: 246 lines
+   - Fixed: 242 lines (4 lines removed)
+   - Backup: agentic_rag.py.backup-duplicate-tools-fix-20260508-092954
+
+LINES REMOVED:
+--------------
+Line 179: get_tools_set("jira_mcp") +
+Line 180: get_tools_set("confluence_mcp") +
+Line 223: get_tools_set("jira_mcp") +
+Line 224: get_tools_set("confluence_mcp") +
+
+═══════════════════════════════════════════════════════════════════════════════
+                                  RESTART REQUIRED
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️  IMPORTANT: The application MUST be restarted for changes to take effect.
+
+REASON:
+-------
+The get_graph() function uses @cache decorator (functools.cache), which means
+the tool list is cached in memory and won't update until the process restarts.
+
+CURRENT RUNNING PROCESSES:
+--------------------------
+PID 1682611: /home/jakebot/Jakes-agent/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8002 --reload
+             Owner: root
+             Started: May 06
+
+PID 3676005: /home/jakebot/Jakes-agent/.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8002 --reload
+             Owner: montjac
+             Started: 09:25 (May 08)
+
+RESTART INSTRUCTIONS:
+---------------------
+
+Option 1: Kill and restart the montjac process (terminal session):
+   As montjac user:
+   $ ps aux | grep uvicorn | grep 3676005
+   $ kill 3676005
+   $ cd /home/jakebot/Jakes-agent
+   $ .venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8002 --reload
+
+Option 2: Kill and restart the root process (service):
+   As root or with sudo:
+   $ kill 1682611
+   $ cd /home/jakebot/Jakes-agent
+   $ .venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8002 --reload
+
+Option 3: Use systemd (if configured):
+   $ sudo systemctl restart jakebot-agent
+
+Option 4: Use existing start script:
+   $ /home/jakebot/Jakes-agent/start-dishchat.sh
+   or
+   $ /home/jakebot/Jakes-agent/start-all-services.sh
+
+═══════════════════════════════════════════════════════════════════════════════
+                                  VERIFICATION STEPS
+═══════════════════════════════════════════════════════════════════════════════
+
+After restart, verify the fix:
+
+1. Check that the application started successfully:
+   $ tail -50 /home/jakebot/Jakes-agent/logs/backend.log | grep "Loaded MCP tool set"
+
+   Expected output (NO DUPLICATES):
+   - Loaded MCP tool set 'beta_report' with 10 tools
+   - Loaded MCP tool set 'viewership' with 7 tools
+   - Loaded MCP tool set 'netra_mcp' with 7 tools
+   (Should NOT see separate jira_mcp or confluence_mcp entries)
+
+2. Send a test message to the chat interface
+
+3. Monitor logs for errors:
+   $ tail -f /home/jakebot/Jakes-agent/logs/backend.log
+
+4. Verify no "search_jira is already defined" errors appear
+
+═══════════════════════════════════════════════════════════════════════════════
+                                  TECHNICAL DETAILS
+═══════════════════════════════════════════════════════════════════════════════
+
+Tool Registry Analysis:
+-----------------------
+From /home/jakebot/Jakes-agent/app/agent/agents/tools/registry.py
+
+MCP tool sets are initialized at startup via initialize_mcp_tools():
+  - _ASYNC_TOOL_FACTORIES maps tool set names to factory functions
+  - Each factory calls get_mcp_tools(config_dict)
+  - get_mcp_tools() creates MultiServerMCPClient and fetches tools
+
+The "netra_mcp" tool set is backed by INTERNAL_TOOLS_MCP_CONFIG which is a
+multi-server config containing BOTH jira_mcp and confluence_mcp.
+
+When tools are assembled in agentic_rag.py:
+  - get_tools_set("jira_mcp") returns 4 tools from standalone JIRA_MCP_CONFIG
+  - get_tools_set("confluence_mcp") returns 3 tools from CONFLUENCE_MCP_CONFIG
+  - get_tools_set("netra_mcp") returns 7 tools (4+3) from INTERNAL_TOOLS_MCP_CONFIG
+
+This created a situation where tool names were added twice to the same list.
+
+AWS Bedrock ConverseStream API requirement:
+  - Tool names must be unique within a single request
+  - Duplicate tool names trigger ValidationException
+
+═══════════════════════════════════════════════════════════════════════════════
+                                  RECOMMENDATIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. IMMEDIATE: Restart the application (see restart instructions above)
+
+2. FUTURE: Consider consolidating MCP configurations in config.py:
+   - Either use INTERNAL_TOOLS_MCP_CONFIG (with jira + confluence)
+   - OR use separate JIRA_MCP_CONFIG and CONFLUENCE_MCP_CONFIG
+   - But NOT both simultaneously
+
+3. MONITORING: Add a startup validation check to detect duplicate tool names:
+   - In registry.py or agentic_rag.py
+   - Before passing to model.bind_tools()
+   - Log warning if duplicates detected
+
+4. DOCUMENTATION: Update deployment docs to note the @cache decorator behavior
+   - Changes to tool registration require process restart
+   - File watcher reload is insufficient
+
+═══════════════════════════════════════════════════════════════════════════════
+                                    FILE LOCATIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+Modified Files:
+  /home/jakebot/Jakes-agent/app/agent/agents/agentic_rag.py
+
+Backup Files:
+  /home/jakebot/Jakes-agent/app/agent/agents/agentic_rag.py.backup-duplicate-tools-fix-20260508-092954
+
+Configuration Files:
+  /home/jakebot/Jakes-agent/app/config.py (INTERNAL_TOOLS_MCP_CONFIG)
+  /home/jakebot/Jakes-agent/app/agent/agents/tools/registry.py
+
+Log Files:
+  /home/jakebot/Jakes-agent/logs/backend.log
+
+═══════════════════════════════════════════════════════════════════════════════
+                                      SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ PROBLEM: Duplicate tool names (search_jira, etc.) from overlapping MCP configs
+✅ DIAGNOSIS: Tools loaded both from standalone configs AND from INTERNAL_TOOLS_MCP_CONFIG
+✅ FIX APPLIED: Removed redundant get_tools_set() calls for jira_mcp and confluence_mcp
+✅ VERIFICATION: Fixed code deployed to /home/jakebot/Jakes-agent/app/agent/agents/agentic_rag.py
+⏸️  PENDING: Application restart required (see instructions above)
+
+═══════════════════════════════════════════════════════════════════════════════
+                                  END OF REPORT
+═══════════════════════════════════════════════════════════════════════════════

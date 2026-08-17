@@ -1,0 +1,43 @@
+
+================================================================================
+DIFF FOR app/config.py
+================================================================================
+
+Location: Line ~280 (VIEWERSHIP_MEASUREMENT_MCP_CONFIG section)
+
+--- app/config.py (OLD)
++++ app/config.py (NEW)
+@@ -277,7 +277,7 @@
+     # -------------------------------------------------------------------------
+     VIEWERSHIP_MEASUREMENT_MCP_CONFIG: dict = {
+         "viewership_measurement": {
+             "transport": "streamable_http",
+-            "url": "https://tnk5wowj7czxafk5c4w4ztznwa0fzcyy.lambda-url.us-west-2.on.aws/mcp",
++            "url": "https://cy4h556zxlhqyjju5psohdr6ou0scrxj.lambda-url.us-west-2.on.aws/mcp",
+             "headers": {
+                 "Accept": "application/json, text/event-stream"
+             }
+
+ALSO VERIFY (should already be True):
+
+@@ -412,7 +412,7 @@
+     # MCP TOOL ENABLE/DISABLE FLAGS
+     # ============================================================================
+-    ENABLE_VIEWERSHIP_MCP: bool = True  # VERIFIED ✅ (but has Lambda runtime error)
++    ENABLE_VIEWERSHIP_MCP: bool = True  # VERIFIED ✅
+
+================================================================================
+EXACT CHANGES NEEDED:
+================================================================================
+
+1. Find line with old URL:
+   "url": "https://tnk5wowj7czxafk5c4w4ztznwa0fzcyy.lambda-url.us-west-2.on.aws/mcp",
+
+2. Replace with new URL:
+   "url": "https://cy4h556zxlhqyjju5psohdr6ou0scrxj.lambda-url.us-west-2.on.aws/mcp",
+
+3. Verify ENABLE_VIEWERSHIP_MCP is True (around line 412)
+
+That's it! Only 1 line needs to change.
+
+================================================================================

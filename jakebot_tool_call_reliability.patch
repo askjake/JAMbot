@@ -1,0 +1,750 @@
+Only in jakebot_work/Jake-Bot-montjac: OLLAMA_TOOL_CALL_RELIABILITY_STRESS_REPORT.md
+diff -ur --no-dereference '--exclude=__pycache__' '--exclude=.pytest_cache' jakebot_orig/Jake-Bot-montjac/app/agent/agents/agentic_rag.py jakebot_work/Jake-Bot-montjac/app/agent/agents/agentic_rag.py
+--- jakebot_orig/Jake-Bot-montjac/app/agent/agents/agentic_rag.py	2026-07-09 18:55:10.000000000 +0000
++++ jakebot_work/Jake-Bot-montjac/app/agent/agents/agentic_rag.py	2026-07-09 19:42:26.331437342 +0000
+@@ -24,6 +24,16 @@
+ from ..utils import aggressive_cachept, cleanup_cachept, set_model_config
+ from .utils import get_prompt
+ from .tools import get_tools_set
++from app.agent.tool_execution_policy import (
++    append_tool_execution_failure,
++    binding_audit,
++    build_compact_tool_execution_system_prompt,
++    build_tool_execution_failed_message,
++    get_all_executor_tools,
++    get_scoped_tools_for_prompt,
++    rank_tools_for_retry,
++    should_force_tool_retry,
++)
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -638,58 +648,48 @@
+     if role_config.provider == "aws-bedrock":
+         messages = ensure_bedrock_converse_message_shape(messages)
+ 
+-    # ── Dual-model routing ────────────────────────────────────────────────────
+-    # DeepSeek-R1 (PLLM_MODEL) handles pure reasoning / synthesis passes.
+-    # The tool-capable model (PLLM_TOOL_MODEL, e.g. llama3.2 / dolphin-mixtral)
+-    # handles turns where tools must be bound (orchestration / first turn).
+-    #
+-    # Detection rule:
+-    #   - ToolMessages present in history → synthesis pass after tool execution
+-    #     → use DeepSeek without tools bound.
+-    #   - No ToolMessages → orchestration pass (or pure text, first turn)
+-    #     → use tool model with tools bound.
++    # ── Dual-model routing with scoped tool binding ───────────────────────────
++    # Local Ollama models are much less reliable when handed the entire MCP
++    # catalog.  Bind only the methodology-relevant tools to the tool-worker.
++    # ToolMessages no longer force a tool-free synthesis pass for data
++    # investigations: popup and QoS workflows need chained tool calls.
+     _has_tool_results = any(isinstance(m, ToolMessage) for m in messages)
+     _is_ollama = (settings.PLLM_PROVIDER == "ollama")
++    tools, tool_plan = get_scoped_tools_for_prompt(
++        last_human_content,
++        has_prior_tool_results=_has_tool_results,
++    )
++    _investigation_needs_tools = bool(tools) and tool_plan.data_investigation
+ 
+-    if _is_ollama and _has_tool_results:
+-        # Synthesis phase: all tool data is in context; reasoning model consumes it without tools bound.
++    if _is_ollama and _has_tool_results and not _investigation_needs_tools:
++        # Synthesis phase for non-investigation flows.
+         model = get_model(role=selected_role)
+         _bind_tools = False
+         logger.info("Dual-model: synthesis pass -> role=%s (no tools bound)", selected_role)
+-    elif _is_ollama:
+-        # Orchestration phase: use tool-capable model so tools can be called.
++    elif _is_ollama and tools:
++        # Orchestration phase: use tool-capable model with scoped tools.
+         model = get_tool_model(role="tool_worker")
+         _bind_tools = True
+-        logger.info("Dual-model: orchestration pass -> role=tool_worker with tools bound")
++        logger.info(
++            "Dual-model: orchestration pass -> role=tool_worker methodology=%s scoped_toolsets=%s bound_tools=%d",
++            tool_plan.methodology,
++            list(tool_plan.candidate_toolsets),
++            len(tools),
++        )
++    elif _is_ollama:
++        model = get_model(role=selected_role)
++        _bind_tools = False
++        logger.warning(
++            "No scoped tools available for methodology=%s selected_toolsets=%s; model must report tool unavailability.",
++            tool_plan.methodology,
++            list(tool_plan.candidate_toolsets),
++        )
+     else:
+-        # Provider-native tool models.
++        # Provider-native tool models still receive the scoped binding.
+         model = get_model(role=selected_role)
+-        _bind_tools = True
++        _bind_tools = bool(tools)
+     set_model_config(model, state["model_config"])
+ 
+-    tools = (
+-        get_tools_set("search") + 
+-        get_tools_set("agent_mode") +
+-        get_tools_set("netra_mcp") +
+-        get_tools_set("beta_report") +
+-        get_tools_set("grasshopper_mcp") +
+-        get_tools_set("viewership") +
+-        get_tools_set("s3_stb_logs") +
+-        get_tools_set("s3_stb_logs_prod") +
+-        get_tools_set("stbhealth_mcp") +
+-        get_tools_set("stbhealth_popups_mcp") +
+-        get_tools_set("rca_mcp") +
+-        get_tools_set("rtr_alerts_mcp") +
+-        get_tools_set("qos_mcp") +
+-        get_tools_set("epg_mcp") +
+-        get_tools_set("net_detective_mcp") +
+-        get_tools_set("qodo_context_mcp") +
+-        get_tools_set("dish_code_tools") +
+-        get_tools_set("dva_mcp") +
+-        get_tools_set("headless_browser_mcp") +
+-        get_tools_set("dish_internal")
+-    )
+-
+     from app.tools.context_budget import get_session_budget, set_current_budget
+ 
+     budget = get_session_budget(session_id, messages, complexity_score=effective_score)
+@@ -699,7 +699,7 @@
+     model_with_tools = model.bind_tools(tools) if _bind_tools else model
+ 
+     # Step 6: Log message state (consolidated)
+-    active_role_config = resolve_model_role("tool_worker" if (_is_ollama and not _has_tool_results) else selected_role)
++    active_role_config = resolve_model_role("tool_worker" if (_is_ollama and _bind_tools) else selected_role)
+     msg_types = {}
+     for msg in messages:
+         t = type(msg).__name__
+@@ -716,6 +716,15 @@
+         type_summary,
+     )
+ 
++    bind_audit = binding_audit(
++        role=active_role_config.role,
++        model_name=active_role_config.model_name,
++        tools=tools if _bind_tools else [],
++        plan=tool_plan,
++        bound_model=model_with_tools if _bind_tools else None,
++    )
++    logger.info("Tool binding audit: %s", json.dumps(bind_audit, sort_keys=True, default=str))
++
+     # Step 7: Invoke the model
+     # Invoke with ExpiredTokenException retry (token refresh fix)
+     from botocore.exceptions import ClientError
+@@ -726,26 +735,100 @@
+     _invoke_messages = (
+         _sanitize_messages_for_ollama(messages) if _is_ollama else messages
+     )
++    policy_prompt = (
++        SystemMessage(content=build_compact_tool_execution_system_prompt(tool_plan))
++        if (_bind_tools or tool_plan.data_investigation) else None
++    )
++    invoke_prefix = [system_prompt]
++    if policy_prompt:
++        invoke_prefix.append(policy_prompt)
+ 
+     max_retries = 2
+     for attempt in range(max_retries + 1):
+         try:
+-            response = await model_with_tools.ainvoke([system_prompt, *_invoke_messages], config=config)
++            response = await model_with_tools.ainvoke([*invoke_prefix, *_invoke_messages], config=config)
+             break
+         except ClientError as e:
+             error_code = e.response.get("Error", {}).get("Code", "")
+             if error_code == "ExpiredTokenException" and attempt < max_retries:
+                 logger.warning(
+                     "AWS token expired during ainvoke (attempt %d/%d), refreshing...",
+-                    attempt + 1, max_retries + 1,
++                    attempt + 1,
++                    max_retries + 1,
+                 )
+                 import asyncio as _aio
+-                model = get_model(force_refresh=True, role=selected_role)
++                if _is_ollama and _bind_tools:
++                    model = get_tool_model(force_refresh=True, role="tool_worker")
++                else:
++                    model = get_model(force_refresh=True, role=selected_role)
+                 model_with_tools = model.bind_tools(tools) if _bind_tools else model
+                 await _aio.sleep(1)
+                 continue
+             raise
+ 
++    _log_ollama_response_metadata(response, role=active_role_config.role)
++    response_audit = binding_audit(
++        role=active_role_config.role,
++        model_name=active_role_config.model_name,
++        tools=tools if _bind_tools else [],
++        plan=tool_plan,
++        bound_model=model_with_tools if _bind_tools else None,
++        response=response,
++    )
++    logger.info("Tool response audit: %s", json.dumps(response_audit, sort_keys=True, default=str))
++
++    if should_force_tool_retry(
++        prompt=last_human_content,
++        plan=tool_plan,
++        tools=tools,
++        messages=messages,
++        response=response,
++    ):
++        logger.error(
++            "FAILED_TOOL_EXECUTION: investigation prompt reached first response with zero tool calls; methodology=%s tools=%d",
++            tool_plan.methodology,
++            len(tools),
++        )
++        ledger_path = append_tool_execution_failure(
++            session_id=session_id,
++            prompt=last_human_content,
++            plan=tool_plan,
++            response_text=str(getattr(response, "content", "")),
++            reason="zero_tool_calls_initial",
++            audit=response_audit,
++        )
++        retry_tools = rank_tools_for_retry(tool_plan.methodology, tools, limit=3)
++        retry_model_with_tools = model.bind_tools(retry_tools)
++        retry_prompt = SystemMessage(content=build_compact_tool_execution_system_prompt(tool_plan, retry=True))
++        try:
++            retry_response = await retry_model_with_tools.ainvoke([system_prompt, retry_prompt, *_invoke_messages], config=config)
++        except Exception as exc:  # noqa: BLE001
++            logger.exception("Strict tool-forcing retry failed: %s", exc)
++            append_tool_execution_failure(
++                session_id=session_id,
++                prompt=last_human_content,
++                plan=tool_plan,
++                response_text=f"retry exception: {type(exc).__name__}: {exc}",
++                reason="strict_retry_exception",
++                audit=response_audit,
++            )
++            retry_response = AIMessage(content=build_tool_execution_failed_message(tool_plan, ledger_path))
++        if not getattr(retry_response, "tool_calls", None):
++            logger.error(
++                "FAILED_TOOL_EXECUTION: strict retry also produced zero tool calls; methodology=%s",
++                tool_plan.methodology,
++            )
++            ledger_path = append_tool_execution_failure(
++                session_id=session_id,
++                prompt=last_human_content,
++                plan=tool_plan,
++                response_text=str(getattr(retry_response, "content", "")),
++                reason="zero_tool_calls_retry",
++                audit=response_audit,
++            )
++            retry_response = AIMessage(content=build_tool_execution_failed_message(tool_plan, ledger_path))
++        response = retry_response
++
+     # Step 8: Clean up cachepoints so they're not stored persistently
+     cleanup_cachept(messages)
+ 
+@@ -767,27 +850,10 @@
+ ### Graph
+ @cache
+ def get_graph():
+-    tools = (
+-        get_tools_set("search") + 
+-        get_tools_set("agent_mode") +
+-        get_tools_set("netra_mcp") +
+-        get_tools_set("beta_report") +
+-        get_tools_set("grasshopper_mcp") +
+-        get_tools_set("viewership") +
+-        get_tools_set("s3_stb_logs") +
+-        get_tools_set("s3_stb_logs_prod") +
+-        get_tools_set("stbhealth_mcp") +
+-        get_tools_set("stbhealth_popups_mcp") +
+-        get_tools_set("rca_mcp") +
+-        get_tools_set("rtr_alerts_mcp") +
+-        get_tools_set("qos_mcp") +
+-        get_tools_set("epg_mcp") +
+-        get_tools_set("net_detective_mcp") +
+-        get_tools_set("qodo_context_mcp") +
+-        get_tools_set("dish_code_tools") +
+-        get_tools_set("dva_mcp") +
+-        get_tools_set("dish_internal")
+-    )
++    # Executor inventory can remain broad because ToolNode only executes tool
++    # calls already emitted by the model. The model-facing bind_tools() path is
++    # scoped dynamically in call_model().
++    tools = get_all_executor_tools()
+ 
+     workflow = StateGraph(AgentState)
+ 
+diff -ur --no-dereference '--exclude=__pycache__' '--exclude=.pytest_cache' jakebot_orig/Jake-Bot-montjac/app/agent/agents/prompts/chat_system_prompt.txt jakebot_work/Jake-Bot-montjac/app/agent/agents/prompts/chat_system_prompt.txt
+--- jakebot_orig/Jake-Bot-montjac/app/agent/agents/prompts/chat_system_prompt.txt	2026-07-09 18:55:10.000000000 +0000
++++ jakebot_work/Jake-Bot-montjac/app/agent/agents/prompts/chat_system_prompt.txt	2026-07-09 19:41:08.452868066 +0000
+@@ -23,6 +23,7 @@
+ - Final engineering conclusions in long workflows require a verifier pass against the evidence ledger or structured packets when that path is active.
+ 
+ Tool discipline:
++- Use bound tools when data is required. Do not describe tool schemas.
+ - Inspect methodology and live tool inventory before broad tool use.
+ - Prefer specialized tools over generic tools when they directly fit the task.
+ - Do not call every tool just because it exists.
+@@ -313,18 +314,7 @@
+ 
+ If asked or told about events or news that may have occurred after this cutoff date, Dish-Chat can't know what happened, so Dish-Chat uses the public_web_search tool to find more information. If asked about current news, weather, prices, or events Dish-Chat uses the public_web_search tool without asking for permission. Dish-Chat is especially careful to search when asked about specific binary events (such as deaths, elections, appointments, or major incidents). Dish-Chat does not make overconfident claims about the validity of search results or lack thereof, and instead presents its findings evenhandedly without jumping to unwarranted conclusions, allowing the user to investigate further if desired. Dish-Chat does not remind the person of its cutoff date unless it is relevant to the person's message. </knowledge_cutoff>
+ <qodo_code_intelligence>
+-You have access to a semantic code search tool called qodo_context_mcp. This tool provides direct access to an indexed corpus of DISH source code repositories through four operations:
+-
+-- get_context: Retrieve relevant code snippets and file sections by describing what you are looking for in natural language (e.g., "the DVR session teardown handler in SgsAv.js")
+-- deep_research: Run a multi-step autonomous research query across the codebase to answer a complex code question
+-- ask: Ask a direct question about the codebase and get a synthesized answer with source citations
+-- list_repositories: List all indexed repositories available for search
+-
+-Indexed repositories include DishTV firmware and middleware source code (DT-ENG/DeviceManager, DT-ENG/src_tree, DT-ENG/TvManager, DT-ENG/stbctrl, DT-DEVOPS/ansible).
+-
+-CRITICAL: When a user or investigation prompt asks about source code, firmware behavior, function implementations, class definitions, error handlers, or any code-level question about DISH software, ALWAYS call qodo_context_mcp directly. Do NOT use web search to look up information about internal DISH code. Do NOT speculate about what code does when you can look it up. Do NOT skip Qodo because a previous attempt failed — retry with a different query formulation.
+-
+-If a Qodo tool call fails or returns empty results, note it explicitly as an Evidence Gap and try an alternative query (different keywords, broader scope, different file/function name). Never silently treat a failed Qodo call as confirmation that the code does not exist.
++For internal code questions, use the selected bound code-intelligence tool family when it is available. Do not paste tool operation catalogs, schemas, or examples into the answer; call the bound tool or state that no suitable bound tool is available.
+ </qodo_code_intelligence>
+ </behavior_instructions>
+ 
+diff -ur --no-dereference '--exclude=__pycache__' '--exclude=.pytest_cache' jakebot_orig/Jake-Bot-montjac/app/agent/methodology.py jakebot_work/Jake-Bot-montjac/app/agent/methodology.py
+--- jakebot_orig/Jake-Bot-montjac/app/agent/methodology.py	2026-07-09 18:55:10.000000000 +0000
++++ jakebot_work/Jake-Bot-montjac/app/agent/methodology.py	2026-07-09 19:37:56.710736535 +0000
+@@ -17,35 +17,141 @@
+         return asdict(self)
+ 
+ 
+-_BASE_EVIDENCE_FIELDS = ("facts", "inferences", "gaps", "errors", "raw_artifacts", "next_recommended_step")
++_BASE_EVIDENCE_FIELDS = (
++    "facts",
++    "inferences",
++    "gaps",
++    "errors",
++    "raw_artifacts",
++    "next_recommended_step",
++)
+ 
+ METHODOLOGY_TEMPLATES = {
+-    "repo_code_review": MethodologyTemplate("repo_code_review", ("dish_code_tools", "agent_mode"), ("qodo_context_mcp", "internal_search"), ("public_web_search",), _BASE_EVIDENCE_FIELDS + ("files_touched", "commands_run"), ("verdict", "files_changed", "tests_run", "risks")),
+-    "backend_runtime_debug": MethodologyTemplate("backend_runtime_debug", ("agent_mode", "dish_code_tools"), ("log_assist", "s3_stb_logs", "cluster_inspect"), ("public_web_search",), _BASE_EVIDENCE_FIELDS + ("logs_examined", "commands_run"), ("symptom", "root_cause", "fix", "verification")),
+-    "qos_switchback_investigation": MethodologyTemplate("qos_switchback_investigation", ("qos_mcp", "s3_stb_logs"), ("stbhealth_mcp", "rtr_alerts_mcp", "qodo_context_mcp"), ("public_web_search", "generic_shell"), _BASE_EVIDENCE_FIELDS + ("device_id", "event_window"), ("classification", "device_topology", "direct_evidence", "confidence")),
+-    "epg_schedule_metadata_check": MethodologyTemplate("epg_schedule_metadata_check", ("epg_mcp",), ("s3_stb_logs", "stbhealth_mcp"), ("public_web_search",), _BASE_EVIDENCE_FIELDS + ("service_id", "schedule_window"), ("metadata_status", "schedule_status", "affected_services", "confidence")),
+-    "dva_stb_firmware_workflow": MethodologyTemplate("dva_stb_firmware_workflow", ("dva_mcp", "stbhealth_mcp"), ("s3_stb_logs", "rtr_alerts_mcp"), ("public_web_search", "generic_shell"), _BASE_EVIDENCE_FIELDS + ("device_id", "firmware_target"), ("workflow_status", "device_status", "rollback_plan", "confidence")),
+-    "web_internal_research": MethodologyTemplate("web_internal_research", ("internal_search",), ("public_web_search", "gdrive_mcp", "jira_mcp", "confluence_mcp"), ("generic_shell",), _BASE_EVIDENCE_FIELDS + ("sources_queried",), ("answer", "sources", "confidence", "remaining_gaps")),
+-    "artifact_generation": MethodologyTemplate("artifact_generation", ("agent_mode",), ("dish_code_tools", "internal_search"), ("public_web_search",), _BASE_EVIDENCE_FIELDS + ("artifact_paths",), ("artifacts_created", "validation", "known_limits")),
+-    "generic_engineering": MethodologyTemplate("generic_engineering", ("agent_mode",), ("internal_search", "dish_code_tools", "public_web_search"), (), _BASE_EVIDENCE_FIELDS, ("summary", "evidence", "confidence", "next_steps")),
++    "receiver_reboot_dvr_playback": MethodologyTemplate(
++        "receiver_reboot_dvr_playback",
++        ("s3_stb_logs", "rtr_alerts_mcp"),
++        ("dva_mcp", "stbhealth_mcp"),
++        ("epg_mcp", "qos_mcp", "viewership"),
++        _BASE_EVIDENCE_FIELDS + ("receiver_id", "event_window", "software_version"),
++        ("symptom", "confirmed_events", "root_cause", "confidence", "unknowns"),
++    ),
++    "popup_signal_loss_investigation": MethodologyTemplate(
++        "popup_signal_loss_investigation",
++        ("s3_stb_logs", "rtr_alerts_mcp"),
++        ("stbhealth_popups_mcp", "epg_mcp"),
++        ("viewership", "qos_mcp", "dva_mcp", "dva_jam"),
++        _BASE_EVIDENCE_FIELDS + ("joey_receiver_id", "hopper_receiver_id", "event_window", "popup_code"),
++        ("exact_popup", "trigger", "recurrence", "confidence", "unknowns"),
++    ),
++    "qos_ota_switchback_investigation": MethodologyTemplate(
++        "qos_ota_switchback_investigation",
++        ("qos_mcp", "rtr_alerts_mcp"),
++        ("epg_mcp",),
++        ("dva_mcp", "viewership"),
++        _BASE_EVIDENCE_FIELDS + ("receiver_id", "event_window", "session_ids"),
++        ("classification", "device_topology", "direct_evidence", "confidence", "unknowns"),
++    ),
++    "viewership_rtr_investigation": MethodologyTemplate(
++        "viewership_rtr_investigation",
++        ("viewership", "rtr_alerts_mcp"),
++        ("epg_mcp",),
++        ("qos_mcp", "dva_mcp", "s3_stb_logs"),
++        _BASE_EVIDENCE_FIELDS + ("date_window", "services", "alert_windows"),
++        ("classification", "trend_evidence", "alert_correlation", "confidence", "unknowns"),
++    ),
++    "repo_code_review": MethodologyTemplate(
++        "repo_code_review",
++        ("dish_code_tools", "agent_mode"),
++        ("qodo_context_mcp", "internal_search"),
++        ("public_web_search",),
++        _BASE_EVIDENCE_FIELDS + ("files_touched", "commands_run"),
++        ("verdict", "files_changed", "tests_run", "risks"),
++    ),
++    "backend_runtime_debug": MethodologyTemplate(
++        "backend_runtime_debug",
++        ("agent_mode", "dish_code_tools"),
++        ("log_assist", "s3_stb_logs", "cluster_inspect"),
++        ("public_web_search",),
++        _BASE_EVIDENCE_FIELDS + ("logs_examined", "commands_run"),
++        ("symptom", "root_cause", "fix", "verification"),
++    ),
++    # Retained as a compatibility alias for older tests/prompts. New OTA-switchback
++    # prompts are classified as qos_ota_switchback_investigation above.
++    "qos_switchback_investigation": MethodologyTemplate(
++        "qos_switchback_investigation",
++        ("qos_mcp", "s3_stb_logs"),
++        ("stbhealth_mcp", "rtr_alerts_mcp", "qodo_context_mcp"),
++        ("public_web_search", "generic_shell"),
++        _BASE_EVIDENCE_FIELDS + ("device_id", "event_window"),
++        ("classification", "device_topology", "direct_evidence", "confidence"),
++    ),
++    "epg_schedule_metadata_check": MethodologyTemplate(
++        "epg_schedule_metadata_check",
++        ("epg_mcp",),
++        ("s3_stb_logs", "stbhealth_mcp"),
++        ("public_web_search",),
++        _BASE_EVIDENCE_FIELDS + ("service_id", "schedule_window"),
++        ("metadata_status", "schedule_status", "affected_services", "confidence"),
++    ),
++    "dva_stb_firmware_workflow": MethodologyTemplate(
++        "dva_stb_firmware_workflow",
++        ("dva_mcp", "stbhealth_mcp"),
++        ("s3_stb_logs", "rtr_alerts_mcp"),
++        ("public_web_search", "generic_shell"),
++        _BASE_EVIDENCE_FIELDS + ("device_id", "firmware_target"),
++        ("workflow_status", "device_status", "rollback_plan", "confidence"),
++    ),
++    "web_internal_research": MethodologyTemplate(
++        "web_internal_research",
++        ("internal_search",),
++        ("public_web_search", "gdrive_mcp", "jira_mcp", "confluence_mcp"),
++        ("generic_shell",),
++        _BASE_EVIDENCE_FIELDS + ("sources_queried",),
++        ("answer", "sources", "confidence", "remaining_gaps"),
++    ),
++    "artifact_generation": MethodologyTemplate(
++        "artifact_generation",
++        ("agent_mode",),
++        ("dish_code_tools", "internal_search"),
++        ("public_web_search",),
++        _BASE_EVIDENCE_FIELDS + ("artifact_paths",),
++        ("artifacts_created", "validation", "known_limits"),
++    ),
++    "generic_engineering": MethodologyTemplate(
++        "generic_engineering",
++        ("agent_mode",),
++        ("internal_search", "dish_code_tools", "public_web_search"),
++        (),
++        _BASE_EVIDENCE_FIELDS,
++        ("summary", "evidence", "confidence", "next_steps"),
++    ),
+ }
+ 
++# Ordered from most specific to broadest. This prevents a prompt containing both
++# "QoS" and "investigate" from falling into generic backend debugging.
+ _KEYWORD_RULES = (
+-    ("qos_switchback_investigation", ("qos", "switchback", "ota switch", "throughput", "stall", "abr")),
+-    ("epg_schedule_metadata_check", ("epg", "schedule", "channel metadata", "service id", "guide data")),
+-    ("dva_stb_firmware_workflow", ("dva", "jamboree", "firmware", "stb software", "jam ", "device upgrade")),
+-    ("backend_runtime_debug", ("backend", "startup", "traceback", "exception", "runtime", "health endpoint", "logs")),
+-    ("artifact_generation", ("create file", "generate report", "spreadsheet", "presentation", "artifact", "write document")),
+-    ("repo_code_review", ("repo", "repository", "code review", "patch", "diff", "pytest", "unit test", "fastapi", "langgraph")),
+-    ("web_internal_research", ("research", "find docs", "confluence", "jira", "google drive", "internal search", "web search")),
++    ("receiver_reboot_dvr_playback", ("reboot", "reboots", "rebooting"), ("dvr", "playback")),
++    ("popup_signal_loss_investigation", ("popup", "signal lost", "signal-lost"), ("joey", "hopper", "live tv")),
++    ("qos_ota_switchback_investigation", ("qos", "ota switchback", "switchback", "throughput stall", "abr"), ()),
++    ("viewership_rtr_investigation", ("viewership", "watch hours", "top services", "content partner"), ("rtr", "anomal", "hourly", "daily trend")),
++    ("epg_schedule_metadata_check", ("epg", "schedule", "channel metadata", "service id", "guide data"), ()),
++    ("dva_stb_firmware_workflow", ("dva", "jamboree", "firmware", "stb software", "jam ", "device upgrade"), ()),
++    ("backend_runtime_debug", ("backend", "startup", "traceback", "exception", "runtime", "health endpoint", "logs"), ()),
++    ("artifact_generation", ("create file", "generate report", "spreadsheet", "presentation", "artifact", "write document"), ()),
++    ("repo_code_review", ("repo", "repository", "code review", "patch", "diff", "pytest", "unit test", "fastapi", "langgraph"), ()),
++    ("web_internal_research", ("research", "find docs", "confluence", "jira", "google drive", "internal search", "web search"), ()),
+ )
+ 
+ 
++def _has_any(text: str, words: tuple[str, ...]) -> bool:
++    return any(word in text for word in words)
++
++
+ def select_methodology(goal: str | None, available_tool_families: Iterable[str] | None = None) -> dict:
+     text = (goal or "").lower()
+     selected = "generic_engineering"
+-    for name, keywords in _KEYWORD_RULES:
+-        if any(k in text for k in keywords):
++    for name, primary, secondary in _KEYWORD_RULES:
++        if _has_any(text, primary) and (not secondary or _has_any(text, secondary)):
+             selected = name
+             break
+     template = METHODOLOGY_TEMPLATES[selected]
+@@ -60,14 +166,23 @@
+ def methodology_selftest() -> dict:
+     expected = set(METHODOLOGY_TEMPLATES)
+     examples = {
++        "receiver_reboot_dvr_playback": "Receiver R1911746693 is repeatedly rebooting during DVR playback around 9pm on U820; check S3 logs and RTR alerts",
++        "popup_signal_loss_investigation": "Joey signal lost popup during live TV; Hopper attached; pull STB logs",
++        "qos_ota_switchback_investigation": "investigate QoS OTA switchback throughput stall followed by ABR session switch",
++        "viewership_rtr_investigation": "content partner viewership watch hours dropped; compare top services and RTR anomalies",
+         "repo_code_review": "patch the FastAPI LangGraph repo and run pytest",
+         "backend_runtime_debug": "debug backend startup traceback and health endpoint",
+-        "qos_switchback_investigation": "investigate QoS OTA switchback stalls",
++        "qos_switchback_investigation": "legacy qos_switchback_investigation template compatibility",
+         "epg_schedule_metadata_check": "check EPG schedule metadata for service id",
+         "dva_stb_firmware_workflow": "run DVA firmware workflow for an STB",
+         "web_internal_research": "research internal confluence docs",
+         "artifact_generation": "create file artifact generation report",
+         "generic_engineering": "help with an engineering question",
+     }
+-    observed = {select_methodology(text)["name"] for text in examples.values()}
+-    return {"status": "pass" if expected == observed else "fail", "expected": sorted(expected), "observed": sorted(observed)}
++    observed = {name: select_methodology(text)["name"] for name, text in examples.items()}
++    # The legacy template is retained for packet compatibility but not selected by
++    # new natural-language OTA prompts. Its selftest entry only verifies presence.
++    status = "pass" if expected == set(METHODOLOGY_TEMPLATES) and all(
++        observed[name] == name for name in observed if name != "qos_switchback_investigation"
++    ) else "fail"
++    return {"status": status, "expected": sorted(expected), "observed": observed}
+Only in jakebot_work/Jake-Bot-montjac/app/agent: tool_execution_policy.py
+diff -ur --no-dereference '--exclude=__pycache__' '--exclude=.pytest_cache' jakebot_orig/Jake-Bot-montjac/app/agent_mode/adaptive_system_prompt.py jakebot_work/Jake-Bot-montjac/app/agent_mode/adaptive_system_prompt.py
+--- jakebot_orig/Jake-Bot-montjac/app/agent_mode/adaptive_system_prompt.py	2026-07-09 18:55:10.000000000 +0000
++++ jakebot_work/Jake-Bot-montjac/app/agent_mode/adaptive_system_prompt.py	2026-07-09 19:42:39.995786574 +0000
+@@ -41,7 +41,7 @@
+         f"Always pass chat_id={chat_id} to agent_* tools.",
+         "Prefer verified, tested solutions. Be efficient.",
+         "Evidence discipline: facts come from tools/files/commands/user context; label inferences; disclose missing evidence; require verifier pass for final engineering conclusions when active.",
+-        "Tool discipline: inspect methodology/live tool inventory before broad tool use; prefer specialized tools; do not call every tool; avoid repeated identical tool calls.",
++        "Tool discipline: use bound tools when data is required; do not describe tool schemas; prefer specialized tools; do not call every tool; avoid repeated identical tool calls.",
+     ])
+ 
+     # On the first iteration of a new run, inject the MCOP orchestration hint
+@@ -52,7 +52,7 @@
+             "── MULTI-TASK ORCHESTRATION (MCOP) ──────────────────────────────────",
+             "For complex tasks with 3+ independent sub-steps, delegate to isolated",
+             "child conversations using agent_spawn_task or agent_spawn_parallel.",
+-            "Each child gets a FRESH context window (no history bloat) + full tools.",
++            "Each child gets a FRESH context window (no history bloat) + methodology-scoped tools.",
+             "Children share your workspace filesystem — artifacts they create are",
+             "immediately available to you.",
+             "",
+diff -ur --no-dereference '--exclude=__pycache__' '--exclude=.pytest_cache' jakebot_orig/Jake-Bot-montjac/app/agent_mode/child_conversation.py jakebot_work/Jake-Bot-montjac/app/agent_mode/child_conversation.py
+--- jakebot_orig/Jake-Bot-montjac/app/agent_mode/child_conversation.py	2026-07-09 18:55:10.000000000 +0000
++++ jakebot_work/Jake-Bot-montjac/app/agent_mode/child_conversation.py	2026-07-09 19:40:52.527673963 +0000
+@@ -20,7 +20,7 @@
+ from pathlib import Path
+ from typing import Optional, List, Any
+ 
+-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
++from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage
+ from langgraph.graph import END, START, StateGraph
+ from langgraph.prebuilt import ToolNode
+ from typing import Annotated
+@@ -36,6 +36,16 @@
+     normalize_worker_packet_from_summary,
+     try_parse_tool_evidence_packet,
+ )
++from app.agent.tool_execution_policy import (
++    append_tool_execution_failure,
++    binding_audit,
++    build_compact_tool_execution_system_prompt,
++    build_tool_execution_failed_message,
++    get_all_executor_tools,
++    get_scoped_tools_for_prompt,
++    rank_tools_for_retry,
++    should_force_tool_retry,
++)
+ 
+ # Children get ALL parent tools EXCEPT the MCOP spawn tools (no recursion).
+ # Loaded dynamically from the registry so MCP tools (Qodo, JIRA, RTR, S3, etc.)
+@@ -52,41 +62,23 @@
+ })
+ 
+ 
+-def _get_child_tools():
++def _filter_child_tools(tools):
++    """Remove recursive MCOP spawn tools from a candidate child binding list."""
++    return [t for t in tools if hasattr(t, "name") and t.name not in _MCOP_SPAWN_TOOL_NAMES]
++
++
++def _get_child_tools(prompt: str | None = None, *, has_prior_tool_results: bool = False):
+     """
+-    Return the full parent tool set minus MCOP spawn tools.
+-    
+-    This gives children access to: Qodo, JIRA, RTR, S3 logs, casebook,
+-    evidence bundles, web search, internal search, cluster inspect, git,
+-    python, shell, etc. — everything the parent has except the ability
+-    to spawn further children.
++    Return methodology-scoped child tools, falling back to the full executor
++    inventory only when no prompt is available (ToolNode construction path).
++
++    Model-facing binding stays small for local Ollama; ToolNode keeps the broad
++    executor inventory so emitted calls can be executed.
+     """
+-    # Late import avoids circular: child_conversation → registry → mcop_tools → child_conversation
+-    from app.agent.agents.tools import get_tools_set
+-    # Same tool aggregation as agentic_rag.py call_model()
+-    all_tools = (
+-        get_tools_set("search") +
+-        get_tools_set("agent_mode") +
+-        get_tools_set("netra_mcp") +
+-        get_tools_set("beta_report") +
+-        get_tools_set("grasshopper_mcp") +
+-        get_tools_set("viewership") +
+-        get_tools_set("s3_stb_logs") +
+-        get_tools_set("s3_stb_logs_prod") +
+-        get_tools_set("stbhealth_mcp") +
+-        get_tools_set("stbhealth_popups_mcp") +
+-        get_tools_set("rca_mcp") +
+-        get_tools_set("rtr_alerts_mcp") +
+-        get_tools_set("qos_mcp") +
+-        get_tools_set("epg_mcp") +
+-        get_tools_set("net_detective_mcp") +
+-        get_tools_set("qodo_context_mcp") +
+-        get_tools_set("dish_code_tools") +
+-        get_tools_set("dva_mcp") +
+-        get_tools_set("dish_internal")
+-    )
+-    # Filter out MCOP spawn tools
+-    return [t for t in all_tools if hasattr(t, "name") and t.name not in _MCOP_SPAWN_TOOL_NAMES]
++    if prompt:
++        scoped, _plan = get_scoped_tools_for_prompt(prompt, has_prior_tool_results=has_prior_tool_results)
++        return _filter_child_tools(scoped)
++    return _filter_child_tools(get_all_executor_tools())
+ 
+ settings = get_settings()
+ logger = logging.getLogger(__name__)
+@@ -245,6 +237,16 @@
+     return False
+ 
+ 
++def _last_human_text(messages: list) -> str:
++    for msg in reversed(messages):
++        if isinstance(msg, HumanMessage):
++            content = getattr(msg, "content", "")
++            if isinstance(content, str):
++                return content
++            return str(content or "")
++    return ""
++
++
+ def _build_child_system_prompt(
+     task_id: str,
+     chat_id: str,
+@@ -376,21 +378,73 @@
+     
+     model = get_model(role="tool_worker")
+     set_model_config(model, {"temperature": 0.5})  # Lower temp for focused execution
+-    
+-    # Child tools: full parent toolset minus MCOP spawn (no recursion)
+-    child_tools = _get_child_tools()
++
++    prompt_text = _last_human_text(messages)
++    has_prior_tool_results = any(isinstance(m, ToolMessage) for m in messages)
++    child_tools, tool_plan = get_scoped_tools_for_prompt(
++        prompt_text,
++        has_prior_tool_results=has_prior_tool_results,
++    )
++    child_tools = _filter_child_tools(child_tools)
+     llm_with_tools = model.bind_tools(child_tools)
+-    
++
+     # Log consolidated message state (matches parent call_model format)
+     msg_types = {}
+     for msg in messages:
+         t = type(msg).__name__
+         msg_types[t] = msg_types.get(t, 0) + 1
+     type_summary = " ".join(f"{k}={v}" for k, v in msg_types.items())
+-    logger.info(f"Child {task_id} iter={iterations+1}/{max_iters} | {len(messages)} msgs [{type_summary}]")
++    audit = binding_audit(
++        role="tool_worker",
++        model_name=getattr(settings, "PLLM_TOOL_MODEL", "tool_worker"),
++        tools=child_tools,
++        plan=tool_plan,
++        bound_model=llm_with_tools,
++    )
++    logger.info(
++        "Child %s iter=%s/%s | %s msgs [%s] | tool_binding_audit=%s",
++        task_id,
++        iterations + 1,
++        max_iters,
++        len(messages),
++        type_summary,
++        json.dumps(audit, sort_keys=True, default=str),
++    )
++
++    policy = SystemMessage(content=build_compact_tool_execution_system_prompt(tool_plan))
++    response = await llm_with_tools.ainvoke([system, policy, *messages], config=config)
++
++    if should_force_tool_retry(
++        prompt=prompt_text,
++        plan=tool_plan,
++        tools=child_tools,
++        messages=messages,
++        response=response,
++    ):
++        ledger_path = append_tool_execution_failure(
++            session_id=chat_id,
++            prompt=prompt_text,
++            plan=tool_plan,
++            response_text=str(getattr(response, "content", "")),
++            reason="child_zero_tool_calls_initial",
++            audit=audit,
++        )
++        retry_tools = rank_tools_for_retry(tool_plan.methodology, child_tools, limit=3)
++        retry_llm = model.bind_tools(retry_tools)
++        retry_policy = SystemMessage(content=build_compact_tool_execution_system_prompt(tool_plan, retry=True))
++        retry_response = await retry_llm.ainvoke([system, retry_policy, *messages], config=config)
++        if not getattr(retry_response, "tool_calls", None):
++            ledger_path = append_tool_execution_failure(
++                session_id=chat_id,
++                prompt=prompt_text,
++                plan=tool_plan,
++                response_text=str(getattr(retry_response, "content", "")),
++                reason="child_zero_tool_calls_retry",
++                audit=audit,
++            )
++            retry_response = AIMessage(content=build_tool_execution_failed_message(tool_plan, ledger_path))
++        response = retry_response
+ 
+-    response = await llm_with_tools.ainvoke([system, *messages], config=config)
+-    
+     return {"messages": [response], "iterations": iterations + 1}
+ 
+ 
+diff -ur --no-dereference '--exclude=__pycache__' '--exclude=.pytest_cache' jakebot_orig/Jake-Bot-montjac/app/health/router.py jakebot_work/Jake-Bot-montjac/app/health/router.py
+--- jakebot_orig/Jake-Bot-montjac/app/health/router.py	2026-07-09 18:55:10.000000000 +0000
++++ jakebot_work/Jake-Bot-montjac/app/health/router.py	2026-07-09 19:42:55.857788869 +0000
+@@ -105,6 +105,7 @@
+ 
+     tool_registry = _safe_call("tool registry selftest", lambda: __import__("app.agent.agents.tools.registry", fromlist=["get_tool_registry_selftest"]).get_tool_registry_selftest())
+     methodology = _safe_call("methodology selftest", lambda: __import__("app.agent.methodology", fromlist=["methodology_selftest"]).methodology_selftest())
++    tool_policy = _safe_call("tool execution policy selftest", lambda: __import__("app.agent.tool_execution_policy", fromlist=["tool_execution_policy_selftest"]).tool_execution_policy_selftest())
+     packets = _safe_call("packet selftest", lambda: __import__("app.agent_mode.orchestration_packets", fromlist=["orchestration_packet_selftest"]).orchestration_packet_selftest(Path(tempfile.mkdtemp(prefix="ollama_packet_selftest_"))))
+     context_budget = _safe_call("context budget selftest", lambda: __import__("app.tools.context_budget", fromlist=["context_budget_selftest"]).context_budget_selftest("primary"))
+     verifier = _safe_call("verifier status", lambda: __import__("app.agent_mode.orchestration_packets", fromlist=["verify_final_answer_against_packets"]).verify_final_answer_against_packets("packet write/read works", [{"facts": [{"claim": "packet write/read works", "source": "selftest", "reference": "selftest", "confidence": "high"}]}]).__dict__)
+@@ -126,6 +127,7 @@
+         "tool_registry_duplicate_status": tool_registry.get("duplicate_status", tool_registry),
+         "prompt_identity_status": _prompt_identity_status(),
+         "methodology_selector_status": methodology,
++        "tool_execution_policy_status": tool_policy,
+         "mcop_packet_status": packets,
+         "evidence_ledger_write_read_status": packets,
+         "context_budget_status": context_budget,
+Only in jakebot_work/Jake-Bot-montjac/reports: ollama_tool_call_smoke.json
+Only in jakebot_work/Jake-Bot-montjac/reports: ollama_tool_call_smoke.stdout
+Only in jakebot_work/Jake-Bot-montjac/reports: static_prompt_contamination_grep.txt
+Only in jakebot_work/Jake-Bot-montjac/scripts: ollama_tool_call_smoke.py
+diff -ur --no-dereference '--exclude=__pycache__' '--exclude=.pytest_cache' jakebot_orig/Jake-Bot-montjac/tests/test_ollama_methodology_packets.py jakebot_work/Jake-Bot-montjac/tests/test_ollama_methodology_packets.py
+--- jakebot_orig/Jake-Bot-montjac/tests/test_ollama_methodology_packets.py	2026-07-09 18:55:10.000000000 +0000
++++ jakebot_work/Jake-Bot-montjac/tests/test_ollama_methodology_packets.py	2026-07-09 19:41:34.910611582 +0000
+@@ -4,9 +4,22 @@
+ 
+ 
+ def test_methodology_selector_required_templates():
+-    required = {"repo_code_review", "backend_runtime_debug", "qos_switchback_investigation", "epg_schedule_metadata_check", "dva_stb_firmware_workflow", "web_internal_research", "artifact_generation", "generic_engineering"}
++    required = {
++        "receiver_reboot_dvr_playback",
++        "popup_signal_loss_investigation",
++        "qos_ota_switchback_investigation",
++        "viewership_rtr_investigation",
++        "repo_code_review",
++        "backend_runtime_debug",
++        "qos_switchback_investigation",
++        "epg_schedule_metadata_check",
++        "dva_stb_firmware_workflow",
++        "web_internal_research",
++        "artifact_generation",
++        "generic_engineering",
++    }
+     assert set(METHODOLOGY_TEMPLATES) == required
+-    assert select_methodology("investigate QoS OTA switchback")["name"] == "qos_switchback_investigation"
++    assert select_methodology("investigate QoS OTA switchback")["name"] == "qos_ota_switchback_investigation"
+     assert methodology_selftest()["status"] == "pass"
+ 
+ 
+Only in jakebot_work/Jake-Bot-montjac/tests: test_tool_execution_policy.py

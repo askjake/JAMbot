@@ -1,0 +1,28 @@
+=== 2026-05-14 (montjac via dish-chat agent) ===
+FIX: Artifact download 404 - path mismatch between tools.py and artifacts_router.py
+
+ROOT CAUSE:
+  tools.py creates artifacts in:       /tmp/home_agent/{chat_id}/
+  artifacts_router.py looked in:       /tmp/dish_chat_agent/{chat_id}/  (WRONG)
+  workspace_lifecycle.py cleaned from:  /tmp/dish_chat_agent/{chat_id}/  (WRONG)
+
+  The AGENT_MODE_WORKDIR env var was not set, so each file fell back to
+  its own hardcoded default. tools.py defaulted to /tmp/home_agent (correct),
+  but artifacts_router.py and workspace_lifecycle.py defaulted to /tmp/dish_chat_agent.
+
+CHANGES:
+  app/agent_mode/artifacts_router.py line 8:
+    - OLD: BASE_AGENT_WORKDIR = os.environ.get("AGENT_MODE_WORKDIR", "/tmp/dish_chat_agent")
+    + NEW: BASE_AGENT_WORKDIR = os.environ.get("AGENT_MODE_WORKDIR", "/tmp/home_agent")
+
+  app/agent_mode/workspace_lifecycle.py line 6:
+    - OLD: BASE = os.environ.get("AGENT_MODE_WORKDIR", "/tmp/dish_chat_agent")
+    + NEW: BASE = os.environ.get("AGENT_MODE_WORKDIR", "/tmp/home_agent")
+
+BACKUPS:
+  app/agent_mode/artifacts_router.py.bak-20260514-085249
+  app/agent_mode/workspace_lifecycle.py.bak-20260514-085249
+
+VERIFICATION:
+  curl localhost:8002/rest/api/v1/agent-mode/artifacts/grasshopper-mcp-investigation/deployments_dev_refactored/kustomization.yaml → 200 OK
+  curl localhost:3002/rest/api/v1/agent-mode/artifacts/grasshopper-mcp-investigation/deployments_dev_refactored/lambda-function.yaml → 200 OK

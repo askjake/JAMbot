@@ -1,0 +1,33 @@
+
+# ============================================================================
+# FILE: app/config.py
+# SECTION TO UPDATE: VIEWERSHIP_MEASUREMENT_MCP_CONFIG (around line 280)
+# ============================================================================
+
+# BEFORE (INCORRECT URL):
+# VIEWERSHIP_MEASUREMENT_MCP_CONFIG: dict = {
+#     "viewership_measurement": {
+#         "transport": "streamable_http",
+#         "url": "https://tnk5wowj7czxafk5c4w4ztznwa0fzcyy.lambda-url.us-west-2.on.aws/mcp",
+#         "headers": {
+#             "Accept": "application/json, text/event-stream"
+#         }
+#     }
+# }
+
+# AFTER (CORRECT URL - Updated 2026-02-16):
+VIEWERSHIP_MEASUREMENT_MCP_CONFIG: dict = {
+    "viewership_measurement": {
+        "transport": "streamable_http",
+        "url": "https://cy4h556zxlhqyjju5psohdr6ou0scrxj.lambda-url.us-west-2.on.aws/mcp",
+        "headers": {
+            "Accept": "application/json, text/event-stream"
+        }
+    }
+}
+
+# NOTE: Lambda function was updated on 2026-02-16 at 18:12:49 UTC
+# New Function URL: https://cy4h556zxlhqyjju5psohdr6ou0scrxj.lambda-url.us-west-2.on.aws/
+# Auth Type: NONE (public access with resource policy)
+# Invoke Mode: RESPONSE_STREAM
+# Region: us-west-2

@@ -1,0 +1,103 @@
+{
+  "active_real_literal_suspects": [],
+  "active_placeholder_examples": [
+    {
+      "path": "docs/guides/JOURNAL_QUICK_GUIDE.txt",
+      "literal_lines": [],
+      "placeholder_lines": [
+        29
+      ],
+      "count": 1
+    },
+    {
+      "path": "docs/deployment/INTERNAL_TOOLS_README.md",
+      "literal_lines": [],
+      "placeholder_lines": [
+        212,
+        223
+      ],
+      "count": 2
+    }
+  ],
+  "inactive_backup_literal_suspects": [
+    {
+      "path": "app/config.py.backup-opus-fix-20260513-153922",
+      "literal_lines": [
+        209,
+        222,
+        236,
+        271,
+        280
+      ],
+      "placeholder_lines": [],
+      "count": 5
+    },
+    {
+      "path": "app/config.py.backup-dish-code-tools-auth-fix",
+      "literal_lines": [
+        219,
+        232,
+        246,
+        281,
+        290,
+        379,
+        512
+      ],
+      "placeholder_lines": [],
+      "count": 7
+    },
+    {
+      "path": "app/config.py.bak_drain_default_on_20260601_161010",
+      "literal_lines": [
+        212,
+        225,
+        239,
+        274,
+        283
+      ],
+      "placeholder_lines": [],
+      "count": 5
+    },
+    {
+      "path": "app/config.py.backup-20260518-pre-s3stblogs",
+      "literal_lines": [
+        209,
+        222,
+        236,
+        271,
+        280,
+        316
+      ],
+      "placeholder_lines": [],
+      "count": 6
+    },
+    {
+      "path": "app/config.py.backup-local-process",
+      "literal_lines": [
+        219,
+        232,
+        246,
+        281,
+        290,
+        379,
+        513
+      ],
+      "placeholder_lines": [],
+      "count": 7
+    },
+    {
+      "path": "app/config.py.backup-dish-code-tools-20260616_114810",
+      "literal_lines": [
+        219,
+        232,
+        246,
+        281,
+        290,
+        379,
+        495
+      ],
+      "placeholder_lines": [],
+      "count": 7
+    }
+  ]
+}

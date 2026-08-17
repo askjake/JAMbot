@@ -1,0 +1,171 @@
+# JakeBot Debug Checklist — Updated Resolution Status
+
+**Update date:** 2026-08-07
+**Supplied source archive:** `Jake-Bot-feature-no-progress-sse-hotfix-20260807.zip`
+**Source archive SHA-256:** `7711208e7657728fb62729ea0e1c06ca468a0f6f7874aa6272cd7e41cd501e9b`
+**Original checklist SHA-256:** `85477fae826fdbdf2b2d8c181c261273b70d18d84745067722f2acd4f9a6fa3a`
+**Scope:** Jake-Bot source and embedded Nightly RCA only. External Grasshopper/S3 service changes are not claimed as completed without their repositories or a live deployment.
+
+## Outcome summary
+
+| Disposition | Count |
+|---|---:|
+| `FIXED_THIS_PATCH` | 10 |
+| `FIXED_AND_REVERIFIED_THIS_PATCH` | 17 |
+| `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | 38 |
+| `SOURCE_GUARD_FIXED_RUNTIME_RECONCILIATION_PENDING` | 1 |
+| `EXTERNAL_COMPONENT_PATCH_REQUIRED` | 4 |
+| `RUNTIME_EVIDENCE_NEEDED` | 2 |
+| `DEFERRED_WITH_REASON` | 7 |
+
+The updated canonical ledger contains 27 roots and 93 alias/recurrence mappings. The supplied checklist contains 79 explicitly named defect IDs; every one is mapped below.
+
+## Repairs implemented in this patch
+
+- Activation intent is now extracted only from positive, authoritative current-turn directives. URLs, examples, quoted prompts, code blocks, negated requests, `key:value`, and placeholder `owner:name` text do not become sticky tools. Qualified and bare multiline tool lists remain supported.
+- Canonical authorization accepts only the four approved `*_authorized=true|false` keys from authoritative current-turn text. Examples, quotes, code fixtures, and report templates cannot mutate authorization. Revocation wins.
+- Parent-only/no-MCOP intent is checkpointed, removes child-spawn tools from the model-facing tray, and is enforced again at the execution gate and both spawn entrypoints.
+- Parent no-progress accounting uses only real current-parent-turn requirements and excludes checkpoint-only stale requests, child-scope failures, and phantom token suffixes.
+- Explicit final-report contracts receive one bounded repair attempt and otherwise terminate as `INCOMPLETE_EXECUTION_CONTRACT` with missing fields.
+- Nightly preview/live arguments explicitly pair `dry_run` with `allow_live_upload`; both upload paths fail closed when remote or local tracker inventory is unavailable/corrupt.
+- Grasshopper profile identity, selected file identity, deterministic plan fingerprint, external-ID provenance, and bounded public errors are preserved.
+- HTTP 406/upstream 4002/`JSON Not readable` is a non-retryable protocol error; executor/transport failure is acceptance-unknown, not an ordinary rejection.
+- Legacy tracker log-type shapes and submitted/waiting rows are normalized in memory while raw historical values and untyped legacy identifiers remain preserved.
+
+## Verification evidence
+
+- Failing-before suite on the immutable uploaded baseline: **64 failed, 17 passed**.
+- Focused post-patch hardening and production-call-path suite: **82 passed**.
+- Full Nightly RCA suite: **143 passed, 1 skipped**.
+- Locally executable Jake policy/evidence matrix: **148 passed**.
+- `compileall`: **PASS**.
+- `git diff --check`: **PASS**.
+- Dependency-complete LangChain/LangGraph tests are reserved for `/home/jakebot/Jakes-agent/.venv` by the deployment gate; this container does not contain those packages.
+
+## Named checklist disposition
+
+| Debug ID | Canonical root | Disposition | Supplied finding / resolution note |
+|---|---|---|---|
+| `ORCH-NO-PROGRESS-TOOL-THRASH` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | The agent repeatedly tries alternate tools, ports, namespaces, dashboards, browsers, child tasks, web search, and APIs without measurable progress or a termination threshold. |
+| `ORCH-PHASE-GATE-BYPASS` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | The agent proceeds to cron and repository investigation before completing the explicitly required Grasshopper test. |
+| `ORCH-CAPABILITY-PREFLIGHT-MISSING` | `ORCH-CAPABILITY-PREFLIGHT-MISSING` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | It spawns or proposes work requiring shell/filesystem access without first verifying that the parent or child has those capabilities. |
+| `ORCH-ENVIRONMENT-IDENTITY-DRIFT` | `ORCH-ENVIRONMENT-IDENTITY-DRIFT` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | It moves between EKS, ArgoCD, 10.79.85.47, the 3080, dashboards, Apache, and the 3090 repository without establishing which environment is authoritative. |
+| `ORCH-UNRELATED-FALLBACK-SUBSTITUTION` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | It substitutes logassist_trigger_workflow, cluster inspection, public web search, dashboards, and browser tools for the specifically requested Grasshopper MCP test. |
+| `ORCH-EVIDENCELESS-PROGRESS-NARRATION` | `ORCH-EVIDENCELESS-PROGRESS-NARRATION` | `DEFERRED_WITH_REASON` | Statements such as “Excellent—I found it,” “Now I have what I need,” and “This is very informative” appear without a corresponding concrete result proving the claim. |
+| `ORCH-MISSING-TERMINAL-BLOCKED-STATE` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | When required tools are unavailable, the agent continues searching rather than returning a concise BLOCKED_MISSING_CAPABILITY result. |
+| `ORCH-CHILD-CAPABILITY-MISMATCH-REPRO` | `ORCH-CAPABILITY-PREFLIGHT-MISSING` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Child tasks are spawned to inspect the repository even though they do not have shell or filesystem tools. This reproduces the defect already seen during the Incident Scene work. |
+| `ORCH-CROSS-DOMAIN-CONTEXT-CONTAMINATION` | `ORCH-CROSS-DOMAIN-CONTEXT-CONTAMINATION` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Human-review dashboards, Grasshopper voice namespaces, previous EKS work, 3080 Ollama context, and unrelated APIs leak into a local cron investigation. |
+| `ORCH-RESULT-ORPHANING` | `ORCH-RESULT-ORPHANING` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The agent says child tasks ran but then reports that they returned no summary, and it does not surface or correlate their actual evidence packets. |
+| `ORCH-HEALTH-VS-FUNCTIONAL-TEST-CONFLATION` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | grasshopper_mcp is HEALTHY with 13 tools is treated as meaningful progress, even though no NAL request was executed. Service discovery health is not an end-to-end functional test. |
+| `ORCH-PRIVATE-SOURCE-PUBLIC-SEARCH-FALLBACK` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | The agent attempts public web search for a known private repository instead of stopping when local repository access is unavailable. |
+| `ORCH-UNBOUNDED-PARALLEL-SEARCH` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | It repeatedly launches “multiple parallel searches” during a task that requires sequential phase verification. |
+| `ORCH-USER-ORDERING-CONSTRAINT-IGNORED` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | The user explicitly required “If that works, then investigate the cron job,” but the agent started both tracks simultaneously. |
+| `INFRA-S3-ARTIFACT-FETCH-NONRESILIENT` | `INFRA-S3-ARTIFACT-FETCH-NONRESILIENT` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Large or moderate S3 artifact downloads from the 3090 use a single non-resumable request and fail when the endpoint or SSH session closes. No ranged retry, resume, checksum verification, or alternate transfer path is automatically attempted. |
+| `ORCH-SELF-LOCATION-INFERRED-FROM-TOOL-ENDPOINT` | `ORCH-ENVIRONMENT-IDENTITY-DRIFT` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The agent infers its own host from an address encountered through browser/API tooling instead of verified runtime identity. |
+| `ORCH-AUTHORITATIVE-TARGET-OVERRIDDEN-BY-INFERENCE` | `ORCH-ENVIRONMENT-IDENTITY-DRIFT` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The user explicitly pinned .35, but the agent overrode that fact using an unverified inference from browsing context. |
+| `EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE` | `EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | A tool execution failure is interpreted as evidence that logs do not exist. |
+| `ORCH-PHASE0-IDENTITY-GATE-BYPASS` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | The agent began current S3 evidence gathering before proving the authoritative host, repository, runtime mode, cron configuration, and exact run artifacts. |
+| `OBSERVABILITY-TOOL-ENDPOINT-HOST-UNATTRIBUTED` | `ORCH-ENVIRONMENT-IDENTITY-DRIFT` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Tool results do not clearly distinguish: |
+| `GH-PROFILE-NAMESPACE-MISMATCH` | `PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Jake sends atv_reboot_instability, but Grasshopper treats it as an unknown literal physical log type and selects zero files. |
+| `GH-UNKNOWN-PROFILE-RETURNS-SUCCESS-ZERO` | `GH-UNKNOWN-PROFILE-RETURNS-SUCCESS-ZERO` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Grasshopper returns status=success with zero selected files rather than an invalid/unknown-profile diagnostic. |
+| `NIGHTLY-NOT-SUBMITTED-REPORTED-NOT-ACCEPTED` | `PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The report says an upload was not accepted even though no submission call occurred. |
+| `NIGHTLY-STALE-TRACKER-STATE-PRESENTED-AS-CURRENT` | `TRACKER-REQUEST-ID-PROVENANCE-MISSING` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | RECEIPT_CHECK_ERROR and related classifications from July 28 are presented in the August 6 result without clearly identifying them as historical carry-forward. |
+| `NIGHTLY-CURRENT-COVERAGE-NOT-VERIFIED` | `EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The affected receivers were classified without a successful current-run S3 coverage result. |
+| `NIGHTLY-SUBMIT-SKIPPED-REASON-NOT-EXPOSED` | `PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Notification output does not say submission was skipped because the plan selected zero files. |
+| `TRACKER-PROLIFERATION-POSSIBLE-DUPLICATES` | `TRACKER-REQUEST-ID-PROVENANCE-MISSING` | `SOURCE_GUARD_FIXED_RUNTIME_RECONCILIATION_PENDING` | Multiple trackers/request-like IDs exist for the same receiver/profile; their equivalence and provenance are not yet resolved. |
+| `TRACKER-REQUEST-ID-PROVENANCE-MISSING` | `TRACKER-REQUEST-ID-PROVENANCE-MISSING` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Stored IDs do not declare whether they are local correlations or external Grasshopper request IDs. |
+| `REPORT-EVIDENCE-COUNT-INCONSISTENT` | `TRACKER-REQUEST-ID-PROVENANCE-MISSING` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The generated investigation report contains mutually inconsistent record and request-ID counts. |
+| `CRON-TIMEZONE-MISINTERPRETED` | `CONFIG-EFFECTIVE-MODE-SOURCE-HIDDEN` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The agent labeled the 02:30 cron schedule as UTC despite the run starting at 08:30Z. |
+| `CONFIG-EFFECTIVE-MODE-SOURCE-HIDDEN` | `CONFIG-EFFECTIVE-MODE-SOURCE-HIDDEN` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Base configuration says commit/write false while the launcher injects true values through a temporary environment file; effective mode provenance is not visible in normal reporting. |
+| `NAL-CURRENT-PLAN-TEST-INCOMPLETE` | `NAL-CURRENT-PLAN-TEST-INCOMPLETE` | `RUNTIME_EVIDENCE_NEEDED` | The required bounded current NAL plan for R1955706171 still has not been executed. |
+| `AUTH-PRIVILEGED-TOOL-BINDING-NOT-STICKY` | `BIND-DYNAMIC-MCP-EXACT-TOOL-NOT-PROMOTED` | `FIXED_AND_REVERIFIED_THIS_PATCH` | All four authorization flags remained true, but agent_run_shell disappeared from last_bound_tool_names on the next turn. The exact privileged-tool request was therefore current-turn-only or was not checkpointed, despite authorization state persisting. |
+| `ORCH-BLOCKED-PHASE-CONTINUES-WITH-SUBSTITUTES` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | After determining that the required shell and Grasshopper planning tools were unavailable, the agent continued through other phases using S3 tools and previously summarized data rather than stopping at the phase gate. |
+| `EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE-RECURRENCE` | `EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The report again said that TOOL_EXECUTION_ERROR from list_dates confirmed the receivers had no logs. That is invalid. A tool error proves only that the call failed. |
+| `EVIDENCE-S3-COVERAGE-CONFLATED-WITH-GRASSHOPPER-PLAN` | `EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Finding 56 historical NAL files in S3 for R1955706171 proves historical S3 coverage, not that the current Grasshopper nal planning path works. The report initially described the S3 finding as completing the NAL test, then later correctly admitted the Grasshopper planning call was untested. |
+| `OBS-MCP-FAMILY-HEALTH-CONFLATED-WITH-TOOL-BINDING` | `BIND-DYNAMIC-MCP-EXACT-TOOL-NOT-PROMOTED` | `FIXED_AND_REVERIFIED_THIS_PATCH` | The report alternates between describing grasshopper_mcp as “bound via LIVE_DISCOVERY” and acknowledging that none of its individual tools appear in last_bound_tool_names. |
+| `REPORT-RECORD-SCOPE-COUNT-AMBIGUITY` | `TRACKER-REQUEST-ID-PROVENANCE-MISSING` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | For R1971472323, the report variously describes: |
+| `CRON-TIMEZONE-INFERENCE-OVERSTATED` | `CONFIG-EFFECTIVE-MODE-SOURCE-HIDDEN` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The arithmetic strongly supports America/Denver, but the report also contains contradictory discussion of the date output and never ran timedatectl, /etc/timezone, or a CRON_TZ check. It correctly labels the result a strong inference near the end, but earlier language says the arithmetic “proves it.” |
+| `EVIDENCE-NO-CAPSULES-AS-NO-ANALYSIS` | `EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The statement that no capsules confirms logs have never been analyzed is unsupported. An empty capsule lookup may reflect filtering, retention, lookup failure, or a different artifact path. This should be treated as NO_CAPSULE_FOUND_IN_THIS_QUERY, not a historical absolute. |
+| `ORCH-EXPLICIT-STOP-CONDITION-IGNORED` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | The prompt explicitly required stopping if either shell or Grasshopper planning was not bound; the agent continued with Steps 2, 5, and 6. |
+| `BIND-DYNAMIC-MCP-EXACT-TOOL-NOT-PROMOTED` | `BIND-DYNAMIC-MCP-EXACT-TOOL-NOT-PROMOTED` | `FIXED_AND_REVERIFIED_THIS_PATCH` | The Grasshopper family was healthy and all authorization flags were true, but the exact planning tool remained absent from the model-facing binding. |
+| `EVIDENCE-FROZEN-REPLAY-DESCRIBED-AS-LIVE` | `EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Some prose described the receiver profile behavior as though a new comparison had just run, while the final report correctly marked atv_core and nal live planning as untested. |
+| `STATUS-DISTINCT-BLOCKERS-COLLAPSED` | `GRASSHOPPER-UPLOAD-SAFETY-CONTRACT` | `FIXED_THIS_PATCH` | Unknown plan size, zero selected files, plan-only mode, unattempted upload, rejected upload, and acceptance uncertainty can all reach the same generic COVERAGE_UNOBTAINABLE message. |
+| `TEST-FIXTURE-GRASSHOPPER-CONTRACT-DRIFT` | `PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Jake tests use flattened fake responses and do not represent the real nested Grasshopper response. |
+| `PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION` | `PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Catalog fields needed for planning are not propagated to the acquisition call. |
+| `LEGACY-TRACKER-ID-PROVENANCE-ABSENT` | `TRACKER-REQUEST-ID-PROVENANCE-MISSING` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Existing tracker records have origin_run_id=None and no declared identifier source. |
+| `REPORT-INTERMEDIATE-HYPOTHESIS-NOT-CLEARED` | `ORCH-EVIDENCELESS-PROGRESS-NARRATION` | `DEFERRED_WITH_REASON` | The agent spent substantial output pursuing UPLOAD_SKIPPED_NO_FILES, then corrected it to UPLOAD_BLOCKED_UNKNOWN_BATCH_SIZE; structured findings should supersede discarded hypotheses explicitly. |
+| `ORCH-EXECUTION-TASK-STOPPED-FOR-SCOPE-CHOICE` | `ORCH-COMPLETION-CONTRACT-ABANDONMENT` | `FIXED_THIS_PATCH` | The agent was told to execute a complete regression-and-patch phase but stopped to ask which subset to implement. |
+| `TEST-BASELINE-CONTRADICTION-UNRESOLVED` | `TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The same source lineage reportedly produces 101/1 and later 69/33 without environment reconciliation. |
+| `TEST-FAILURES-LABELED-PREEXISTING-WITHOUT-PROOF` | `TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | Failures were called pre-existing merely because they occurred before the patch. |
+| `PATCH-SCOPE-DROPS-VERIFIED-DEFECTS` | `TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The proposed four fixes omitted nested upload-ID parsing, tracker identity, idempotency, metadata propagation, and accurate messaging. |
+| `ROOT-CAUSE-FALSE-STATUS-NORMALIZATION` | `PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | The agent incorrectly treated executor status OK and inner Grasshopper status success as the same contract layer. |
+| `PATCH-CROSS-REPO-WORKTREE-CONFLATION` | `TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | It proposed editing Grasshopper source in the Jake-Bot worktree instead of creating separate repository branches/worktrees. |
+| `PROFILE-ALIAS-PROPOSED-AS-CANONICAL-FIX` | `PROFILE-METADATA-DROPPED-BEFORE-ACQUISITION` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | A Grasshopper alias alone would hide Jake’s failure to consume the S3 profile mapping. |
+| `AUTH-BINDING-LOSS-DURING-IMPLEMENTATION` | `BIND-DYNAMIC-MCP-EXACT-TOOL-NOT-PROMOTED` | `FIXED_AND_REVERIFIED_THIS_PATCH` | Privileged tools disappeared during an authorized multi-phase patch operation. This reproduces the nonsticky exact-tool-binding defect. |
+| `GIT-AUTHORITATIVE-WORKTREE-CONTEXT-LOST` | `GIT-AUTHORITATIVE-WORKTREE-CONTEXT-LOST` | `DEFERRED_WITH_REASON` | The agent ignored the three established /tmp/...20260806 worktrees and searched a generic default workspace. |
+| `GIT-KNOWN-PUSH-TARGET-REASKED` | `GIT-AUTHORITATIVE-WORKTREE-CONTEXT-LOST` | `DEFERRED_WITH_REASON` | It asked which repository to push despite the prior task explicitly defining all three repositories and feature branches. |
+| `PATCH-UNIT-TESTED-BUT-NOT-WIRED` | `TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | A new adapter and its unit tests may pass without being invoked by the production Nightly path. |
+| `PATCH-INCOMPLETE-BRANCH-PRESENTED-FOR-PUSH` | `ORCH-COMPLETION-CONTRACT-ABANDONMENT` | `FIXED_THIS_PATCH` | The Grasshopper branch was presented as part of the completed cross-repository repair even though its source change was not implemented. |
+| `ORCH-PARENT-ONLY-VIOLATION-RECURRENCE` | `ORCH-PARENT-ONLY-VIOLATION-RECURRENCE` | `FIXED_THIS_PATCH` | The agent spawned child work after repeated parent-only instructions. |
+| `GIT-PUSH-PROTOCOL-STATE-NOT-STICKY` | `GIT-AUTHORITATIVE-WORKTREE-CONTEXT-LOST` | `DEFERRED_WITH_REASON` | Repository identity, branches, completed tests, and push scope were not preserved into the push turn. |
+| `TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE` | `TEST-PASS-CLAIM-LACKS-CALL-PATH-COVERAGE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | 119 passed was treated as completion without proving the real Phase 5 path imports and uses the new adapter. |
+| `GH-UPLOAD-V2-PAYLOAD-CONTRACT-MISMATCH` | `GRASSHOPPER-SMP-WIRE-CONTRACT-UNRESOLVED` | `EXTERNAL_COMPONENT_PATCH_REQUIRED` | GH-FRESH-LOG-REQUEST-CONFLATED-WITH-FILE-UPLOAD     P1 |
+| `GH-FRESH-LOG-REQUEST-CONFLATED-WITH-FILE-UPLOAD` | `GRASSHOPPER-SMP-WIRE-CONTRACT-UNRESOLVED` | `EXTERNAL_COMPONENT_PATCH_REQUIRED` | GH-HTTP-406-MISCLASSIFIED-AS-BUSINESS-REJECTION     P2 |
+| `GH-HTTP-406-MISCLASSIFIED-AS-BUSINESS-REJECTION` | `GRASSHOPPER-UPLOAD-SAFETY-CONTRACT` | `FIXED_THIS_PATCH` | GH-OUTBOUND-PAYLOAD-OBSERVABILITY-MISSING           P1 |
+| `GH-OUTBOUND-PAYLOAD-OBSERVABILITY-MISSING` | `GRASSHOPPER-SMP-WIRE-CONTRACT-UNRESOLVED` | `EXTERNAL_COMPONENT_PATCH_REQUIRED` | GH-PROFILE-UPLOAD-LIVE-CONTRACT-NOT-INTEGRATION_TESTED P1 |
+| `GH-PROFILE-UPLOAD-LIVE-CONTRACT-NOT-INTEGRATION_TESTED` | `NAL-CURRENT-PLAN-TEST-INCOMPLETE` | `RUNTIME_EVIDENCE_NEEDED` | AUTH-PARSER-CANONICAL-FLAGS-DIVERGENCE              P1 |
+| `AUTH-PARSER-CANONICAL-FLAGS-DIVERGENCE` | `AUTH-CURRENT-TURN-DIRECTIVE-PROVENANCE` | `FIXED_THIS_PATCH` | AUTH-KEY-VALUE-GRANTS-TESTED-BUT-NOT-RUNTIME-WIRED  P1 |
+| `AUTH-KEY-VALUE-GRANTS-TESTED-BUT-NOT-RUNTIME-WIRED` | `AUTH-CURRENT-TURN-DIRECTIVE-PROVENANCE` | `FIXED_THIS_PATCH` | AUTH-PROMPT-CONTRACT-MISMATCH                        P1 |
+| `AUTH-PROMPT-CONTRACT-MISMATCH` | `AUTH-CURRENT-TURN-DIRECTIVE-PROVENANCE` | `FIXED_THIS_PATCH` | GH-UPLOAD-STATUS-HISTORY-CLIENT-CAPABILITY-MISSING — P1 |
+| `GH-UPLOAD-STATUS-HISTORY-CLIENT-CAPABILITY-MISSING` | `GRASSHOPPER-STATUS-HISTORY-CAPABILITY-GAP` | `EXTERNAL_COMPONENT_PATCH_REQUIRED` | agent_run_shell/python disappearance |
+| `ORCH-GRASSHOPPER-WRITE-REQUEST-SUBSTITUTED-BY-S3-READ` | `ORCH-NO-PROGRESS-TOOL-THRASH` | `FIXED_AND_REVERIFIED_THIS_PATCH` | The agent answered a fresh-upload request by listing already uploaded files. |
+| `ORCH-KNOWN-RECEIVER-ID-REASKED` | `GIT-AUTHORITATIVE-WORKTREE-CONTEXT-LOST` | `DEFERRED_WITH_REASON` | It asked for the RXID immediately after being given R1955706171. |
+| `OBS-GRASSHOPPER-MCP-MISIDENTIFIED-AS-S3-TOOLCHAIN` | `EVIDENCE-TOOL-ERROR-CONVERTED-TO-ABSENCE` | `RETAINED_FIXED_IN_BASELINE_AND_REVERIFIED` | It called list_dates and list_files a Grasshopper MCP test. |
+| `ORCH-UPLOAD-CAPABILITY-NOT-DISCOVERED` | `BIND-DYNAMIC-MCP-EXACT-TOOL-NOT-PROMOTED` | `FIXED_AND_REVERIFIED_THIS_PATCH` | It failed to locate the exact Grasshopper planning and upload tools despite the family being healthy. |
+| `SEC-CREDENTIALS-PASTED-IN-CONVERSATION` | `SEC-CREDENTIALS-PASTED-IN-CONVERSATION` | `DEFERRED_WITH_REASON` | Raw credentials were placed in chat. Rotate them and ensure future prompts use only server-side secret references. |
+| `ORCH-IMPLEMENTATION-TASK-CONVERTED-TO-EXPLANATION` | `ORCH-COMPLETION-CONTRACT-ABANDONMENT` | `FIXED_THIS_PATCH` | GH-UPLOAD-V2-PAYLOAD-CONTRACT-MISMATCH              P1 |
+| `JAKE-15` | `ORCH-PARENT-ONLY-VIOLATION-RECURRENCE` | `FIXED_THIS_PATCH` | EXPLICIT MCOP PROHIBITION NOT ENFORCED |
+
+## Newly formalized findings discovered during this repair
+
+| ID | Disposition | Note |
+|---|---|---|
+| `JAKE-16` | `FIXED_THIS_PATCH` | Phantom/checkpoint/child failures could contaminate the parent no-progress capability set. |
+| `JAKE-17` | `FIXED_THIS_PATCH` | Authorization-looking examples and specifications in a Human prompt could mutate live authorization. |
+| `BARE-EXACT-TOOL-LIST-NOT-EXTRACTED` | `FIXED_THIS_PATCH` | Markdown lists of bare exact tools are now preserved after an explicit bind directive. |
+| `NIGHTLY-LOCAL-TRACKER-LEDGER-ERROR-AS-EMPTY` | `FIXED_THIS_PATCH` | Missing/corrupt local duplicate inventory now blocks both upload paths and is preserved for recovery. |
+| `AUDIT-PARENT-ONLY-BLOCK-MISCLASSIFIED` | `FIXED_THIS_PATCH` | Parent-only blocks now retain their own audit result code instead of appearing as an authorization failure. |
+| `ORCH-COMPLETION-CONTRACT-ABANDONMENT` | `FIXED_THIS_PATCH` | Structured engineering tasks cannot terminate with required final-report fields absent. |
+
+## Remaining gates
+
+- **External Grasshopper patch required:** v2 SMP payload/fresh-request semantics, safe outbound DTO observability, and a proven read-only status/history client capability.
+- **Runtime evidence required:** fresh NAL plan, patched duplicate preflight, credential security gate, and one separately authorized upload call. No upload was performed by this repair.
+- **Deferred:** end-to-end progress-event evidence binding, durable multi-repository execution-plan checkpointing, and operator-approved rotation/revocation of the exposed credential.
+- **Historical tracker mutation:** not performed. The two July rows remain unchanged; source repair does not invent external request-ID provenance.
+
+## Safety state
+
+```text
+LIVE_SOURCE_MODIFIED=false
+LIVE_RESTART_PERFORMED=false
+LIVE_UPLOAD_CALLS=0
+AUTOMATIC_UPLOAD_RETRIES=0
+TRACKER_DATA_MUTATIONS=0
+MCOP_CHILDREN_SPAWNED=0
+PRODUCTION_DEPLOYMENTS=0
+```
+
+
+## Post-restart live canary addendum — 2026-08-07 v2.2
+
+- **LIVE PASS — canonical authorization and privileged binding persistence:** all four canonical flags were true; `agent_run_shell` and `agent_run_python` remained requested, eligible, `BOUND`, and in `last_bound_tool_names` on the next turn without a new activation.
+- **LIVE PASS — incidental/example activation filtering:** URI/Git/placeholder/example/negated qualified tokens produced empty requested/pending/eligible extra-tool state.
+- **LIVE PASS — parent-only MCOP enforcement:** authoritative `tool_policy_state` reported `mcop_children_forbidden=true`; both spawn tools were absent from `last_bound_tool_names`, with backend withholding logs for both.
+- **LIVE PASS — Grasshopper status/history truthfulness:** exact read-only tools bound; upstream client exposed no authoritative status/history method (`attempted_methods=[]`); output was `status=unavailable`, coverage `UNKNOWN`, negative conclusion false, uploads zero.
+- **LIVE FAIL / v2.2 SOURCE FIX — sequential no-progress:** two sequential `internal_search` `TOOL_NOT_IN_LAST_BINDING` failures separated by AI turns did not terminate. Root cause: `_tail_tool_records` stopped at the first non-tool AI message and unrelated parent fallback failures were skipped when a nominal required set existed. v2.2 collects across AI separators and counts real parent fallback failures globally while preserving child/phantom isolation.
+- **LIVE FAIL / v2.2 SOURCE FIX — forced completion contract:** the model called the contract fictional and terminated without required fields. v2.2 injects a server-trusted completion-contract SystemMessage before the initial invocation, retains deterministic post-response enforcement, and logs DETECTED/REPAIR/TERMINAL events.
+- **LIVE INCONCLUSIVE — JAKE-17 example authorization contamination:** the attempted canary did not call the binding-status facade, so no live state proof was captured. Source/unit tests remain PASS; rerun after v2.2 deployment.
+- **Operational-only fixed defect:** the v2.1 deployment Step 5 runner incorrectly applied whole-worktree `git diff --check` to intentionally preserved dirt. The package runner was hotfixed to check the committed feature delta after exact dirty path/fingerprint/non-overlap gates.
+- **Security containment:** embedded dirty `run.py` webhook was removed; source security test and all Nightly tests passed. The scheduled wrapper uses a different external secret. Provider-side revocation/rotation of any exposed legacy webhook remains required.
+- **Runtime evidence needed:** an existing chat emitted `Database branch reconstruction yielded 16 messages` vs `checkpoint_messages has 20`; track as `CHAT-HISTORY-CHECKPOINT-COUNT-DIVERGENCE` without mixing it into v2.2.

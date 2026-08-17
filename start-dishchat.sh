@@ -1,0 +1,1 @@
+scripts/active/start-dishchat.sh

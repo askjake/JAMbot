@@ -1,0 +1,29 @@
+DISH-CHAT SERVICE STATUS
+========================
+Date: Mon Mar  2 11:45:34 AM MST 2026
+
+✅ BACKEND: RUNNING
+   URL: http://10.79.85.35:8000
+   Process ID: 2843106
+   Health: Healthy (v2.1.0)
+   Started: 2026-03-02 11:44:54
+
+✅ FRONTEND: RUNNING  
+   URL: http://10.79.85.35:3001
+   Framework: Next.js
+
+✅ DATABASE: RUNNING
+   PostgreSQL container: postgres-dev-dishchat
+   Ports: 5433, 5434
+
+RECENT FIX:
+- Added 30s timeout to MCP initialization
+- Removed duplicate MCP call
+- Backend now starts reliably even if MCP Lambda is slow
+
+LOGS:
+tail -f ~/Jakes-agent/logs/backend.log
+
+CONTROLS:
+Start:  ~/Jakes-agent/start-dishchat.sh
+Stop:   ~/Jakes-agent/stop-dishchat.sh

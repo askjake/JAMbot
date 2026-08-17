@@ -1,0 +1,4 @@
+hardcoded bearer active config count: 0
+active prompt legacy identity count: 0
+active get_model(model_arn=) count: 0
+active agentic use_opus count: 0

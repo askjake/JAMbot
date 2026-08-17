@@ -1,0 +1,60 @@
+
+================================================================================
+VIEWERSHIP MCP - QUICK REFERENCE
+================================================================================
+
+LAMBDA INFO:
+-----------
+Function: viewership-mcp
+Region: us-west-2
+URL: https://cy4h556zxlhqyjju5psohdr6ou0scrxj.lambda-url.us-west-2.on.aws/mcp
+Auth: NONE (public)
+Status: HAS RUNTIME ERROR (needs Ilhyoung's fix)
+
+CONFIG FILE:
+-----------
+File: ~/dish-chat/app/config.py
+Line: ~280 (VIEWERSHIP_MEASUREMENT_MCP_CONFIG)
+Flag: ENABLE_VIEWERSHIP_MCP = True
+
+REGISTRY FILE:
+-------------
+File: ~/dish-chat/app/agent/agents/tools/registry.py
+Lines: 45-49
+Status: ✅ Already correct, no changes needed
+
+QUICK COMMANDS:
+--------------
+# Backup config
+cp ~/dish-chat/app/config.py ~/dish-chat/app/config.py.backup-$(date +%Y%m%d-%H%M%S)
+
+# Test Lambda
+curl -X POST https://cy4h556zxlhqyjju5psohdr6ou0scrxj.lambda-url.us-west-2.on.aws/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"tools/list","id":1}'
+
+# Verify integration (after config update)
+cd ~/dish-chat && python integration_files/02_verify_integration.py
+
+# Restart backend
+cd ~/dish-chat && python -m app.main
+
+WHAT TO CHANGE:
+--------------
+OLD URL: https://tnk5wowj7czxafk5c4w4ztznwa0fzcyy.lambda-url.us-west-2.on.aws/mcp
+NEW URL: https://cy4h556zxlhqyjju5psohdr6ou0scrxj.lambda-url.us-west-2.on.aws/mcp
+
+WHAT NOT TO CHANGE:
+------------------
+✅ registry.py - Already correct
+✅ Tool factory logic - Already correct
+✅ MCP initialization - Already correct
+
+WAITING ON:
+----------
+⏳ Ilhyoung to fix Lambda runtime error:
+   "fork/exec /opt/extensions/lambda-adapter: exec format error"
+
+DO NOT RESTART BACKEND until Lambda is fixed!
+
+================================================================================

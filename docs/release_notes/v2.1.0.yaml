@@ -1,0 +1,5 @@
+title: "Integration with Agentic Pipelines"
+date: "2025-11-24"
+changes:
+  - "New framework for integrating agentic data processing pipeline is deployed with our first agent for beta report analysis project."
+  - "Smoother visual for chat generation"

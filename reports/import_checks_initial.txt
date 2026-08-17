@@ -1,0 +1,9 @@
+Import checks:
+ok app.config
+fail app.core.llm.chat_models ModuleNotFoundError No module named 'langchain_core'
+fail app.agent_mode.agent ModuleNotFoundError No module named 'langchain_core'
+fail app.agent_mode.child_conversation ModuleNotFoundError No module named 'langchain_core'
+fail app.agent.agents.agentic_rag ModuleNotFoundError No module named 'langchain_core'
+fail app.agent.agents.tools.registry ModuleNotFoundError No module named 'langchain_core'
+fail app.health.router ModuleNotFoundError No module named 'langchain_core'
+exit=0

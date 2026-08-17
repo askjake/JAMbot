@@ -1,0 +1,17 @@
+.buildpushdocker:
+    variables: 
+        CI_REGISTRY_IMAGE: "name"
+        DOCKERFILE: "test"
+        IMG_TAG: "v1"
+    image:
+        name: gcr.io/kaniko-project/executor:debug
+        entrypoint: [""]
+    script:
+        -  mkdir -p /kaniko/.docker
+        -  echo "{\"credsStore\":\"ecr-login\"}" > /kaniko/.docker/config.json
+        -  /kaniko/executor
+            --context "${CI_PROJECT_DIR}"
+            --dockerfile "${CI_PROJECT_DIR}/${DOCKERFILE}"
+            --destination "${CI_REGISTRY_IMAGE}:${IMG_TAG}"
+
+

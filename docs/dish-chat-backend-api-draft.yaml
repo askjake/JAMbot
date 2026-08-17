@@ -1,0 +1,1411 @@
+openapi: 3.0.0
+info:
+  title: Dish-Chat API
+  version: 1.0.0
+  description: API for Dish-Chat application
+
+servers:
+  - url: /api/v1
+
+components:
+  securitySchemes:
+    userAuth:
+      type: apiKey
+      in: header
+      name: X-Auth-Request-Email
+      description: |
+        User email obtained from OAuth2 proxy after Okta SSO authentication.
+        The authentication is handled by an oauth2-proxy server, and authenticated requests are forwarded with this header.
+
+  schemas:
+    Chat:
+      type: object
+      properties:
+        chat_id:
+          type: string
+          example: e4adfbe1-42d3-4a34-9b3d-fb7d0d049987
+        title:
+          type: string
+          example: New chat 1
+        created_at:
+          type: string
+          format: date-time
+        owner_id:
+          type: string
+          example: first.last@dish.com
+        last_message_at:
+          type: string
+          format: date-time
+        vault_mode:
+          type: boolean
+          example: false
+        favorite:
+          type: boolean
+          example: false
+        status:
+          type: string
+          enum: [normal, readonly]
+        status_msg:
+          type: string
+          nullable: true
+
+    Message:
+      type: object
+      required:
+        - message_id
+        - content
+        - role
+        - created_at
+      properties:
+        message_id:
+          type: string
+          example: 7c8f8037-e14e-494f-b175-c55b3fbc3ba2
+        content:
+          type: object
+          example: {
+            1: {
+              "type": "reasoning",
+              "reasoning": "Hmmmmm......Let me think...."
+            },
+            2: {
+              "type": "text",
+              "text": "I have come to the ultimate conclusion... The humanity's existence is futile."
+            }
+          }
+
+        role:
+          type: string
+          enum: [user, assistant]
+        version_count:
+          type: integer
+          example: 3
+        version_index:
+          type: integer
+          example: 0
+        created_at:
+          type: string
+          format: date-time
+        message_config:
+          type: object
+          properties:
+            reasoning:
+              type: boolean
+              example: false
+            temperature:
+              type: number
+              example: 0.2
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+
+    Attachment:
+      type: object
+      properties:
+        attachment_id:
+          type: string
+          example: 3c5d69d7-b9b3-4487-85e5-766526d3b2b1
+        filename:
+          type: string
+          example: report.pdf
+        media_type:
+          type: string
+          enum: [image/jpeg, image/png, image/gif, image/webp, document]
+          example: document
+        status:
+          type: string
+          enum: [queued, processing, ready, failed]
+          example: processing
+        created_at:
+          type: string
+          format: date-time
+        owner_id:
+          type: string
+          example: first.last@dish.com
+        vault_mode:
+          type: boolean
+          example: false
+
+    Pagination:
+      type: object
+      properties:
+        docs:
+          type: array
+          items:
+            type: object
+        totalDocs:
+          type: integer
+          description: Total number of documents
+          example: 50
+        limit:
+          type: integer
+          description: Number of documents per page
+          example: 50
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 3
+        hasNextPage:
+          type: boolean
+          description: Whether there is a next page
+          example: true
+        nextPage:
+          type: integer
+          nullable: true
+          description: Next page number if available
+          example: 2
+        hasPrevPage:
+          type: boolean
+          description: Whether there is a previous page
+          example: false
+        prevPage:
+          type: integer
+          nullable: true
+          description: Previous page number if available
+          example: null
+
+    ReleaseLog:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          example: "2025-08-08"
+        title:
+          type: string
+          example: "Version 2.0: New features coming"
+        changes:
+          type: array
+          items:
+            type: string
+          example:
+            - "Added support for reasoning mode."
+            - "Added support for image upload."
+
+    UsageInfo:
+      type: object
+      properties:
+        input_token:
+          type: integer
+          example: 1000
+        output_token:
+          type: integer
+          example: 100
+        cost:
+          type: number
+          example: 0.1
+
+security:
+  - userAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the service
+      security: []  # No authentication required
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy]
+                    example: healthy
+                  version:
+                    type: string
+                    example: 1.0.0
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2024-01-01T00:00:00Z"
+        '503':
+          description: Service is unhealthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [unhealthy]
+                    example: unhealthy
+                  message:
+                    type: string
+                    example: Database connection failed
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2024-01-01T00:00:00Z"
+
+  /releases:
+    get:
+      summary: Get paginated list of release logs (changelog)
+      description: Returns a paginated list of release logs for the application changelog page.
+      security: [] # No authentication required
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: A paginated list of release logs
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagination'
+                  - type: object
+                    properties:
+                      docs:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ReleaseLog'
+
+  /releases/latest:
+    get:
+      summary: Get the latest release log
+      description: Returns the single most recent release log.
+      security: [] # No authentication required
+      responses:
+        '200':
+          description: The latest release log
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReleaseLog'
+        '404':
+          description: No release logs found
+
+  /whoami:
+    get:
+      summary: Get current user email and name.
+      responses:
+        '200':
+          description: User email and name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: first.last@dish.com
+                  first_name:
+                    type: string
+                    example: First
+                  last_name:
+                    type: string
+                    example: Last
+  /chats:
+    post:
+      summary: Create new chat session
+      responses:
+        '200':
+          description: Chat session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chat'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: object
+                    properties:
+                      error:
+                        type: string
+                        enum: [CHAT_LIMIT_EXCEEDED]
+                      message:
+                        type: string
+                        example: "Chat session limit reached. You can have up to 200 chats. Please delete some existing chats to create new ones."
+        '401':
+          description: Unauthorized
+
+    get:
+      summary: List chat sessions
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 50
+      - name: search
+        in: query
+        schema:
+          type: string
+          default: ""
+
+      responses:
+        '200':
+          description: |
+            List of chat sessions, paginated to pagination parameter.
+            If search query is present, return search result.
+            Results are sorted by favorite status and then creation time.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagination'
+                - type: object
+                  properties:
+                    docs:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Chat'
+                    active_chat_id:
+                      type: string
+                      example: e4adfbe1-42d3-4a34-9b3d-fb7d0d049987
+        '401':
+          description: Unauthorized
+
+  /chats/{chatId}:
+    get:
+      summary: Get the active chat history of a specific chat session.
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chat history
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Chat'
+                  - type: object
+                    properties:
+                      messages:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Message'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found
+
+    put:
+      summary: Update chat session
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                favorite:
+                  type: boolean
+                active:
+                  type: boolean
+      responses:
+        '200':
+          description: Chat session updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chat_id:
+                    type: string
+                  title:
+                    type: string
+                  favorite:
+                    type: boolean
+                  updated_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: Invalid input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found
+
+    delete:
+      summary: Delete chat session
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chat session deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chat_id:
+                    type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found
+  /chats/{chatId}/messages:
+
+    post:
+      summary: Send new message
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message_config:
+                  type: object
+                  properties:
+                    reasoning:
+                      type: boolean
+                      default: false
+                content:
+                  type: string
+                attachments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      attachment_id:
+                        type: string
+      responses:
+        '200':
+          description: |
+            Streaming response with Server-Sent Events (SSE).
+
+            ### Event types:
+            Each server-sent event includes a named event type and associated JSON data.
+
+            Each event will use an SSE event name (e.g. `event: message_stop`), and include the matching event type in its data.
+
+            Event stream uses the following event flow:
+
+            1. `message_start`: contains message metadata object with an empty content array.
+            2. A series of content blocks, each of which have a `content_block_start`, one or more `content_block_delta` events, and a `content_block_stop` event.
+              Each content block will have an index that corresponds to its index in the final message content array.
+            3. One or more `message_delta` events, indicating top-level changes to the final message metadata object.
+            4. A final `message_stop` event.
+
+            Event streams may also include any number of `ping` events.
+
+            ### Delta:
+            Each `content_block_delta` event contains a delta of a type that updates the content block at a given index.
+
+            Possible Delta types:
+            1. `text_delta`: A `text` content block delta for LLM response message update to the user.
+            2. `reasoning_delta`: A `reasoning` content block delta for reasoning models' reasoning update.
+            3. `tool_use_delta`: A `tool_use` content block delta for tool use message update.
+
+            ### Error handling:
+            In the case an unexpected error happened during message streaming, a `message_delta` event
+            with delta `{"stop_reason": "error_or_unexpected_end", "error_msg": "optional error message"}`
+            will be emitted immediately, followed by a `message_stop` event.
+
+            ### Future compatibility:
+            In future development we may add more content block types for new LLM functionalities.
+            Codes receiving the streaming response should maintain flexibility in handling more content block types.
+
+            Example stream for text only response:
+            ```
+            event: message_start
+            data: {"type": "message_start", "message": {"input_message_id": "e9b8caa2-ad14-42c4-bb47-47c16bb7bae4", "response_message_id": "01d425bf-80bc-4201-b573-8fe968d40583", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+            event: content_block_start
+            data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Hello"}}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
+
+            event: content_block_stop
+            data: {"type": "content_block_stop", "index": 0}
+
+            event: message_delta
+            data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": "Greeting between user and AI assistant."}}
+
+            event: message_stop
+            data: {"type": "message_stop"}
+            ```
+
+            Example stream for reasoning model output response:
+            ```
+            event: message_start
+            data: {"type": "message_start", "message": {"input_message_id": "e9b8caa2-ad14-42c4-bb47-47c16bb7bae4", "response_message_id": "01d425bf-80bc-4201-b573-8fe968d40583", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_start
+            data: {"type": "content_block_start", "index": 0, "content_block": {"type": "reasoning", "reasoning": ""}}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "reasoning_delta", "reasoning": "This"}}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "reasoning_delta", "reasoning": " is"}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "reasoning_delta", "reasoning": " reasoning."}
+
+            event: content_block_stop
+            data: {"type": "content_block_stop", "index": 0}
+
+            event: content_block_start
+            data: {"type": "content_block_start", "index": 1, "content_block": {"type": "text", "text": ""}}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 1, "delta": {"type": "text_delta", "text": "Hello"}}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 1, "delta": {"type": "text_delta", "text": "!"}}
+
+            event: content_block_stop
+            data: {"type": "content_block_stop", "index": 1}
+
+            event: message_delta
+            data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": "Greeting between user and AI assistant."}}
+
+            event: message_stop
+            data: {"type": "message_stop"}
+            ```
+
+            Example stream of an unexpected error:
+            ```
+            event: message_start
+            data: {"type": "message_start", "message": {"input_message_id": "e9b8caa2-ad14-42c4-bb47-47c16bb7bae4", "response_message_id": "01d425bf-80bc-4201-b573-8fe968d40583", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+            event: content_block_start
+            data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Hello"}}
+
+            event: message_delta
+            data: {"type": "message_delta", "delta": {"stop_reason": "message_stop", "error_msg": "Chat is too long. Length limit exceeded."}}
+
+            event: message_stop
+            data: {"type": "message_stop"}
+            ```
+
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: Server-sent events stream
+                example: |
+                  event: message_start
+                  data: {"type": "message_start", "message": {"input_message_id": "e9b8caa2-ad14-42c4-bb47-47c16bb7bae4", "response_message_id": "01d425bf-80bc-4201-b573-8fe968d40583", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+                  event: content_block_start
+                  data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+                  event: ping
+                  data: {"type": "ping"}
+
+                  event: content_block_delta
+                  data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Hello"}}
+
+                  event: content_block_delta
+                  data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
+
+                  event: content_block_stop
+                  data: {"type": "content_block_stop", "index": 0}
+
+                  event: message_delta
+                  data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": "Greeting between user and AI assistant."}}
+
+                  event: message_stop
+                  data: {"type": "message_stop"}
+
+        '400':
+          description: Invalid input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session or attachment not found
+
+  /chats/{chatId}/messages/{messageId}:
+    get:
+      summary: Get the active version of a specific message
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Active message content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found or message not found in the active chat history
+
+  /chats/{chatId}/messages/{messageId}/versions:
+    get:
+      summary: Get message version details
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Message versions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message_id:
+                    type: string
+                  versions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        version_index:
+                          type: integer
+                        content:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                  total_versions:
+                    type: integer
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found or message not found in the active chat history
+    post:
+      summary: Add a new message version and change the active version to it
+      description: |
+        Add a new message version and change the active version to it.
+        Only user messages with no attachment can be edited
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+      responses:
+        '200':
+          description: |
+            Event stream uses the following event flow:
+
+            1. `message_start`: contains message metadata object with an empty content array.
+            2. A series of content blocks, each of which have a `content_block_start`, one or more `content_block_delta` events, and a `content_block_stop` event.
+              Each content block will have an index that corresponds to its index in the final message content array.
+            3. One or more `message_delta` events, indicating top-level changes to the final message metadata object.
+            4. A final `message_stop` event.
+
+            Event streams may also include any number of `ping` events.
+
+            ### Delta:
+            Each `content_block_delta` event contains a delta of a type that updates the content block at a given index.
+
+            Possible Delta types:
+            1. `text_delta`: A `text` content block delta for LLM response message update to the user.
+            2. `reasoning_delta`: A `reasoning` content block delta for reasoning models' reasoning update.
+            3. `tool_use_delta`: A `tool_use` content block delta for tool use message update.
+
+            ### Future compatibility:
+            In future development we may add more content block types for new LLM functionalities.
+            Codes receiving the streaming response should maintain flexibility in handling more content block types.
+
+            Example stream for text only response:
+            ```
+            event: message_start
+            data: {"type": "message_start", "message": {"input_message_id": "e9b8caa2-ad14-42c4-bb47-47c16bb7bae4", "response_message_id": "01d425bf-80bc-4201-b573-8fe968d40583", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+            event: content_block_start
+            data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Hello"}}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
+
+            event: content_block_stop
+            data: {"type": "content_block_stop", "index": 0}
+
+            event: message_delta
+            data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": "Greeting between user and AI assistant."}}
+
+            event: message_stop
+            data: {"type": "message_stop"}
+            ```
+
+            Example stream for reasoning model output response:
+            ```
+            event: message_start
+            data: {"type": "message_start", "message": {"input_message_id": "e9b8caa2-ad14-42c4-bb47-47c16bb7bae4", "response_message_id": "01d425bf-80bc-4201-b573-8fe968d40583", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_start
+            data: {"type": "content_block_start", "index": 0, "content_block": {"type": "reasoning", "reasoning": ""}}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "reasoning_delta", "reasoning": "This"}}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "reasoning_delta", "reasoning": " is"}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "reasoning_delta", "reasoning": " reasoning."}
+
+            event: content_block_stop
+            data: {"type": "content_block_stop", "index": 0}
+
+            event: content_block_start
+            data: {"type": "content_block_start", "index": 1, "content_block": {"type": "text", "text": ""}}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 1, "delta": {"type": "text_delta", "text": "Hello"}}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 1, "delta": {"type": "text_delta", "text": "!"}}
+
+            event: content_block_stop
+            data: {"type": "content_block_stop", "index": 1}
+
+            event: message_delta
+            data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": "Greeting between user and AI assistant."}}
+
+            event: message_stop
+            data: {"type": "message_stop"}
+            ```
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: Server-sent events stream
+                example: |
+                  event: message_start
+                  data: {"type": "message_start", "message": {"input_message_id": "e9b8caa2-ad14-42c4-bb47-47c16bb7bae4", "response_message_id": "01d425bf-80bc-4201-b573-8fe968d40583", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null}}
+
+                  event: content_block_start
+                  data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+                  event: ping
+                  data: {"type": "ping"}
+
+                  event: content_block_delta
+                  data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Hello"}}
+
+                  event: content_block_delta
+                  data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
+
+                  event: content_block_stop
+                  data: {"type": "content_block_stop", "index": 0}
+
+                  event: message_delta
+                  data: {"type": "message_delta", "delta": {"stop_reason": "end_turn"}}
+
+                  event: message_stop
+                  data: {"type": "message_stop"}
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    enum: [MESSAGE_VERSION_LIMIT_EXCEEDED, DUPLICATE_VERSION, NOT_ALLOWED]
+                  message:
+                    type: string
+                    example: "Message version limit reached. You can only have up to 10 message versions."
+
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found or message not found in the active chat history
+
+    put:
+      summary: Change the active version of a message
+      description: |
+        Change the active version of a message and the branched chat history following it.
+        The updated message and the full chat history branch is also returned.
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                version_index:
+                  type: integer
+      responses:
+        '200':
+          description: The new active version of the message and the branched chat history following it.
+          content:
+            application/json:
+                schema:
+                  type: object
+                  properties:
+                    active_message:
+                      $ref: '#/components/schemas/Message'
+                    branched_history:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Message'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found or message not found in the active chat history
+
+  /chats/{chatId}/token_usage:
+    get:
+      summary: Get the token usage status of the chat `chatID`
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Token usage information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageInfo'
+
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found
+
+  /attachments:
+    post:
+      summary: Upload attachments
+      description: |
+        Upload a list of attachments.
+        Uploaded attachments may not be immediatly available and may requires processing.
+        Max total payload size 20MB
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                attachments:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+
+      responses:
+        '200':
+          description: Attachment uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  attachments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Attachment'
+        '400':
+          description: Invalid file format or missing filename
+        '401':
+          description: Unauthorized
+        '413':
+          description: Payload size exceeds limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Payload too large
+                      sizeLimitMB:
+                        type: integer
+                        example: 20
+
+    get:
+      summary: List of uploaded attachments for the user
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+
+      responses:
+        '200':
+          description: List of attachments
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagination'
+                - type: object
+                  properties:
+                    docs:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Attachment'
+        '401':
+          description: Unauthorized
+
+  /attachments/status:
+    post:
+      summary: Query attachments processing status
+      description: |
+        Get a dict containing requested attachments status.
+        Null is returned for unauthorized or non-existing attachment ids.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                attachment_ids:
+                  type: array
+                  items:
+                    type: string
+            example:
+              attachment_ids: ["id1", "id2", "id3"]
+      responses:
+        '200':
+          description: Attachments status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    additionalProperties:
+                      nullable: true
+                      allOf:
+                        - $ref: '#/components/schemas/Attachment'
+                        - type: object
+                          properties:
+                            progress:
+                              type: integer
+                              description: Present if the attachment is processing
+                              minimum: 0
+                              maximum: 100
+                              example: 77
+                            message:
+                              type: string
+                              example: processing
+                example:
+                  status:
+                    id1:
+                      attachment_id: id1
+                      filename: document.pdf
+                      media_type: document
+                      status: processing
+                      created_at: '2023-06-15T10:30:45.123Z'
+                      updated_at: '2023-06-15T10:31:00.456Z'
+                      vault_mode: false
+                      owner_id: first.last@dish.com
+                      progress: 65
+                      message: processing
+                    id2:
+                      attachment_id: id2
+                      filename: image.jpg
+                      media_type: image/jpeg
+                      status: ready
+                      created_at: '2023-06-15T09:20:15.789Z'
+                      updated_at: '2023-06-15T09:20:45.012Z'
+                      vault_mode: false
+                      owner_id: first.last@dish.com
+                      progress: 100
+                      message: ''
+                    id3: null
+
+  /attachments/{attachmentId}/status:
+    get:
+      summary: Get attachment processing status
+      description: Get percentage processing progress if the attachment is processing.
+      parameters:
+        - name: attachmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Attachment status
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Attachment'
+                  - type: object
+                    properties:
+                      progress:
+                        type: integer
+                        description: Present if the attachment is processing
+                        minimum: 0
+                        maximum: 100
+                        example: 77
+                      message:
+                        type: string
+                        example: processing
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Attachment not found
+
+  /attachments/{attachmentId}:
+    get:
+      summary: Download an attachment
+      parameters:
+        - name: attachmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Return the file for download. Return type depends on file type.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+                example: 'attachment; filename="example.pdf"'
+            Content-Length:
+              schema:
+                type: integer
+                example: 1234567
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Attachment not found
+
+  /vault/exists:
+    get:
+      summary: Check if user has vault mode set up
+      responses:
+        '200':
+          description: Successfully checked vault existance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+                    description: Whether vault mode is set up for the user
+
+  /vault/status:
+    get:
+      summary: Check if vault mode is currently enabled for user
+      responses:
+        '200':
+          description: Successfully checked vault mode status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                    description: Whether vault mode is currently enabled for the user
+
+  /vault/setup:
+    post:
+      summary: Set up vault mode with new password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Vault mode successfully set up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: Invalid password format
+
+  /vault/change-password:
+    post:
+      summary: Change vault mode password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  format: password
+                newPassword:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Password successfully changed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: Invalid password format
+        '401':
+          description: Incorrect old password
+
+  /vault/verify:
+    post:
+      summary: Verify password and enable vault mode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Password verified and vault mode enabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '401':
+          description: Incorrect password
+
+  /vault/disable:
+    post:
+      summary: Disable vault mode
+      responses:
+        '200':
+          description: Vault mode successfully disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /vault/reset-password:
+    post:
+      summary: |
+        Reset user's vault mode password. This will permanently remove all
+        current user chats and other resources protected by vault mode. Use with caution.
+      responses:
+        '200':
+          description: Vault mode password is successfully reset
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '404':
+          description: Vault mode password is not found for the user
+
+  /token_usage:
+    get:
+      summary: Get the token usage status of the requested time perioed
+
+      parameters:
+        - in: query
+          name: start_date
+          schema:
+            type: string
+            format: date
+            example: "2025-07-08"
+        - in: query
+          name: end_date
+          schema:
+            type: string
+            format: date
+            example: "2025-08-08"
+      responses:
+        '200':
+          description: Token usage information from `start_date` to `end_date`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageInfo'
+
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden

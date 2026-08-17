@@ -1,0 +1,8 @@
+snapshot_utc=2026-08-17T14:32:13Z
+source_repo=/home/jakebot/Jakes-agent
+source_branch=montjac
+source_head=55017a0d44e69598f88ae27498e1c04306c53c78
+source_status_sha256=33d3c7a46117262de1f667dea391c02067135caedf21a8c96b1b707523f987a2
+mirror_repo=askjake/JAMbot
+mirror_branch=sync/live-jakebot-20260817
+snapshot_type=sanitized-live-working-tree

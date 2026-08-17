@@ -1,0 +1,3 @@
+# Runs at 02:00 in the cron daemon's local timezone.
+# Mode is controlled only by /home/jakebot/Jakes-agent/config/nightly_rca.env.
+0 2 * * * /home/jakebot/Jakes-agent/apps/nightly_rca/run_nightly.sh >/dev/null 2>&1

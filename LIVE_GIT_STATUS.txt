@@ -1,0 +1,39 @@
+ M app/agent/agents/agentic_rag.py
+ M app/agent/agents/prompts/chat_system_prompt.txt
+ M app/agent/agents/tools/management.py
+ M app/agent/agents/tools/registry.py
+ M app/agent/no_progress_controller.py
+ M app/agent/service.py
+ M app/agent/utils.py
+ M app/agent_mode/child_conversation.py
+ M app/agent_mode/mcop_tools.py
+ M app/message/compression.py
+ M app/message/schemas.py
+ M app/message/service.py
+ M app/message/tool_message_compressor.py
+ M app/tools/web_browse.py
+ M app/tools/web_search.py
+ M apps/nightly_rca/__init__.py
+ M apps/nightly_rca/config.py
+ M apps/nightly_rca/env.example
+ M apps/nightly_rca/pipeline.py
+ M apps/nightly_rca/report.py
+ M apps/nightly_rca/requirements.txt
+ T stop-dishchat.sh
+?? app/agent/agents/.agentic_rag.py.swp
+?? app/agent/nightly_rca_visual_context.py
+?? app/usage_tracking/service.py.bak.20260727_132408
+?? apps/nightly_rca/t2i_atlas.py
+?? apps/nightly_rca/t2i_selective.py
+?? apps/nightly_rca/tests/test_t2i_atlas_v3.py
+?? apps/nightly_rca/tests/test_t2i_selective_v3.py
+?? dishchat-runtime.env
+?? script-backups/20260803T165558Z/restart-dishchat.sh
+?? script-backups/20260803T165558Z/stop-dishchat.sh
+?? status-dishchat.sh
+?? test.sh
+?? tests/test_image_mime_boundary_normalization_20260811.py
+?? tests/test_mcop_child_lifecycle_hardening_20260810.py
+?? tests/test_mcop_secondary_hardening_20260810.py
+?? tests/test_multimodal_context_preservation_20260811.py
+?? tests/test_nightly_rca_visual_context_20260813.py

@@ -1,0 +1,80 @@
+== config validation ==
+providers ollama ollama
+model_names deepseek-r1:32b deepseek-r1:32b llama3.2:latest
+ctx 65536
+== role resolver ==
+primary ollama deepseek-r1:32b <base-redacted> 65536 8000 False ('ollama', 'primary', '<model/base/ctx/output>')
+efficient ollama deepseek-r1:32b <base-redacted> 65536 4096 False ('ollama', 'efficient', '<model/base/ctx/output>')
+complex ollama deepseek-r1:70b <base-redacted> 65536 8000 False ('ollama', 'complex', '<model/base/ctx/output>')
+tool_worker ollama llama3.2:latest <base-redacted> 65536 4096 True ('ollama', 'tool_worker', '<model/base/ctx/output>')
+analyst ollama deepseek-r1:32b <base-redacted> 65536 8000 False ('ollama', 'analyst', '<model/base/ctx/output>')
+verifier ollama deepseek-r1:32b <base-redacted> 65536 4096 False ('ollama', 'verifier', '<model/base/ctx/output>')
+title ollama deepseek-r1:32b <base-redacted> 65536 512 False ('ollama', 'title', '<model/base/ctx/output>')
+summary ollama deepseek-r1:32b <base-redacted> 65536 4096 False ('ollama', 'summary', '<model/base/ctx/output>')
+== import checks ==
+ok app.config
+ok app.core.llm.chat_models
+ok app.core.llm.model_roles
+ok app.agent.methodology
+ok app.agent_mode.orchestration_packets
+ok app.agent_mode.orchestrator
+ok app.health.router
+ok app.tools.context_budget
+== ollama selftest direct ==
+{
+  "provider_config": {
+    "PLLM_PROVIDER": "ollama",
+    "ELLM_PROVIDER": "ollama",
+    "pure_ollama_chat_mode": true
+  },
+  "langchain_ollama_import_status": {
+    "module": "langchain_ollama",
+    "available": false
+  },
+  "prompt_identity_status": {
+    "status": "pass",
+    "identity_leaks": [],
+    "contract_present": true
+  },
+  "methodology_selector_status": {
+    "status": "pass",
+    "expected": [
+      "artifact_generation",
+      "backend_runtime_debug",
+      "dva_stb_firmware_workflow",
+      "epg_schedule_metadata_check",
+      "generic_engineering",
+      "qos_switchback_investigation",
+      "repo_code_review",
+      "web_internal_research"
+    ],
+    "observed": [
+      "artifact_generation",
+      "backend_runtime_debug",
+      "dva_stb_firmware_workflow",
+      "epg_schedule_metadata_check",
+      "generic_engineering",
+      "qos_switchback_investigation",
+      "repo_code_review",
+      "web_internal_research"
+    ]
+  },
+  "context_budget_status": {
+    "status": "pass",
+    "missing": [],
+    "budget": {
+      "model_role": "primary",
+      "provider": "ollama",
+      "model_name": "deepseek-r1:32b",
+      "configured_context": 65536,
+      "reserved_system_tool_output_budget": 22745,
+      "reserved_output_budget": 8000,
+      "reserved_system_budget": 6553,
+      "reserved_tool_schema_budget": 8192,
+      "history_budget": 42791,
+      "tool_result_budget": 2674
+    }
+  },
+  "aws_refresh_disabled_or_skipped_for_pure_ollama": true,
+  "backend_startup_status": "selftest_route_loaded"
+}

@@ -1,0 +1,306 @@
+--- a/app/config.py
++++ b/app/config.py
+@@ -101,10 +101,30 @@
+     # MODEL_ROLE_VERIFIER_MODEL, MODEL_ROLE_VERIFIER_PROVIDER,
+     # MODEL_ROLE_VERIFIER_CONTEXT_LENGTH, MODEL_ROLE_VERIFIER_MAX_OUTPUT_TOKENS.
+     OLLAMA_KEEP_ALIVE: str = "1h"
++    # Global maximum context target. Per-role defaults below keep runner startup
++    # reliable on mixed GPU/CPU hosts while still allowing large-context roles
++    # when explicitly configured.
+     OLLAMA_CTX_LEN: int = 65_536
++    OLLAMA_PRIMARY_CTX_LEN: Optional[int] = None
++    OLLAMA_EFFICIENT_CTX_LEN: Optional[int] = 32_768
++    OLLAMA_COMPLEX_CTX_LEN: Optional[int] = 32_768
++    OLLAMA_TOOL_WORKER_CTX_LEN: Optional[int] = 32_768
++    OLLAMA_ANALYST_CTX_LEN: Optional[int] = 32_768
++    OLLAMA_VERIFIER_CTX_LEN: Optional[int] = 16_384
++    OLLAMA_TITLE_CTX_LEN: Optional[int] = 8_192
++    OLLAMA_SUMMARY_CTX_LEN: Optional[int] = 16_384
+     OLLAMA_MAX_OUTPUT_TOKENS: int = 8_192
+     OLLAMA_TEMPERATURE: Optional[float] = None
+     OLLAMA_REASONING: Optional[bool] = None
++    # httpx client timeout used by langchain-ollama. This does not replace
++    # Ollama daemon load-timeout tuning, but prevents premature client aborts
++    # during first/cold model loads.
++    OLLAMA_CLIENT_TIMEOUT: float = 600.0
++    # POST /health/ollama-agent-prewarm uses these roles to load model runners
++    # before the first user SSE request. Keep this short to avoid loading every
++    # role on small hosts.
++    OLLAMA_PREWARM_ROLES: str = "tool_worker,primary"
++    OLLAMA_PREWARM_MAX_OUTPUT_TOKENS: int = 1
+     MODEL_ROLES_CONFIG: dict = Field(default_factory=dict)
+ 
+     # Optional aliases preserve existing deployment env names while active code
+--- a/app/core/llm/chat_models.py
++++ b/app/core/llm/chat_models.py
+@@ -152,11 +152,15 @@
+         from langchain_ollama import ChatOllama
+     except ImportError as exc:
+         raise ImportError("Ollama provider selected but langchain-ollama is not installed. Run: pip install -U langchain-ollama") from exc
++    client_timeout = float(getattr(settings, "OLLAMA_CLIENT_TIMEOUT", 600.0) or 600.0)
+     kwargs: dict[str, Any] = {
+         "model": role_config.model_name,
+         "num_predict": role_config.max_output_tokens,
+         "validate_model_on_init": False,
+         "disable_streaming": False,
++        "client_kwargs": {"timeout": client_timeout},
++        "async_client_kwargs": {"timeout": client_timeout},
++        "sync_client_kwargs": {"timeout": client_timeout},
+     }
+     if role_config.context_length:
+         kwargs["num_ctx"] = role_config.context_length
+@@ -164,16 +168,18 @@
+         kwargs["base_url"] = role_config.base_url
+     if role_config.temperature is not None:
+         kwargs["temperature"] = role_config.temperature
++    if role_config.keep_alive:
++        kwargs["keep_alive"] = role_config.keep_alive
+     logger.info(
+-        "Creating Ollama model role=%s model=%r ctx=%s output=%s tool_capable=%s",
++        "Creating Ollama model role=%s model=%r ctx=%s output=%s tool_capable=%s keep_alive=%s client_timeout=%ss",
+         role_config.role,
+         role_config.model_name,
+         role_config.context_length,
+         role_config.max_output_tokens,
+         role_config.tool_capable,
++        role_config.keep_alive,
++        client_timeout,
+     )
+-    if role_config.keep_alive:
+-        kwargs["keep_alive"] = role_config.keep_alive
+     return ChatOllama(**kwargs)
+ 
+ 
+--- a/app/core/llm/model_roles.py
++++ b/app/core/llm/model_roles.py
+@@ -105,8 +105,16 @@
+     return value if isinstance(value, Mapping) else {}
+ 
+ 
+-def _ollama_context(settings: Settings, legacy_ctx: int | None) -> int | None:
+-    return int(getattr(settings, "OLLAMA_CTX_LEN", None) or legacy_ctx or 32768)
++def _ollama_context(settings: Settings, legacy_ctx: int | None, role: str = "primary") -> int | None:
++    """Resolve effective Ollama context for a role.
++
++    Large contexts improve long agent/coding tasks but also increase runner
++    startup memory. Role-specific defaults keep tool and verifier calls from
++    accidentally paying the full 64k+ load cost unless explicitly requested.
++    """
++    role_attr = f"OLLAMA_{role.upper()}_CTX_LEN"
++    role_value = getattr(settings, role_attr, None)
++    return int(role_value or getattr(settings, "OLLAMA_CTX_LEN", None) or legacy_ctx or 32768)
+ 
+ 
+ def _default_role_values(settings: Settings, role: str) -> dict[str, Any]:
+@@ -114,7 +122,7 @@
+         "provider": settings.PLLM_PROVIDER,
+         "model_name": settings.PLLM_MODEL,
+         "base_url": settings.PLLM_API_BASE,
+-        "context_length": _ollama_context(settings, settings.PLLM_CTX_LEN) if settings.PLLM_PROVIDER == "ollama" else settings.PLLM_CTX_LEN,
++        "context_length": _ollama_context(settings, settings.PLLM_CTX_LEN, "primary") if settings.PLLM_PROVIDER == "ollama" else settings.PLLM_CTX_LEN,
+         "max_output_tokens": settings.MAX_OUTPUT_COUNT,
+         "temperature": settings.DEFAULT_TEMP,
+         "reasoning": settings.DEFAULT_REASONING,
+@@ -125,7 +133,7 @@
+         "provider": settings.ELLM_PROVIDER or settings.PLLM_PROVIDER,
+         "model_name": settings.ELLM_MODEL or settings.PLLM_MODEL,
+         "base_url": settings.ELLM_API_BASE or settings.PLLM_API_BASE,
+-        "context_length": _ollama_context(settings, settings.ELLM_CTX_LEN or settings.PLLM_CTX_LEN) if (settings.ELLM_PROVIDER or settings.PLLM_PROVIDER) == "ollama" else (settings.ELLM_CTX_LEN or settings.PLLM_CTX_LEN),
++        "context_length": _ollama_context(settings, settings.ELLM_CTX_LEN or settings.PLLM_CTX_LEN, "efficient") if (settings.ELLM_PROVIDER or settings.PLLM_PROVIDER) == "ollama" else (settings.ELLM_CTX_LEN or settings.PLLM_CTX_LEN),
+         "max_output_tokens": 4096,
+         "temperature": settings.DEFAULT_TEMP,
+         "reasoning": False,
+@@ -135,24 +143,53 @@
+     complex_role = {
+         **primary,
+         "model_name": getattr(settings, "COMPLEX_MODEL", None) or getattr(settings, "OPUS_MODEL", None) or settings.PLLM_MODEL,
++        "context_length": _ollama_context(settings, settings.PLLM_CTX_LEN, "complex") if settings.PLLM_PROVIDER == "ollama" else primary["context_length"],
+         "tool_capable": False if settings.PLLM_PROVIDER == "ollama" else primary["tool_capable"],
+     }
+     tool_worker = {
+         **primary,
+         "model_name": getattr(settings, "PLLM_TOOL_MODEL", None) or settings.PLLM_MODEL,
++        "context_length": _ollama_context(settings, settings.PLLM_CTX_LEN, "tool_worker") if settings.PLLM_PROVIDER == "ollama" else primary["context_length"],
+         "max_output_tokens": min(settings.MAX_OUTPUT_COUNT, 4096),
+         "reasoning": False,
+         "tool_capable": True,
+     }
++    analyst = {
++        **primary,
++        "context_length": _ollama_context(settings, settings.PLLM_CTX_LEN, "analyst") if settings.PLLM_PROVIDER == "ollama" else primary["context_length"],
++        "max_output_tokens": min(settings.MAX_OUTPUT_COUNT, 8192),
++    }
++    verifier = {
++        **primary,
++        "context_length": _ollama_context(settings, settings.PLLM_CTX_LEN, "verifier") if settings.PLLM_PROVIDER == "ollama" else primary["context_length"],
++        "max_output_tokens": 4096,
++        "temperature": 0.0,
++        "reasoning": False,
++        "tool_capable": False,
++    }
++    title = {
++        **efficient,
++        "context_length": _ollama_context(settings, settings.ELLM_CTX_LEN or settings.PLLM_CTX_LEN, "title") if (settings.ELLM_PROVIDER or settings.PLLM_PROVIDER) == "ollama" else efficient["context_length"],
++        "max_output_tokens": 512,
++        "temperature": 0.2,
++        "reasoning": False,
++    }
++    summary = {
++        **efficient,
++        "context_length": _ollama_context(settings, settings.ELLM_CTX_LEN or settings.PLLM_CTX_LEN, "summary") if (settings.ELLM_PROVIDER or settings.PLLM_PROVIDER) == "ollama" else efficient["context_length"],
++        "max_output_tokens": 4096,
++        "temperature": 0.3,
++        "reasoning": False,
++    }
+     mapping = {
+         "primary": primary,
+         "efficient": efficient,
+         "complex": complex_role,
+         "tool_worker": tool_worker,
+-        "analyst": {**primary, "max_output_tokens": min(settings.MAX_OUTPUT_COUNT, 8192)},
+-        "verifier": {**primary, "max_output_tokens": 4096, "temperature": 0.0, "reasoning": False, "tool_capable": False},
+-        "title": {**efficient, "max_output_tokens": 512, "temperature": 0.2, "reasoning": False},
+-        "summary": {**efficient, "max_output_tokens": 4096, "temperature": 0.3, "reasoning": False},
++        "analyst": analyst,
++        "verifier": verifier,
++        "title": title,
++        "summary": summary,
+     }
+     return mapping[role]
+ 
+--- a/app/health/router.py
++++ b/app/health/router.py
+@@ -6,7 +6,7 @@
+ from pathlib import Path
+ from typing import Any
+ 
+-from fastapi import APIRouter
++from fastapi import APIRouter, Query
+ 
+ from app.config import get_settings
+ from app.core.llm.model_roles import pure_ollama_chat_mode, resolve_all_model_roles
+@@ -59,6 +59,75 @@
+         return {"reachable": False, "models": [], "running_models": [], "error": str(exc)}
+ 
+ 
++
++async def _ollama_prewarm_roles(role_names: list[str]) -> dict[str, Any]:
++    """Warm selected Ollama role models with a tiny request.
++
++    This deliberately does not pull missing models. It only calls /api/chat for
++    models already present in /api/tags so cold runner startup happens before a
++    user-facing SSE stream.
++    """
++    try:
++        import httpx
++    except Exception as exc:
++        return {"status": "fail", "error": f"httpx unavailable: {exc}", "results": []}
++
++    settings = get_settings()
++    roles = resolve_all_model_roles(settings=settings)
++    base_url = (settings.PLLM_API_BASE or settings.ELLM_API_BASE or "http://127.0.0.1:11434").rstrip("/")
++    timeout = float(getattr(settings, "OLLAMA_CLIENT_TIMEOUT", 600.0) or 600.0)
++    keep_alive_default = getattr(settings, "OLLAMA_KEEP_ALIVE", "1h")
++    max_predict = int(getattr(settings, "OLLAMA_PREWARM_MAX_OUTPUT_TOKENS", 1) or 1)
++    reachability = await _ollama_reachability(base_url)
++    local_models = set(reachability.get("models", []))
++    results: list[dict[str, Any]] = []
++
++    async with httpx.AsyncClient(timeout=timeout) as client:
++        for role_name in role_names:
++            role_name = role_name.strip()
++            if not role_name:
++                continue
++            cfg = roles.get(role_name)
++            if not cfg:
++                results.append({"role": role_name, "status": "fail", "error": "unknown role"})
++                continue
++            if cfg.provider != "ollama":
++                results.append({"role": role_name, "status": "skipped", "reason": f"provider={cfg.provider}"})
++                continue
++            if cfg.model_name not in local_models:
++                results.append({"role": role_name, "model": cfg.model_name, "status": "fail", "error": "model not present in /api/tags; prewarm will not pull"})
++                continue
++            payload = {
++                "model": cfg.model_name,
++                "messages": [{"role": "user", "content": "Reply with OK."}],
++                "stream": False,
++                "keep_alive": cfg.keep_alive or keep_alive_default,
++                "options": {
++                    "num_ctx": cfg.context_length,
++                    "num_predict": max_predict,
++                    "temperature": 0,
++                },
++            }
++            try:
++                response = await client.post(base_url + "/api/chat", json=payload)
++                data = response.json() if response.headers.get("content-type", "").startswith("application/json") else {"raw": response.text[:500]}
++                results.append({
++                    "role": role_name,
++                    "model": cfg.model_name,
++                    "context_length": cfg.context_length,
++                    "keep_alive": cfg.keep_alive or keep_alive_default,
++                    "status_code": response.status_code,
++                    "status": "pass" if response.status_code < 400 else "fail",
++                    "load_duration_ms": int(data.get("load_duration", 0) / 1_000_000) if isinstance(data, dict) else None,
++                    "total_duration_ms": int(data.get("total_duration", 0) / 1_000_000) if isinstance(data, dict) else None,
++                    "done_reason": data.get("done_reason") if isinstance(data, dict) else None,
++                    "error": data.get("error") if isinstance(data, dict) else None,
++                })
++            except Exception as exc:
++                results.append({"role": role_name, "model": cfg.model_name, "status": "fail", "error": str(exc)})
++    return {"status": "pass" if all(r.get("status") in {"pass", "skipped"} for r in results) else "fail", "base_url": base_url, "results": results}
++
++
+ def _import_status(module_name: str) -> dict[str, Any]:
+     return {"module": module_name, "available": importlib.util.find_spec(module_name) is not None}
+ 
+@@ -80,6 +149,16 @@
+         return {"status": "unverified", "error": f"{label}: {exc}"}
+ 
+ 
++
++@router.post("/health/ollama-agent-prewarm", tags=["health"])
++async def ollama_agent_prewarm(roles: str = Query(default="", description="Comma-separated model roles to prewarm; defaults to OLLAMA_PREWARM_ROLES")) -> dict[str, Any]:
++    settings = get_settings()
++    role_text = roles or getattr(settings, "OLLAMA_PREWARM_ROLES", "tool_worker,primary")
++    role_names = [item.strip() for item in role_text.split(",") if item.strip()]
++    result = await _ollama_prewarm_roles(role_names)
++    return {"requested_roles": role_names, **result}
++
++
+ @router.get("/health/ollama-agent-selftest", tags=["health"])
+ async def ollama_agent_selftest() -> dict[str, Any]:
+     settings = get_settings()
+@@ -112,6 +191,11 @@
+     pure_ollama = pure_ollama_chat_mode(settings)
+     return {
+         "provider_config": {"PLLM_PROVIDER": settings.PLLM_PROVIDER, "ELLM_PROVIDER": settings.ELLM_PROVIDER, "pure_ollama_chat_mode": pure_ollama},
++        "ollama_runtime_config": {
++            "keep_alive": getattr(settings, "OLLAMA_KEEP_ALIVE", None),
++            "client_timeout_seconds": getattr(settings, "OLLAMA_CLIENT_TIMEOUT", None),
++            "prewarm_roles": getattr(settings, "OLLAMA_PREWARM_ROLES", None),
++        },
+         "ollama_base_url_reachability": ollama_status,
+         "available_local_models": ollama_status.get("models", []),
+         "running_ollama_models": ollama_status.get("running_models", []),
+--- a/tests/test_ollama_model_roles.py
++++ b/tests/test_ollama_model_roles.py
+@@ -12,11 +12,16 @@
+     for role, cfg in roles.items():
+         assert cfg.provider == "ollama"
+         assert cfg.model_name
+-        assert cfg.context_length >= 65536
++        assert cfg.context_length >= 8192
+         assert cfg.max_output_tokens > 0
+         assert cfg.keep_alive == "1h"
+         assert cfg.cache_key[:2] == ("ollama", role)
+         assert cfg.cache_key[-1] == "1h"
++    assert roles["primary"].context_length == 65536
++    assert roles["tool_worker"].context_length == 32768
++    assert roles["complex"].context_length == 32768
++    assert roles["verifier"].context_length == 16384
++    assert roles["title"].context_length == 8192
+     assert roles["tool_worker"].tool_capable is True
+     assert roles["verifier"].role == "verifier"
+ 

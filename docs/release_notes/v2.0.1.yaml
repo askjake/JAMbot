@@ -1,0 +1,6 @@
+title: "Claude Sonnet 4.5 is live!"
+date: "2025-09-30"
+changes:
+  - "Chat model is updated to Anthropic's newest release of Claude Sonnet. It offers a new cutting edge performance on coding, analysis, math, and reasoning capability. Read more on https://www.anthropic.com/news/claude-sonnet-4-5"
+  - "Improved the system prompt for safer and more professional responses."
+  - "Bug fix: resolved a bug where sometimes chatbot generates titles that are too long."

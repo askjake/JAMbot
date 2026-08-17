@@ -1,0 +1,209 @@
+
+================================================================================
+VIEWERSHIP MCP INTEGRATION - IMPLEMENTATION CHECKLIST
+================================================================================
+Date: 2026-02-16
+Lambda Function: viewership-mcp
+Region: us-west-2
+Status: Lambda has runtime error (exec format error) - needs Ilhyoung's fix
+
+================================================================================
+CURRENT STATE
+================================================================================
+
+✅ Lambda function exists and is active
+✅ Lambda Function URL is public (AuthType: NONE)
+✅ Resource policy allows public invocation
+❌ Lambda has runtime error: "fork/exec /opt/extensions/lambda-adapter: exec format error"
+⚠️  Config.py has WRONG Lambda URL (old URL from previous deployment)
+✅ ENABLE_VIEWERSHIP_MCP flag exists in config.py
+⚠️  Need to verify flag is set to True
+
+================================================================================
+REQUIRED CHANGES
+================================================================================
+
+FILE 1: app/config.py
+Location: Line ~280 (VIEWERSHIP_MEASUREMENT_MCP_CONFIG section)
+
+CHANGE:
+-------
+OLD URL: https://tnk5wowj7czxafk5c4w4ztznwa0fzcyy.lambda-url.us-west-2.on.aws/mcp
+NEW URL: https://cy4h556zxlhqyjju5psohdr6ou0scrxj.lambda-url.us-west-2.on.aws/mcp
+
+VERIFY:
+-------
+ENABLE_VIEWERSHIP_MCP: bool = True  # Should be True
+
+FILE 2: app/agent/agents/tools/registry.py
+Location: Lines 45-49
+Status: ✅ ALREADY CORRECT - No changes needed
+
+Current code:
+-------------
+if getattr(settings, "ENABLE_VIEWERSHIP_MCP", False):
+    _ASYNC_TOOL_FACTORIES["viewership_measurement"] = lambda: get_mcp_tools(
+        settings.VIEWERSHIP_MEASUREMENT_MCP_CONFIG
+    )
+
+This is correct and will automatically load the tools when:
+1. ENABLE_VIEWERSHIP_MCP is True
+2. VIEWERSHIP_MEASUREMENT_MCP_CONFIG has correct URL
+3. Lambda is working (no runtime errors)
+
+================================================================================
+IMPLEMENTATION STEPS
+================================================================================
+
+STEP 1: BACKUP CURRENT CONFIG
+------------------------------
+cd ~/dish-chat
+cp app/config.py app/config.py.backup-$(date +%Y%m%d-%H%M%S)
+
+STEP 2: UPDATE CONFIG.PY
+-------------------------
+# Edit app/config.py
+# Find VIEWERSHIP_MEASUREMENT_MCP_CONFIG (around line 280)
+# Update the URL to: https://cy4h556zxlhqyjju5psohdr6ou0scrxj.lambda-url.us-west-2.on.aws/mcp
+
+# Also verify this line exists and is True:
+ENABLE_VIEWERSHIP_MCP: bool = True
+
+STEP 3: VERIFY CHANGES (DO NOT RESTART YET)
+--------------------------------------------
+cd ~/dish-chat
+python integration_files/02_verify_integration.py
+
+Expected output:
+- ENABLE_VIEWERSHIP_MCP: True ✅
+- Configuration exists ✅
+- URL matches new Lambda URL ✅
+- Lambda endpoint test: Will show runtime error (Ilhyoung needs to fix)
+- Registry integration: viewership_measurement registered ✅
+
+STEP 4: WAIT FOR ILHYOUNG TO FIX LAMBDA
+----------------------------------------
+The Lambda currently has this error:
+"fork/exec /opt/extensions/lambda-adapter: exec format error"
+
+This is an architecture mismatch in the Lambda Docker image.
+Ilhyoung needs to rebuild the Lambda with the correct architecture.
+
+DO NOT RESTART BACKEND until Lambda is fixed.
+
+STEP 5: TEST LAMBDA DIRECTLY (After Ilhyoung fixes it)
+-------------------------------------------------------
+curl -X POST https://cy4h556zxlhqyjju5psohdr6ou0scrxj.lambda-url.us-west-2.on.aws/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"tools/list","id":1}'
+
+Expected response:
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "tools": [
+      {
+        "name": "query_viewership",
+        "description": "Query viewership data...",
+        ...
+      }
+    ]
+  },
+  "id": 1
+}
+
+STEP 6: RESTART BACKEND
+-----------------------
+# After Lambda is working, restart the backend
+cd ~/dish-chat
+# Stop current backend (Ctrl+C or kill process)
+# Start backend
+python -m app.main
+
+# Check logs for:
+# "Loaded MCP tool set 'viewership_measurement' with X tools"
+
+STEP 7: TEST IN DISH-CHAT
+--------------------------
+Open http://10.79.85.35:3000/
+Ask: "What viewership tools are available?"
+Expected: Should list query_viewership tool
+
+Ask: "Query viewership for service 100 on 2026-02-15"
+Expected: Should return viewership data (or zeros if no data)
+
+================================================================================
+VERIFICATION CHECKLIST
+================================================================================
+
+PRE-IMPLEMENTATION:
+[ ] Backup created: app/config.py.backup-YYYYMMDD-HHMMSS
+[ ] Verification script runs: python integration_files/02_verify_integration.py
+[ ] Current URL identified: tnk5wowj7czxafk5c4w4ztznwa0fzcyy (OLD)
+[ ] New URL identified: cy4h556zxlhqyjju5psohdr6ou0scrxj (NEW)
+
+POST-IMPLEMENTATION (Config Update):
+[ ] config.py updated with new URL
+[ ] ENABLE_VIEWERSHIP_MCP = True
+[ ] Verification script shows correct URL
+[ ] No syntax errors in config.py
+
+POST-IMPLEMENTATION (Lambda Fix by Ilhyoung):
+[ ] Lambda responds to tools/list without errors
+[ ] Lambda returns valid JSON-RPC responses
+[ ] Lambda can execute query_viewership
+
+POST-IMPLEMENTATION (Backend Restart):
+[ ] Backend starts without errors
+[ ] Logs show "Loaded MCP tool set 'viewership_measurement'"
+[ ] No MCP initialization errors in logs
+
+POST-IMPLEMENTATION (End-to-End Test):
+[ ] Dish-Chat shows viewership tools available
+[ ] Can query viewership data
+[ ] Results are returned (even if zeros)
+[ ] No errors in backend logs
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+ISSUE: "Failed to initialise MCP tool set viewership_measurement"
+FIX: Check Lambda is accessible and responding correctly
+
+ISSUE: Lambda returns "exec format error"
+FIX: Ilhyoung needs to rebuild Lambda with correct architecture
+
+ISSUE: Tools not showing in Dish-Chat
+FIX: Verify ENABLE_VIEWERSHIP_MCP=True and backend was restarted
+
+ISSUE: "Connection refused" or timeout
+FIX: Check network connectivity to Lambda Function URL
+
+================================================================================
+ROLLBACK PROCEDURE
+================================================================================
+
+If something goes wrong:
+
+1. Restore backup:
+   cp app/config.py.backup-YYYYMMDD-HHMMSS app/config.py
+
+2. Restart backend
+
+3. Verify old configuration works
+
+================================================================================
+CONTACTS
+================================================================================
+
+Lambda Owner: Ilhyoung Kim (ilhyoung.kim@dish.com)
+Lambda Function: viewership-mcp
+Lambda Region: us-west-2
+Lambda ARN: arn:aws:lambda:us-west-2:233532778289:function:viewership-mcp
+
+Integration Owner: Jacob Montgomery (jacob.montgomery@dish.com)
+Backend: ~/dish-chat
+Frontend: http://10.79.85.35:3000/
+
+================================================================================

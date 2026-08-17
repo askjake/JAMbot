@@ -1,0 +1,84 @@
+# Token Efficiency Layer Configuration
+# ======================================
+
+token_efficiency:
+  # LLM context window size (tokens)
+  context_window: 128000
+  
+  # Reserved tokens for the model's response
+  target_response_tokens: 4000
+  
+  # Buffer to prevent overflow
+  safety_margin: 500
+
+  # --- Codebook Manager ---
+  codebook:
+    enabled: true
+    max_entries: 20
+    sigil_prefix: "Σ"
+    # Minimum times a phrase must appear before promotion to sigil
+    min_occurrences_to_promote: 3
+    # Minimum token length of phrase to be a candidate
+    min_phrase_tokens: 8
+    # Turns without use before a sigil is garbage-collected
+    expiry_turns: 10
+    # Matching mode: "exact" or "semantic" (semantic uses embeddings)
+    match_mode: "exact"
+
+  # --- Rolling Summarizer ---
+  summarizer:
+    enabled: true
+    # Number of recent turns kept verbatim (no compression)
+    tier1_verbatim_turns: 5
+    # Token budget for tier 2 (detailed summary)
+    tier2_budget_tokens: 1500
+    # Token budget for tier 3 (abstract summary)
+    tier3_budget_tokens: 500
+    # Model used for summarization (should be cheap/fast)
+    summarization_model: "claude-3-5-haiku-20241022"
+    # Alternative: "gpt-4o-mini"
+    # Entities to ALWAYS preserve in summaries (regex patterns)
+    preserve_patterns:
+      - 'R\d{10}'          # Receiver IDs
+      - '[A-Z]{2,}-\d+'    # JIRA tickets
+      - '\d+\.\d+\.\d+' # Version numbers
+      - '/[\w/]+\.\w+'    # File paths
+
+  # --- Prompt Compressor ---
+  compressor:
+    enabled: true
+    # Target compression ratio (1.0 = no compression, 0.5 = keep 50%)
+    target_ratio: 0.65
+    # Method: "heuristic" (fast, rule-based) or "perplexity" (accurate, slow)
+    method: "heuristic"
+    # Patterns that must NEVER be modified by compression
+    protected_patterns:
+      - '```[\s\S]*?```'    # Code blocks
+      - 'R\d{10}'           # Receiver IDs
+      - '/[\w/]+\.\w+'     # File paths
+      - 'https?://\S+'      # URLs
+      - '[A-Z]{2,}[-_]\d+'  # Error/ticket codes
+      - '"[^"]*"'            # Quoted strings
+    # Words to always remove (low information)
+    stop_phrases:
+      - "I see"
+      - "Got it"
+      - "Sure thing"
+      - "That makes sense"
+      - "As I mentioned"
+      - "As we discussed"
+      - "I think that"
+      - "It seems like"
+      - "basically"
+      - "essentially"
+
+  # --- Metrics & Monitoring ---
+  metrics:
+    enabled: true
+    # Log compression stats every N turns
+    log_interval_turns: 5
+    # Warn if fidelity drops below this threshold
+    min_fidelity_threshold: 0.85
+    # Cost rate for savings calculation (USD per 1K tokens)
+    input_cost_per_1k: 0.003
+    output_cost_per_1k: 0.015

@@ -1,0 +1,1960 @@
+openapi: 3.0.0
+info:
+  title: Dish-Chat API
+  version: 1.0.0
+  description: API for Dish-Chat application
+
+tags:
+  - name: releases
+    description: Operations related to software releases
+
+servers:
+  - url: /api/v1
+
+components:
+  securitySchemes:
+    userAuth:
+      type: apiKey
+      in: header
+      name: X-Auth-Request-Email
+      description: |
+        User email obtained from OAuth2 proxy after Okta SSO authentication.
+        The authentication is handled by an oauth2-proxy server, and authenticated requests are forwarded with this header.
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+    Chat:
+      type: object
+      properties:
+        chat_id:
+          type: string
+          example: e4adfbe1-42d3-4a34-9b3d-fb7d0d049987
+        title:
+          type: string
+          example: New chat 1
+        created_at:
+          type: string
+          format: date-time
+        owner_id:
+          type: string
+          example: first.last@dish.com
+        last_message_at:
+          type: string
+          format: date-time
+        group_id:
+          type: string
+
+    Message:
+      type: object
+      required:
+        - message_id
+        - content
+        - role
+        - created_at
+      properties:
+        message_id:
+          type: string
+          example: 7c8f8037-e14e-494f-b175-c55b3fbc3ba2
+        content:
+          type: string
+          example: Hello!
+        role:
+          type: string
+          enum: [user, assistant]
+        version_count:
+          type: integer
+          example: 3
+        version_index:
+          type: integer
+          example: 0
+        created_at:
+          type: string
+          format: date-time
+        attachments:
+          type: array
+          items:
+            type: object
+            properties:
+              attachment_id:
+                type: string
+                example: 3c5d69d7-b9b3-4487-85e5-766526d3b2b1
+    
+    Attachment:
+      type: object  
+      properties:
+        attachment_id:
+          type: string
+          example: 3c5d69d7-b9b3-4487-85e5-766526d3b2b1
+        filename:
+          type: string
+          example: report.pdf
+        media_type:
+          type: string
+          enum: [image/jpeg, image/png, image/gif, image/webp, document]
+          example: document
+        status:
+          type: string
+          enum: [queued, processing, ready, failed]
+          example: processing
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Bookmark:
+      type: object
+      properties:
+        chat_id:
+          type: string
+          example: e4adfbe1-42d3-4a34-9b3d-fb7d0d049987
+        title:
+          type: string
+          example: New chat 1
+        created_at:
+          type: string
+          format: date-time
+    
+    Pagination:
+      type: object
+      properties:
+        docs:
+          type: array
+          items:
+            type: object
+        totalDocs:
+          type: integer
+          description: Total number of documents
+          example: 50
+        limit:
+          type: integer
+          description: Number of documents per page
+          example: 50
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 3
+        hasNextPage:
+          type: boolean
+          description: Whether there is a next page
+          example: true
+        nextPage:
+          type: integer
+          nullable: true
+          description: Next page number if available
+          example: 2
+        hasPrevPage:
+          type: boolean
+          description: Whether there is a previous page
+          example: false
+        prevPage:
+          type: integer
+          nullable: true
+          description: Previous page number if available
+          example: null
+
+
+    Workspace:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        owner_id:
+          type: string
+
+    WorkspaceMember:
+      type: object
+      properties:
+        workspace_id:
+          type: string
+        user_id:
+          type: string
+        role:
+          type: string
+          enum: [owner, admin, user]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SharedResource:
+      type: object
+      properties:
+        resource_id:
+          type: string
+        resource_type:
+          type: string
+          enum: [chat, document]
+        name:
+          type: string
+        shared_at:
+          type: string
+          format: date-time
+        owner_id:
+          type: string
+    ChatGroup:
+      type: object
+      required:
+        - group_id
+        - title
+        - owner_id
+      properties:
+        group_id: 
+          type: string
+          format: uuid
+          description: Unique identifier for the chat group
+          example: "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987"
+        title:
+          type: string
+          minLength: 1
+          maxLength: 40
+          description: Title of the chat group
+          example: "Work Projects"
+        owner_id:
+          type: string
+          format: email
+          description: Email of the group owner
+          example: "first.last@dish.com"
+    Release:
+      type: object
+      required:
+        - release_id
+        - title
+        - date
+        - changes
+        - created_at
+        - updated_at
+      properties:
+        release_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the release
+          example: "123e4567-e89b-12d3-a456-426614174000"
+          readOnly: true
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Title of the release
+          example: "Version 2.1.0 - Major Feature Update"
+        date:
+          type: string
+          format: date-time
+          description: Release date in ISO 8601 format
+          example: "2023-12-25T10:00:00Z"
+        changes:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 255
+          minItems: 1
+          maxItems: 50
+          description: List of changes in this release
+          example:
+            - "Added new user authentication system"
+            - "Fixed critical security vulnerability in payment processing"
+            - "Improved application performance by 30%"
+        created_at:
+          type: string
+          format: date-time
+          description: When the release was created in the system
+          example: "2023-12-20T09:00:00Z"
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          description: When the release was last updated
+          example: "2023-12-22T14:30:00Z"
+          readOnly: true
+
+security:
+  - userAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the service
+      security: []  # No authentication required
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy]
+                    example: healthy
+                  version:
+                    type: string
+                    example: 1.0.0
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2024-01-01T00:00:00Z"
+        '503':
+          description: Service is unhealthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [unhealthy]
+                    example: unhealthy
+                  message:
+                    type: string
+                    example: Database connection failed
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2024-01-01T00:00:00Z"
+  /chats:
+    post:
+      summary: Create new chat session
+      responses:
+        '200':
+          description: Chat session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chat'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    enum: [CHAT_LIMIT_EXCEEDED]
+                  message:
+                    type: string
+                    example: "Chat session limit reached. You can have up to 200 chats. Please delete some existing chats to create new ones."
+        '401':
+          description: Unauthorized
+
+    get:
+      summary: List chat sessions
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 50
+      responses:
+        '200':
+          description: List of chat sessions
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagination'
+                - type: object
+                  properties:
+                    docs:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Chat'
+        '401':
+          description: Unauthorized
+
+  /chats/{chatId}:
+    get:
+      summary: Get the active chat history of a specific chat session.
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chat history
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Chat'
+                  - type: object
+                    properties:
+                      messages:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Message'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found
+
+    put:
+      summary: Update chat session
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+      responses:
+        '200':
+          description: Chat session updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chat_id:
+                    type: string
+                  title:
+                    type: string
+                  updated_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: Invalid input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found
+
+    delete:
+      summary: Delete chat session
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chat session deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chat_id:
+                    type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found
+  /chats/{chatId}/messages:
+
+    post:
+      summary: Send new message
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                attachments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      attachment_id:
+                        type: string
+      responses:
+        '200':
+          description: |
+            Streaming response with Server-Sent Events (SSE).
+            Events sequence:
+            1. message_start - Initial message metadata
+            2. For each content block:
+               - content_block_start - Starts a new content block
+               - multiple content_block_delta - Incremental content updates
+               - content_block_stop - Ends the content block
+            3. message_delta - Final message metadata updates
+            4. message_stop - Ends the message stream
+            
+            Ping events may occur throughout the sequence.
+
+            Example stream:
+            ```
+            event: message_start
+            data: {"type": "message_start", "message": {"input_message_id": "e9b8caa2-ad14-42c4-bb47-47c16bb7bae4", "response_message_id": "01d425bf-80bc-4201-b573-8fe968d40583", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+            event: content_block_start
+            data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Hello"}}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
+
+            event: content_block_stop
+            data: {"type": "content_block_stop", "index": 0}
+
+            event: message_delta
+            data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": "Greeting between user and AI assistant."}}
+
+            event: message_stop
+            data: {"type": "message_stop"}
+            ```
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: Server-sent events stream
+                example: |
+                  event: message_start
+                  data: {"type": "message_start", "message": {"input_message_id": "e9b8caa2-ad14-42c4-bb47-47c16bb7bae4", "response_message_id": "01d425bf-80bc-4201-b573-8fe968d40583", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+                  event: content_block_start
+                  data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+                  event: ping
+                  data: {"type": "ping"}
+
+                  event: content_block_delta
+                  data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Hello"}}
+
+                  event: content_block_delta
+                  data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
+
+                  event: content_block_stop
+                  data: {"type": "content_block_stop", "index": 0}
+
+                  event: message_delta
+                  data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": "Greeting between user and AI assistant."}}
+
+                  event: message_stop
+                  data: {"type": "message_stop"}
+
+        '400':
+          description: Invalid input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session or attachment not found
+
+  /chats/{chatId}/messages/{messageId}:
+    get:
+      summary: Get the active version of a specific message
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Active message content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found or message not found in the active chat history
+
+  /chats/{chatId}/messages/{messageId}/versions:
+    get:
+      summary: Get message version details
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Message versions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  versions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        version_index:
+                          type: integer
+                        content:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                  total_versions:
+                    type: integer
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found or message not found in the active chat history
+    post:
+      summary: Add a new message version and change the active version to it
+      description: |
+        Add a new message version and change the active version to it.
+        Only user messages with no attachment can be edited
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+      responses:
+        '200':
+          description: |
+            Streaming response with Server-Sent Events (SSE).
+            Events sequence:
+            1. message_start - Initial message metadata
+            2. For each content block:
+               - content_block_start - Starts a new content block
+               - multiple content_block_delta - Incremental content updates
+               - content_block_stop - Ends the content block
+            3. message_delta - Final message metadata updates
+            4. message_stop - Ends the message stream
+            
+            Ping events may occur throughout the sequence.
+
+            Example stream:
+            ```
+            event: message_start
+            data: {"type": "message_start", "message": {"input_message_id": "e9b8caa2-ad14-42c4-bb47-47c16bb7bae4", "response_message_id": "01d425bf-80bc-4201-b573-8fe968d40583", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "title": null}}
+
+            event: content_block_start
+            data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+            event: ping
+            data: {"type": "ping"}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Hello"}}
+
+            event: content_block_delta
+            data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
+
+            event: content_block_stop
+            data: {"type": "content_block_stop", "index": 0}
+
+            event: message_delta
+            data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "title": "Greeting between user and AI assistant."}}
+
+            event: message_stop
+            data: {"type": "message_stop"}
+            ```
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: Server-sent events stream
+                example: |
+                  event: message_start
+                  data: {"type": "message_start", "message": {"input_message_id": "e9b8caa2-ad14-42c4-bb47-47c16bb7bae4", "response_message_id": "01d425bf-80bc-4201-b573-8fe968d40583", "type": "message", "role": "assistant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null}}
+
+                  event: content_block_start
+                  data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}
+
+                  event: ping
+                  data: {"type": "ping"}
+
+                  event: content_block_delta
+                  data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "Hello"}}
+
+                  event: content_block_delta
+                  data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
+
+                  event: content_block_stop
+                  data: {"type": "content_block_stop", "index": 0}
+
+                  event: message_delta
+                  data: {"type": "message_delta", "delta": {"stop_reason": "end_turn"}}
+
+                  event: message_stop
+                  data: {"type": "message_stop"}
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    enum: [MESSAGE_VERSION_LIMIT_EXCEEDED, DUPLICATE_VERSION, NOT_ALLOWED]
+                  message:
+                    type: string
+                    example: "Message version limit reached. You can only have up to 10 message versions."
+
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found or message not found in the active chat history
+    
+    put:
+      summary: Change the active version of a message
+      description: |
+        Change the active version of a message and the branched chat history following it.
+        The branched chat history following the new active version of the message is returned.
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                version_index:
+                  type: integer
+      responses:
+        '200':
+          description: The new active version of the message and the branched chat history following it.
+          content:
+            application/json:
+                schema:
+                  type: object
+                  properties:
+                    active_message:
+                      $ref: '#/components/schemas/Message'
+                    branched_history:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Message'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found or message not found in the active chat history
+
+  /attachments:
+    post:
+      summary: Upload an attachment
+      description: Upload an attachment. Uploaded attachments may not be immediatly available and may requires processing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  example: 'cat.png'
+                media_type:
+                  type: string
+                  enum: [image/jpeg, image/png, image/gif, image/webp, document]
+                  example: image/png
+                data:
+                  type: string
+                  format: byte
+                  example: EBJg4/KtZptKpWyteYYisQ==
+
+      responses:
+        '200':
+          description: Attachment uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attachment'
+        '400':
+          description: Invalid file format or missing filename
+        '401':
+          description: Unauthorized
+        '413':
+          description: File size exceeds limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sizeLimitMB:
+                    type: integer
+
+    get:
+      summary: List uploaded attachments
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+
+      responses:
+        '200':
+          description: List of attachments
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagination'
+                - type: object
+                  properties:
+                    docs:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Attachment'
+        '401':
+          description: Unauthorized
+
+  /attachments/{attachmentId}/status:
+    get:
+      summary: Get attachment processing status
+      description: Get percentage processing progress if the attachment is processing.
+      parameters:
+        - name: attachmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Attachment status
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Attachment'
+                  - type: object
+                    properties:
+                      progress:
+                        type: integer 
+                        minimum: 0
+                        maximum: 100
+                        example: 77
+                      message:
+                        type: string
+                        example: processing
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Attachment not found
+
+  /attachments/{attachmentId}:
+    delete:
+      summary: Delete attachment
+      parameters:
+        - name: attachmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Attachment deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  attachment_id:
+                    type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Attachment not found
+
+  /bookmarks:
+    post:
+      summary: Create bookmark
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chat_id:
+                  type: string
+                title:
+                  type: string
+      responses:
+        '200':
+          description: Bookmark created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bookmark'
+        '400':
+          description: Invalid input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Chat session not found
+
+    get:
+      summary: List bookmarks
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: List of bookmarks
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagination'
+                - type: object
+                  properties:
+                    docs:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Bookmark'
+        '401':
+          description: Unauthorized
+
+  /bookmarks/{chatId}:
+    put:
+      summary: Update bookmark
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+      responses:
+        '200':
+          description: Bookmark updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chat_id:
+                    type: string
+                  title:
+                    type: string
+                  updated_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: Invalid input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Bookmark not found
+
+    delete:
+      summary: Delete bookmark
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bookmark deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  chat_id:
+                    type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Bookmark not found
+          
+  /vault/exists:
+    get:
+      summary: Check if user has vault mode set up
+      responses:
+        '200':
+          description: Successfully checked vault mode status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exists:
+                    type: boolean
+                    description: Whether vault mode is set up for the user
+
+  /vault/setup:
+    post:
+      summary: Set up vault mode with new password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Vault mode successfully set up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: Invalid password format
+
+  /vault/change-password:
+    post:
+      summary: Change vault mode password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  format: password
+                newPassword:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Password successfully changed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: Invalid password format
+        '401':
+          description: Incorrect old password
+
+  /vault/verify:
+    post:
+      summary: Verify password and enable vault mode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Password verified and vault mode enabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '401':
+          description: Incorrect password
+
+  /vault/disable:
+    post:
+      summary: Disable vault mode
+      responses:
+        '200':
+          description: Vault mode successfully disabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    
+  /workspaces:
+    post:
+      summary: Create workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                pin:
+                  type: integer
+                  minLength: 4
+                  maxLength: 4
+                  format: password
+
+      responses:
+        '200':
+          description: Workspace created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+        '400':
+          description: Invalid input format
+        '401':
+          description: Unauthorized
+
+    get:
+      summary: List workspaces
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of workspaces
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workspaces:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Workspace'
+                  total:
+                    type: integer
+        '401':
+          description: Unauthorized
+
+  /workspaces/{workspaceId}/members:
+    get:
+      summary: List workspace member
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Workspace member list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkspaceMember'
+  
+  /workspaces/{workspaceId}/invitations:
+    post:
+      summary: Invite users to workspace
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                role:
+                  type: string
+                  enum: [admin, user]
+                  default: user
+                message:
+                  type: string
+      responses:
+        '200':
+          description: Invitations sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invitations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkspaceInvitation'
+        '400':
+          description: Invalid input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: User doesn't have permission to invite
+        '404':
+          description: Workspace not found
+
+  /workspaces/{workspaceId}/members/{userId}:
+    put:
+      summary: Update member role
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum: [admin, member]
+      responses:
+        '200':
+          description: Member role updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceMember'
+        '400':
+          description: Invalid role value
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Workspace or user not found
+
+    delete:
+      summary: Remove member
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Member removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  workspace_id:
+                    type: string
+                  user_id:
+                    type: string
+        '400':
+          description: Cannot remove workspace owner
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Workspace or user not found
+
+  /workspaces/{workspaceId}/shared-resources:
+    post:
+      summary: Share resource
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resource_type:
+                  type: string
+                  enum: [chat, document]
+                resource_id:
+                  type: string
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Resource shared
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SharedResource'
+        '400':
+          description: Invalid input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Workspace or resource not found
+
+    get:
+      summary: List shared resources
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [chat, document]
+      responses:
+        '200':
+          description: List of shared resources
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resources:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SharedResource'
+                  total:
+                    type: integer
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Workspace not found
+
+  /workspaces/{workspaceId}/shared-resources/{resourceId}/duplicate:
+    post:
+      summary: Duplicate shared resource
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Resource duplicated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  new_resource_id:
+                    type: string
+                  resource_type:
+                    type: string
+                  name:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Workspace or resource not found
+
+  /workspaces/{workspaceId}/shared-resources/{resourceId}:
+    delete:
+      summary: Unshare resource
+      parameters:
+        - name: workspaceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: resourceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Resource unshared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  workspace_id:
+                    type: string
+                  resource_id:
+                    type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Workspace or resource not found
+  /chats-groups:
+    post:
+      summary: Create new chat group
+      description: Create a new chat group for the authenticated user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 40
+                  description: Title of the chat group
+                  example: "Work Projects"
+      responses:
+        '200':
+          description: Chat group created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatGroup'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    enum: [GROUP_LIMIT_EXCEEDED]
+                    example: GROUP_LIMIT_EXCEEDED
+                  message:
+                    type: string
+                    example: "Chat group limit reached. You can have up to 20 groups. Please delete some existing groups to create new ones."
+        '401':
+          description: Unauthorized
+
+    get:
+      summary: List chat groups
+      description: List all chat groups owned by the user with pagination and search support
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for pagination
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          description: Number of groups per page
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 40
+            default: ""
+          description: Search term to filter groups by title
+      responses:
+        '200':
+          description: List of chat groups with pagination
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagination'
+                  - type: object
+                    properties:
+                      docs:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ChatGroup'
+        '401':
+          description: Unauthorized
+
+  /chats-groups/{groupId}:
+    put:
+      summary: Update chat group
+      description: Update the title of an existing chat group
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+          description: UUID of the chat group to update
+          example: "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 40
+                  description: New title for the chat group
+                  example: "Updated Work Projects"
+      responses:
+        '200':
+          description: Chat group updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatGroup'
+        '400':
+          description: Invalid input format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Not authorized to modify this group
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Not authorized to modify this group"
+        '404':
+          description: Group not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Group not found"
+
+    delete:
+      summary: Delete chat group
+      description: Delete an existing chat group. Only the owner can delete the group.
+      tags:
+        - chat_group
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+          description: UUID of the chat group to delete
+          example: "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987"
+      responses:
+        '200':
+          description: Chat group deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: string
+                    description: UUID of the deleted group
+                    example: "e4adfbe1-42d3-4a34-9b3d-fb7d0d049987"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Not authorized to delete this group
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Not authorized to delete this group"
+        '404':
+          description: Group not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Group not found"
+  /releases:
+    get:
+      tags:
+        - releases
+      summary: List all releases
+      description: |
+        Retrieve a paginated list of all releases with optional filtering by title search and date.
+        Supports case-insensitive title search and exact date filtering.
+      operationId: listReleases
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination (starts from 1)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          example: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          example: 10
+        - name: search
+          in: query
+          description: Search term to filter releases by title (case-insensitive)
+          required: false
+          schema:
+            type: string
+            maxLength: 40
+            default: ""
+          example: "version 2.0"
+        - name: date
+          in: query
+          description: Filter releases by specific date (ISO 8601 format)
+          required: false
+          schema:
+            type: string
+            format: date-time
+          example: "2023-12-25T10:00:00Z"
+      responses:
+        '200':
+          description: Successfully retrieved releases list
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - docs
+                  - totalDocs
+                  - limit
+                  - page
+                  - totalPages
+                  - hasNextPage
+                  - hasPrevPage
+                properties:
+                  docs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Release'
+                    description: Array of release objects for the current page
+                  totalDocs:
+                    type: integer
+                    description: Total number of releases matching the filter criteria
+                    example: 25
+                  limit:
+                    type: integer
+                    description: Number of items per page
+                    example: 10
+                  page:
+                    type: integer
+                    description: Current page number
+                    example: 1
+                  totalPages:
+                    type: integer
+                    description: Total number of pages
+                    example: 3
+                  hasNextPage:
+                    type: boolean
+                    description: Whether there is a next page available
+                    example: true
+                  nextPage:
+                    type: integer
+                    nullable: true
+                    description: Next page number (null if no next page)
+                    example: 2
+                  hasPrevPage:
+                    type: boolean
+                    description: Whether there is a previous page available
+                    example: false
+                  prevPage:
+                    type: integer
+                    nullable: true
+                    description: Previous page number (null if no previous page)
+                    example: null
+        '400':
+          description: Bad request - Invalid query parameters
+        '422':
+          description: Validation error
+
+    put:
+      tags:
+        - releases
+      summary: Update user's last release date
+      description: |
+        Update the last release date for the authenticated user. This is typically used 
+        to track when a user last viewed release notes or acknowledged releases.
+      operationId: updateLastReleaseDate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - date
+              properties:
+                date:
+                  type: string
+                  format: date-time
+                  description: The date to set as last viewed release date
+                  example: "2023-12-25T10:00:00Z"
+            example:
+              date: "2023-12-25T10:00:00Z"
+      responses:
+        '200':
+          description: Successfully updated last release date
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - ok
+                properties:
+                  ok:
+                    type: string
+                    description: Success message confirming the update
+                    example: "The date has been updated."
+              example:
+                ok: "The date has been updated."
+        '400':
+          description: Bad request - Invalid date format
+        '401':
+          description: Unauthorized - Missing or invalid user email
+        '422':
+          description: Validation error
+        '500':
+          description: Internal server error
+
+  /releases/last:
+    get:
+      tags:
+        - releases
+      summary: Get the latest release
+      description: |
+        Retrieve the most recent release based on the release date. 
+        Returns the release with the latest date value.
+      operationId: getLastRelease
+      responses:
+        '200':
+          description: Successfully retrieved the latest release
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Release'
+              example:
+                release_id: "123e4567-e89b-12d3-a456-426614174000"
+                title: "Version 2.1.0 - Major Update"
+                date: "2023-12-25T10:00:00Z"
+                changes:
+                  - "Added new user authentication system"
+                  - "Fixed critical security vulnerability"
+                  - "Improved application performance by 30%"
+                  - "Updated user interface design"
+                created_at: "2023-12-20T09:00:00Z"
+                updated_at: "2023-12-22T14:30:00Z"
+        '404':
+          description: No releases found
+        '500':
+          description: Internal server error

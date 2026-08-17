@@ -1,0 +1,118 @@
+venv*
+test_app.py
+test_stream.ipynb
+.ipynb_checkpoints
+app/test_streamlit.py
+app/helpers/__pycache__/
+app/components/__pycache__/
+app/test/
+tmp/
+streamlit_scratchpad/
+
+__pycache__/
+.pytest_cache
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.py[cod]
+*$py.class
+.env.local
+
+.DS_Store
+.vscode
+.idea
+.amazonq/
+.venv/
+*.backup
+*.backup2
+*Zone.Identifier
+
+# Backup files
+*.bak
+*.bak-*
+*.bak2*
+
+
+# Unreadable by montjac (owned by jakebot, no world-read)
+scripts/archive/deploy.sh
+*.backup-*
+*.broken
+*.deprecated
+
+# Secret/env files - never commit
+.env
+.env.production
+internal_tools.env
+Token_Tracker/db_config.env
+
+# Backup directories and alternate-format backup files
+backups/
+*.backup.*
+
+# Runtime / generated files
+backend.pid
+logs/
+smplogs
+
+# User upload data (binary blobs, PII)
+uploads/
+
+# Odd zero-byte file created by flag misparse
+--help
+
+# Temporary analytics file
+app/analytics/review.py.temp
+
+# Runtime PID files
+gateway.pid
+qodo-portforward.pid
+
+# Runtime-only state and audit evidence - never committed
+var/
+var/tool_execution_audit/
+.restart-dishchat.lock
+
+# D3B1 runtime last-known-good MCP schema cache (never committed)
+var/mcp_registry_cache/
+
+# JakeBot public mirror safety
+.env
+*.env
+.venv/
+venv/
+node_modules/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+var/
+logs/
+log/
+coverage/
+htmlcov/
+*.log
+*.pid
+*.sqlite
+*.sqlite3
+*.db
+*.swp
+*.swo
+*.bak*
+script-backups/
+.aws/
+.ssh/
+.gnupg/
+secrets/
+credentials/
+credentials.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z

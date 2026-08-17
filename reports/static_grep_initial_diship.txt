@@ -1,0 +1,386 @@
+===== ollama =====
+app/core/llm/chat_models.ollama_patched.py:45:def _create_ollama_model(
+app/core/llm/chat_models.ollama_patched.py:53:        from langchain_ollama import ChatOllama
+app/core/llm/chat_models.ollama_patched.py:56:            "Ollama provider selected, but langchain-ollama is not installed. "
+app/core/llm/chat_models.ollama_patched.py:57:            "Install it with: pip install -U langchain-ollama"
+app/core/llm/chat_models.ollama_patched.py:99:    if provider == "ollama":
+app/core/llm/chat_models.ollama_patched.py:100:        return _create_ollama_model(model_name, max_tokens=max_tokens, num_ctx=num_ctx, base_url=api_base)
+app/core/llm/chat_models.py:173:def _create_ollama_model(
+app/core/llm/chat_models.py:181:        from langchain_ollama import ChatOllama
+app/core/llm/chat_models.py:184:            "Ollama provider selected but langchain-ollama is not installed. "
+app/core/llm/chat_models.py:185:            "Run: pip install -U langchain-ollama"
+app/core/llm/chat_models.py:243:    if provider == "ollama":
+app/core/llm/chat_models.py:244:        return _create_ollama_model(model_name, max_tokens=max_tokens,
+app/core/llm/chat_models.py:308:    settings.ELLM_PROVIDER — currently "ollama" (DeepSeek-R1 on <internal-host>).
+app/core/llm/chat_models.py:401:    if provider != "ollama":
+app/core/llm/chat_models.py:424:    model = _create_ollama_model(
+app/agent/agents/agentic_rag.py:322:def _sanitize_messages_for_ollama(messages: list) -> list:
+app/agent/agents/agentic_rag.py:325:    langchain_ollama only accepts content that is a str or a list of dicts
+app/agent/agents/agentic_rag.py:619:    _is_ollama = (settings.PLLM_PROVIDER == "ollama")
+app/agent/agents/agentic_rag.py:621:    if _is_ollama and _has_tool_results:
+app/agent/agents/agentic_rag.py:626:    elif _is_ollama:
+app/agent/agents/agentic_rag.py:683:    # langchain_ollama does not raise ValueError on the content-type check.
+app/agent/agents/agentic_rag.py:685:        _sanitize_messages_for_ollama(messages) if _is_ollama else messages
+app/config.py:64:    PLLM_PROVIDER: Literal["aws-bedrock", "openai", "anthropic", "ollama"] = "ollama"
+app/config.py:70:    ELLM_PROVIDER: Optional[Literal["aws-bedrock", "openai", "anthropic", "ollama"]] = "ollama"
+app/config.py:81:    EMBED_PROVIDER: Literal["aws-bedrock", "openai", "ollama"] = "ollama"
+app/config.ollama_patched.py:58:    PLLM_PROVIDER: Literal["aws-bedrock", "openai", "anthropic", "ollama"] = "aws-bedrock"
+app/config.ollama_patched.py:62:    ELLM_PROVIDER: Optional[Literal["aws-bedrock", "openai", "anthropic", "ollama"]] = (
+app/embedding/utils.py:88:    - "ollama"     : OllamaEmbeddings (nomic-embed-text via <internal-host>)
+app/embedding/utils.py:91:    if settings.EMBED_PROVIDER == "ollama":
+app/embedding/utils.py:93:            from langchain_ollama import OllamaEmbeddings
+app/embedding/utils.py:96:                "ollama embedding provider requires langchain-ollama. "
+app/embedding/utils.py:97:                "Install with: pip install langchain-ollama"
+app/embedding/utils.py:134:            "Supported: 'ollama', 'aws-bedrock'."
+===== bedrock =====
+app/core/llm/chat_models.ollama_patched.py:42:    return provider == "aws-bedrock"
+app/core/llm/chat_models.ollama_patched.py:97:    if provider == "aws-bedrock":
+app/core/llm/chat_models.ollama_patched.py:98:        return _create_bedrock_model(model_name, max_tokens)
+app/core/llm/chat_models.ollama_patched.py:104:def _create_bedrock_model(model_name: str, max_tokens: int) -> ChatBedrockConverse:
+app/core/llm/chat_models.py:19:# == Application Inference Profile ARNs (used only when provider == "aws-bedrock") ====
+app/core/llm/chat_models.py:20:PROFILE_SONNET  = "arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-sonnet-4-6"
+app/core/llm/chat_models.py:21:PROFILE_HAIKU   = "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/wpnvchycfust"
+app/core/llm/chat_models.py:22:PROFILE_OPUS    = "arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-opus-4-6-v1"
+app/core/llm/chat_models.py:23:PROFILE_EMBED   = "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/4xgakngy389z"
+app/core/llm/chat_models.py:30:    if model_id and model_id.startswith("arn:aws:bedrock:"):
+app/core/llm/chat_models.py:160:    return provider == "aws-bedrock"
+app/core/llm/chat_models.py:201:def _create_bedrock_model(model_name: str, max_tokens: int):
+app/core/llm/chat_models.py:207:            "aws-bedrock provider selected but langchain-aws is not installed. "
+app/core/llm/chat_models.py:246:    if provider == "aws-bedrock":
+app/core/llm/chat_models.py:247:        return _create_bedrock_model(model_name, max_tokens)
+app/usage_tracking/constants.py:45:    "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/c6y599kzy1u2": {
+app/usage_tracking/constants.py:51:    "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/wpnvchycfust": {
+app/usage_tracking/constants.py:57:    "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/4xgakngy389z": {
+app/usage_tracking/constants.py:64:    "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/zkim7rxbcgv0": {
+app/usage_tracking/constants.py:73:MODEL_PRICING["arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-sonnet-4-6"] = {
+app/usage_tracking/constants.py:79:MODEL_PRICING["arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-opus-4-6-v1"] = {
+app/agent/agents/agentic_rag.py:238:def ensure_bedrock_converse_message_shape(messages: list[BaseMessage]) -> list[BaseMessage]:
+app/agent/agents/agentic_rag.py:542:    return ensure_bedrock_converse_message_shape(messages)
+app/agent/agents/agentic_rag.py:586:    messages = ensure_bedrock_converse_message_shape(messages)
+app/agent/agents/tools/registry.py:34:    bedrock_list_models,
+app/agent/agents/tools/registry.py:35:    bedrock_invoke_model,
+app/agent/agents/tools/registry.py:236:            bedrock_list_models,
+app/agent/agents/tools/registry.py:237:            bedrock_invoke_model,
+app/config.py:64:    PLLM_PROVIDER: Literal["aws-bedrock", "openai", "anthropic", "ollama"] = "ollama"
+app/config.py:70:    ELLM_PROVIDER: Optional[Literal["aws-bedrock", "openai", "anthropic", "ollama"]] = "ollama"
+app/config.py:81:    EMBED_PROVIDER: Literal["aws-bedrock", "openai", "ollama"] = "ollama"
+app/config.ollama_patched.py:58:    PLLM_PROVIDER: Literal["aws-bedrock", "openai", "anthropic", "ollama"] = "aws-bedrock"
+app/config.ollama_patched.py:62:    ELLM_PROVIDER: Optional[Literal["aws-bedrock", "openai", "anthropic", "ollama"]] = (
+app/config.ollama_patched.py:63:        "aws-bedrock"
+app/config.ollama_patched.py:74:    EMBED_PROVIDER: Literal["aws-bedrock", "openai"] = "aws-bedrock"
+app/tools/aws_tools.py:21:def _get_bedrock_client():
+app/tools/aws_tools.py:23:    return boto3.client('bedrock-runtime', region_name='us-west-2')
+app/tools/aws_tools.py:42:@tool("bedrock_list_models")
+app/tools/aws_tools.py:43:def bedrock_list_models() -> str:
+app/tools/aws_tools.py:50:    interceptor.tool_call("bedrock_list_models", params={})
+app/tools/aws_tools.py:54:        # Note: This uses bedrock client (not bedrock-runtime) for listing models
+app/tools/aws_tools.py:55:        bedrock_client = boto3.client('bedrock', region_name='us-west-2')
+app/tools/aws_tools.py:56:        response = bedrock_client.list_foundation_models()
+app/tools/aws_tools.py:77:        interceptor.tool_call("bedrock_list_models", result=f"Listed {len(models)} models")
+app/tools/aws_tools.py:83:        interceptor.tool_call("bedrock_list_models", result=f"Error: {error_msg}")
+app/tools/aws_tools.py:88:        interceptor.tool_call("bedrock_list_models", result=f"Error: {error_msg}")
+app/tools/aws_tools.py:92:@tool("bedrock_invoke_model")
+app/tools/aws_tools.py:93:def bedrock_invoke_model(model_id: str, prompt: str, max_tokens: int = 1000) -> str:
+app/tools/aws_tools.py:108:    interceptor.tool_call("bedrock_invoke_model", params={
+app/tools/aws_tools.py:117:        "sonnet": "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/c6y599kzy1u2",
+app/tools/aws_tools.py:118:        "haiku":  "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/wpnvchycfust",
+app/tools/aws_tools.py:119:        "opus":   "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/zkim7rxbcgv0",
+app/tools/aws_tools.py:120:        "embed":  "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/4xgakngy389z",
+app/tools/aws_tools.py:124:    if model_id.startswith("arn:aws:bedrock:"):
+app/tools/aws_tools.py:136:    if _settings.PLLM_PROVIDER != "aws-bedrock":
+app/tools/aws_tools.py:138:            f"bedrock_invoke_model is only available when PLLM_PROVIDER='aws-bedrock'. "
+app/tools/aws_tools.py:141:        interceptor.tool_call("bedrock_invoke_model", result=msg)
+app/tools/aws_tools.py:146:        from app.core.llm.chat_models import _create_bedrock_model
+app/tools/aws_tools.py:150:        model = _create_bedrock_model(profile_arn, max_tokens)
+app/tools/aws_tools.py:153:        interceptor.tool_call("bedrock_invoke_model", result="Model invoked successfully via profile ARN")
+app/tools/aws_tools.py:159:        interceptor.tool_call("bedrock_invoke_model", result=f"Error: {error_msg}")
+app/main.py:187:    """Wrap boto3.client to add custom config for bedrock-runtime."""
+app/main.py:188:    if service_name == 'bedrock-runtime':
+app/embedding/utils.py:51:    """Placeholder — only instantiated when provider==aws-bedrock."""
+app/embedding/utils.py:56:            from langchain_aws.embeddings.bedrock import _batch_cohere_embedding_texts as _bce
+app/embedding/utils.py:61:                "aws-bedrock embedding provider requires langchain-aws. "
+app/embedding/utils.py:89:    - "aws-bedrock": PatchedBedrockEmbeddings (Cohere via Bedrock)
+app/embedding/utils.py:109:    elif settings.EMBED_PROVIDER == "aws-bedrock":
+app/embedding/utils.py:110:        EMBED_ARN = "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/4xgakngy389z"
+app/embedding/utils.py:112:        if not embed_model.startswith("arn:aws:bedrock:"):
+app/embedding/utils.py:134:            "Supported: 'ollama', 'aws-bedrock'."
+tests/test_context_pressure.py:7:from app.agent.agents.agentic_rag import sanitize_tool_messages, ensure_bedrock_converse_message_shape
+tests/test_context_pressure.py:49:    assert isinstance(ensure_bedrock_converse_message_shape(cleaned)[0], HumanMessage)
+tests/test_context_pressure.py:73:def test_bedrock_shape_after_orphan_trim():
+tests/test_context_pressure.py:78:    assert isinstance(ensure_bedrock_converse_message_shape(cleaned)[0], HumanMessage)
+===== sonnet =====
+app/core/llm/chat_models.py:20:PROFILE_SONNET  = "arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-sonnet-4-6"
+app/core/llm/chat_models.py:33:        "us.anthropic.claude-sonnet-4-5-20250929-v1:0": PROFILE_SONNET,
+app/core/llm/chat_models.py:34:        "us.anthropic.claude-sonnet-4-20250514-v1:0":   PROFILE_SONNET,
+app/core/llm/chat_models.py:35:        "anthropic.claude-3-5-sonnet-20241022-v2:0":    PROFILE_SONNET,
+app/usage_tracking/service.py:160:                # {'us.anthropic.claude-sonnet-4-20250514-v1:0': {'input_tokens': 71, 'output_tokens': 789, 'total_tokens': 860, 'input_token_details': {'cache_creation': 0, 'cache_read': 0}}}
+app/usage_tracking/constants.py:20:    "us.anthropic.claude-sonnet-4-20250514-v1:0": {
+app/usage_tracking/constants.py:38:    "us.anthropic.claude-sonnet-4-5-20250929-v1:0": {
+app/usage_tracking/constants.py:73:MODEL_PRICING["arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-sonnet-4-6"] = {
+app/agent/complexity_detector.py:45:        self.sonnet_requests: int = 0
+app/agent/complexity_detector.py:64:            self.sonnet_requests += 1
+app/agent/complexity_detector.py:92:            "sonnet_requests": self.sonnet_requests,
+app/agent/complexity_detector.py:508:    model_selected = "opus" if use_opus else "sonnet"
+app/config.ollama_patched.py:60:    PLLM_MODEL: str = "us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+app/tools/aws_tools.py:98:        model_id: One of 'sonnet', 'haiku', 'opus', or a full profile ARN.
+app/tools/aws_tools.py:117:        "sonnet": "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/c6y599kzy1u2",
+===== opus =====
+app/core/llm/chat_models.py:22:PROFILE_OPUS    = "arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-opus-4-6-v1"
+app/core/llm/chat_models.py:39:        "anthropic.claude-opus-4-20250514-v1:0":        PROFILE_OPUS,
+app/core/llm/chat_models.py:40:        "us.anthropic.claude-opus-4-20250514-v1:0":     PROFILE_OPUS,
+app/core/llm/chat_models.py:41:        "anthropic.claude-3-opus-20240229-v1:0":        PROFILE_OPUS,
+app/core/llm/chat_models.py:62:    "opus":      {"model": None, "expires_at": None, "cred_fingerprint": None},
+app/core/llm/chat_models.py:164:    if cache_key == "opus":
+app/core/llm/chat_models.py:224:    if cache_key == "opus":
+app/core/llm/chat_models.py:303:    use_opus:      bool = False,
+app/core/llm/chat_models.py:313:        use_opus:      Use the high-quality opus / complex-query model.
+app/core/llm/chat_models.py:318:    if use_opus:
+app/core/llm/chat_models.py:319:        cache_key = "opus"
+app/core/llm/chat_models.py:383:    use_opus:      bool = False,
+app/core/llm/chat_models.py:403:        return get_model(efficient=efficient, force_refresh=force_refresh, use_opus=use_opus)
+app/core/llm/chat_models.py:406:    cache_key = "tool_opus" if use_opus else ("tool_efficient" if efficient else "tool_primary")
+app/usage_tracking/constants.py:79:MODEL_PRICING["arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-opus-4-6-v1"] = {
+app/agent/complexity_detector.py:44:        self.opus_requests: int = 0
+app/agent/complexity_detector.py:61:        if model_selected == "opus":
+app/agent/complexity_detector.py:62:            self.opus_requests += 1
+app/agent/complexity_detector.py:86:        opus_pct = (self.opus_requests / self.total_requests) * 100
+app/agent/complexity_detector.py:91:            "opus_requests": self.opus_requests,
+app/agent/complexity_detector.py:93:            "opus_percentage": round(opus_pct, 1),
+app/agent/complexity_detector.py:104:            "auto_opus_enabled": settings.AUTO_OPUS_ENABLED,
+app/agent/complexity_detector.py:237:    opus_triggers = [
+app/agent/complexity_detector.py:243:    if any(opus_triggers):
+app/agent/complexity_detector.py:476:def should_use_opus_for_context(content, session_id: str = None) -> bool:
+app/agent/complexity_detector.py:507:    use_opus = effective_score >= threshold
+app/agent/complexity_detector.py:508:    model_selected = "opus" if use_opus else "sonnet"
+app/agent/complexity_detector.py:551:    if use_opus:
+app/agent/complexity_detector.py:567:    return use_opus
+app/agent/complexity_detector.py:590:        "event": "opus_routing_decision",
+app/agent/agents/agentic_rag.py:20:from app.agent.complexity_detector import detect_prompt_complexity, should_use_opus_for_context, context_tracker
+app/agent/agents/agentic_rag.py:606:    use_opus = should_use_opus_for_context(last_human_content, session_id=session_id)
+app/agent/agents/agentic_rag.py:623:        model = get_model(use_opus=use_opus)
+app/agent/agents/agentic_rag.py:628:        model = get_tool_model(use_opus=use_opus)
+app/agent/agents/agentic_rag.py:633:        model = get_model(use_opus=use_opus)
+app/agent/agents/agentic_rag.py:669:    model_name = "Opus" if use_opus else "Sonnet"
+app/agent/agents/agentic_rag.py:701:                model = get_model(force_refresh=True, use_opus=use_opus)
+app/opus_metrics_router.py:6:Endpoint: GET /rest/api/v1/internal/opus-routing-stats
+app/opus_metrics_router.py:15:@router.get("/internal/opus-routing-stats")
+app/opus_metrics_router.py:16:async def get_opus_routing_stats():
+app/opus_metrics_router.py:32:@router.post("/internal/opus-routing-stats/reset")
+app/opus_metrics_router.py:33:async def reset_opus_routing_stats():
+app/tools/aws_tools.py:98:        model_id: One of 'sonnet', 'haiku', 'opus', or a full profile ARN.
+app/tools/aws_tools.py:119:        "opus":   "arn:aws:bedrock:us-west-2:233532778289:application-inference-profile/zkim7rxbcgv0",
+app/main.py:30:from app.opus_metrics_router import router as opus_metrics_router
+app/main.py:274:    opus_metrics_router,
+===== anthropic =====
+app/core/llm/chat_models.py:20:PROFILE_SONNET  = "arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-sonnet-4-6"
+app/core/llm/chat_models.py:22:PROFILE_OPUS    = "arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-opus-4-6-v1"
+app/core/llm/chat_models.py:33:        "us.anthropic.claude-sonnet-4-5-20250929-v1:0": PROFILE_SONNET,
+app/core/llm/chat_models.py:34:        "us.anthropic.claude-sonnet-4-20250514-v1:0":   PROFILE_SONNET,
+app/core/llm/chat_models.py:35:        "anthropic.claude-3-5-sonnet-20241022-v2:0":    PROFILE_SONNET,
+app/core/llm/chat_models.py:36:        "us.anthropic.claude-3-5-haiku-20241022-v1:0":  PROFILE_HAIKU,
+app/core/llm/chat_models.py:37:        "anthropic.claude-3-5-haiku-20241022-v1:0":     PROFILE_HAIKU,
+app/core/llm/chat_models.py:38:        "anthropic.claude-3-haiku-20240307-v1:0":       PROFILE_HAIKU,
+app/core/llm/chat_models.py:39:        "anthropic.claude-opus-4-20250514-v1:0":        PROFILE_OPUS,
+app/core/llm/chat_models.py:40:        "us.anthropic.claude-opus-4-20250514-v1:0":     PROFILE_OPUS,
+app/core/llm/chat_models.py:41:        "anthropic.claude-3-opus-20240229-v1:0":        PROFILE_OPUS,
+app/core/llm/chat_models.py:218:        provider="anthropic",
+app/usage_tracking/service.py:129:                llm_2 = init_chat_model(model="anthropic:claude-3-5-haiku-latest")
+app/usage_tracking/service.py:160:                # {'us.anthropic.claude-sonnet-4-20250514-v1:0': {'input_tokens': 71, 'output_tokens': 789, 'total_tokens': 860, 'input_token_details': {'cache_creation': 0, 'cache_read': 0}}}
+app/usage_tracking/constants.py:20:    "us.anthropic.claude-sonnet-4-20250514-v1:0": {
+app/usage_tracking/constants.py:26:    "anthropic.claude-3-5-haiku-20241022-v1:0": {
+app/usage_tracking/constants.py:32:    "us.anthropic.claude-3-5-haiku-20241022-v1:0": {
+app/usage_tracking/constants.py:38:    "us.anthropic.claude-sonnet-4-5-20250929-v1:0": {
+app/usage_tracking/constants.py:73:MODEL_PRICING["arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-sonnet-4-6"] = {
+app/usage_tracking/constants.py:79:MODEL_PRICING["arn:aws:bedrock:us-west-2:233532778289:inference-profile/us.anthropic.claude-opus-4-6-v1"] = {
+app/config.py:64:    PLLM_PROVIDER: Literal["aws-bedrock", "openai", "anthropic", "ollama"] = "ollama"
+app/config.py:70:    ELLM_PROVIDER: Optional[Literal["aws-bedrock", "openai", "anthropic", "ollama"]] = "ollama"
+app/config.ollama_patched.py:58:    PLLM_PROVIDER: Literal["aws-bedrock", "openai", "anthropic", "ollama"] = "aws-bedrock"
+app/config.ollama_patched.py:60:    PLLM_MODEL: str = "us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+app/config.ollama_patched.py:62:    ELLM_PROVIDER: Optional[Literal["aws-bedrock", "openai", "anthropic", "ollama"]] = (
+app/config.ollama_patched.py:66:    ELLM_MODEL: Optional[str] = "us.anthropic.claude-3-5-haiku-20241022-v1:0"
+===== model_arn =====
+app/core/llm/chat_models.py:26:def _resolve_model_arn(model_id: str) -> str:
+app/core/llm/chat_models.py:211:    resolved_model = _resolve_model_arn(model_name)
+app/core/llm/chat_models.py:304:    model_arn:     Optional[str] = None,
+app/core/llm/chat_models.py:314:        model_arn:     Override model identifier (Bedrock ARN or Ollama model name).
+app/agent_mode/child_conversation.py:389:    model_arn: str = None,
+app/agent_mode/child_conversation.py:408:        model_arn: Override model for this child
+app/agent_mode/agent.py:47:    model_arn = settings.AGENT_MODE_MODEL or None
+app/agent_mode/agent.py:48:    model = get_model(model_arn=model_arn)
+app/agent_mode/INTEGRATION_GUIDE.md:236:    model_arn = settings.AGENT_MODE_MODEL or None
+app/agent_mode/INTEGRATION_GUIDE.md:237:    model = get_model(model_arn=model_arn)
+===== get_model =====
+app/journal/service.py:9:from app.core.llm import get_model, invoke_with_retry
+app/journal/service.py:209:            model = get_model(efficient=True)
+app/logs/service.py:12:from app.core.llm import get_model
+app/logs/service.py:226:        model = get_model(efficient=True)
+app/core/llm/chat_models.ollama_patched.py:149:                    # Direct model refresh without calling get_model to avoid loop
+app/core/llm/chat_models.ollama_patched.py:179:def get_model(efficient: bool = False, force_refresh: bool = False) -> BaseChatModel:
+app/core/llm/chat_models.ollama_patched.py:261:                    model = get_model(efficient=efficient, force_refresh=True)
+app/core/llm/chat_models.ollama_patched.py:326:                    model = get_model(efficient=efficient, force_refresh=True)
+app/core/llm/__init__.py:1:from .chat_models import get_model, get_tool_model, invoke_with_retry
+app/core/llm/chat_models.py:300:def get_model(
+app/core/llm/chat_models.py:393:    equivalent to get_model() with the same flags.
+app/core/llm/chat_models.py:403:        return get_model(efficient=efficient, force_refresh=force_refresh, use_opus=use_opus)
+app/core/llm/chat_models.py:456:                model = get_model(efficient=efficient, force_refresh=True)
+app/core/llm/chat_models.py:491:                model = get_model(efficient=efficient, force_refresh=True)
+app/usage_tracking/schemas.py:20:def _get_model_pricing(model: str) -> dict:
+app/usage_tracking/schemas.py:45:        pricing = _get_model_pricing(self.model)
+app/usage_tracking/schemas.py:55:        pricing = _get_model_pricing(self.model)
+app/agent/agentic_rag.py:13:from app.core.llm import get_model
+app/agent/agentic_rag.py:89:    model = get_model()
+app/agent/agentic_rag.py:122:                model = get_model(force_refresh=True)
+app/agent/agents/agentic_rag.py:17:from app.core.llm import get_model, get_tool_model
+app/agent/agents/agentic_rag.py:623:        model = get_model(use_opus=use_opus)
+app/agent/agents/agentic_rag.py:633:        model = get_model(use_opus=use_opus)
+app/agent/agents/agentic_rag.py:701:                model = get_model(force_refresh=True, use_opus=use_opus)
+app/agent/agents/betareport_analysis.py:13:from app.core.llm import get_model
+app/agent/agents/betareport_analysis.py:70:    model = get_model()
+app/agent/agents/title_gen.py:12:from app.core.llm import get_model
+app/agent/agents/title_gen.py:34:    model = get_model(efficient=True)
+app/analytics/review.py:13:from app.core.llm import get_model
+app/analytics/review.py:70:        model = get_model(efficient=True)
+app/analytics/review.py.temp:13:from app.core.llm import get_model
+app/analytics/review.py.temp:70:        model = get_model(efficient=True)
+app/analytics/service.py:14:from app.core.llm import get_model
+app/analytics/service.py:167:        model = get_model(efficient=True)
+app/embedding/service.py:24:from app.core.llm import get_model
+app/embedding/service.py:169:    llm = get_model(efficient=True)
+app/agent_mode/child_conversation.py:31:from app.core.llm import get_model
+app/agent_mode/child_conversation.py:327:    model = get_model()
+app/agent_mode/agent.py:17:from app.core.llm import get_model
+app/agent_mode/agent.py:48:    model = get_model(model_arn=model_arn)
+app/agent_mode/INTEGRATION_GUIDE.md:237:    model = get_model(model_arn=model_arn)
+===== use_opus =====
+app/core/llm/chat_models.py:303:    use_opus:      bool = False,
+app/core/llm/chat_models.py:313:        use_opus:      Use the high-quality opus / complex-query model.
+app/core/llm/chat_models.py:318:    if use_opus:
+app/core/llm/chat_models.py:383:    use_opus:      bool = False,
+app/core/llm/chat_models.py:403:        return get_model(efficient=efficient, force_refresh=force_refresh, use_opus=use_opus)
+app/core/llm/chat_models.py:406:    cache_key = "tool_opus" if use_opus else ("tool_efficient" if efficient else "tool_primary")
+app/agent/complexity_detector.py:476:def should_use_opus_for_context(content, session_id: str = None) -> bool:
+app/agent/complexity_detector.py:507:    use_opus = effective_score >= threshold
+app/agent/complexity_detector.py:508:    model_selected = "opus" if use_opus else "sonnet"
+app/agent/complexity_detector.py:551:    if use_opus:
+app/agent/complexity_detector.py:567:    return use_opus
+app/agent/agents/agentic_rag.py:20:from app.agent.complexity_detector import detect_prompt_complexity, should_use_opus_for_context, context_tracker
+app/agent/agents/agentic_rag.py:606:    use_opus = should_use_opus_for_context(last_human_content, session_id=session_id)
+app/agent/agents/agentic_rag.py:623:        model = get_model(use_opus=use_opus)
+app/agent/agents/agentic_rag.py:628:        model = get_tool_model(use_opus=use_opus)
+app/agent/agents/agentic_rag.py:633:        model = get_model(use_opus=use_opus)
+app/agent/agents/agentic_rag.py:669:    model_name = "Opus" if use_opus else "Sonnet"
+app/agent/agents/agentic_rag.py:701:                model = get_model(force_refresh=True, use_opus=use_opus)
+===== Claude =====
+app/usage_tracking/constants.py:2:    "Claude-3.5-Sonnet": {
+app/usage_tracking/constants.py:8:    "Claude-3.7-Sonnet": {
+app/usage_tracking/constants.py:14:    "Claude-Sonnet-4": {
+app/config.py:623:    # OPUS_MODEL: Bedrock Application Inference Profile ARN for Claude Opus 4
+app/tools/aws_tools.py:95:    Invoke an Anthropic Claude model via Bedrock Application Inference Profile.
+app/message/compression.py:14:# Token counter - using cl100k_base (GPT-4/Claude approximation)
+app/message/compression.py:106:        # For Claude Sonnet 4.5: 200k context, but keep to 160k for safety
+app/agent_mode/INTEGRATION_GUIDE.md:443:# If using Claude with extended thinking:
+===== Sonnet =====
+app/usage_tracking/constants.py:2:    "Claude-3.5-Sonnet": {
+app/usage_tracking/constants.py:8:    "Claude-3.7-Sonnet": {
+app/usage_tracking/constants.py:14:    "Claude-Sonnet-4": {
+app/agent/complexity_detector.py:218:        False → definitely use Sonnet (skip full scoring)
+app/agent/complexity_detector.py:222:        return False  # Empty → Sonnet
+app/agent/complexity_detector.py:234:                return False  # Obviously simple → Sonnet
+app/agent/complexity_detector.py:357:        return 0  # Guaranteed Sonnet
+app/agent/complexity_detector.py:478:    Determine whether to route a prompt to Opus or keep on Sonnet.
+app/agent/complexity_detector.py:487:        True if the prompt should be routed to Opus, False for Sonnet
+app/agent/complexity_detector.py:560:            f" → Using Sonnet"
+app/agent/agents/agentic_rag.py:669:    model_name = "Opus" if use_opus else "Sonnet"
+app/opus_metrics_router.py:22:    - Opus vs Sonnet distribution
+app/message/compression.py:106:        # For Claude Sonnet 4.5: 200k context, but keep to 160k for safety
+===== Opus =====
+app/usage_tracking/constants.py:63:    # Opus 4.1 Application Inference Profile (Auto-Opus routing)
+app/agent/complexity_detector.py:2:Opus Auto-Routing Complexity Detector v2.0
+app/agent/complexity_detector.py:40:    """Collects and exposes metrics for the Opus routing system."""
+app/agent/complexity_detector.py:125:    to Opus even if individual messages score below threshold.
+app/agent/complexity_detector.py:138:        - If previous turns scored high (Opus-worthy), maintain elevated routing
+app/agent/complexity_detector.py:139:        - Decays over turns so single complex query doesn't lock in Opus forever
+app/agent/complexity_detector.py:217:        True → definitely use Opus (skip full scoring)
+app/agent/complexity_detector.py:244:        return True  # Obviously complex → Opus
+app/agent/complexity_detector.py:355:        return 10  # Guaranteed Opus
+app/agent/complexity_detector.py:478:    Determine whether to route a prompt to Opus or keep on Sonnet.
+app/agent/complexity_detector.py:487:        True if the prompt should be routed to Opus, False for Sonnet
+app/agent/complexity_detector.py:555:            f" → Routing to Opus"
+app/agent/agents/agentic_rag.py:571:    Includes intelligent Opus routing based on prompt complexity.
+app/agent/agents/agentic_rag.py:605:    # Determine if we should use Opus
+app/agent/agents/agentic_rag.py:669:    model_name = "Opus" if use_opus else "Sonnet"
+app/config.py:621:    # Opus Auto-Routing Settings (complexity_detector.py)
+app/config.py:623:    # OPUS_MODEL: Bedrock Application Inference Profile ARN for Claude Opus 4
+app/config.py:626:    # Master switch: set to True to enable complexity-based routing to Opus
+app/config.py:629:    # Score threshold (0-12+) at or above which a prompt is routed to Opus
+app/opus_metrics_router.py:2:Opus Routing Metrics API Router
+app/opus_metrics_router.py:18:    Get current Opus routing statistics.
+app/opus_metrics_router.py:22:    - Opus vs Sonnet distribution
+app/main.py:272:# Opus routing metrics
+===== Anthropic =====
+app/agent/complexity_detector.py:298:    - list: extracts text from content blocks (Anthropic format)
+app/tools/aws_tools.py:95:    Invoke an Anthropic Claude model via Bedrock Application Inference Profile.
+===== Bedrock =====
+app/core/llm/chat_models.ollama_patched.py:9:from langchain_aws import ChatBedrockConverse
+app/core/llm/chat_models.ollama_patched.py:104:def _create_bedrock_model(model_name: str, max_tokens: int) -> ChatBedrockConverse:
+app/core/llm/chat_models.ollama_patched.py:106:    Create a new ChatBedrockConverse instance with fresh credentials.
+app/core/llm/chat_models.ollama_patched.py:109:        model_name: The Bedrock model identifier
+app/core/llm/chat_models.ollama_patched.py:113:        A new ChatBedrockConverse instance
+app/core/llm/chat_models.ollama_patched.py:115:    logger.info(f"Creating new Bedrock model instance for {model_name}")
+app/core/llm/chat_models.ollama_patched.py:116:    return ChatBedrockConverse(
+app/core/llm/chat_models.ollama_patched.py:273:                logger.error(f"AWS Bedrock error (non-token): {error_code} - {str(e)}")
+app/core/llm/chat_models.ollama_patched.py:333:                logger.error(f"AWS Bedrock error during streaming: {error_code} - {str(e)}")
+app/core/llm/chat_models.py:202:    """Create ChatBedrockConverse via Application Inference Profile ARN."""
+app/core/llm/chat_models.py:204:        from langchain_aws import ChatBedrockConverse
+app/core/llm/chat_models.py:212:    logger.info(f"Creating Bedrock model: {model_name!r} -> {resolved_model!r}")
+app/core/llm/chat_models.py:213:    return ChatBedrockConverse(
+app/core/llm/chat_models.py:314:        model_arn:     Override model identifier (Bedrock ARN or Ollama model name).
+app/core/llm/chat_models.py:392:    For Bedrock / OpenAI: the primary model already supports tools so this is
+app/core/llm/chat_models.py:402:        # Bedrock / OpenAI support tools natively — delegate to the normal model.
+app/agent/agents/agentic_rag.py:194:    the message list is always valid for the Bedrock Converse API.
+app/agent/agents/agentic_rag.py:240:    Bedrock Converse requires the conversational message list to start with a user message.
+app/agent/agents/agentic_rag.py:247:    This guard prevents Bedrock from rejecting the request with:
+app/agent/agents/agentic_rag.py:255:            "Bedrock message repair: message list was empty; injecting recovery HumanMessage."
+app/agent/agents/agentic_rag.py:276:                    "Bedrock message repair: trimmed context to latest HumanMessage at index %s.",
+app/agent/agents/agentic_rag.py:281:    # If only AI/tool fragments remain, prepend a minimal user turn so Bedrock accepts the shape.
+app/agent/agents/agentic_rag.py:283:        "Bedrock message repair: first message was %s and no HumanMessage remained; "
+app/agent/agents/agentic_rag.py:327:    passes can carry content blocks of type 'tool_use', and Bedrock-style
+app/agent/agents/agentic_rag.py:539:    # Then enforce Bedrock Converse shape. sanitize_tool_messages() can legitimately
+app/agent/agents/agentic_rag.py:585:    # Step 4: Final Bedrock Converse shape repair after cachepoint handling
+app/agent/agents/agentic_rag.py:632:        # Bedrock / OpenAI: tools are natively supported, no routing needed.
+app/agent/agents/tools/registry.py:134:# name collisions with the dev s3_stb_logs set when Bedrock builds toolConfig.
+app/agent/agents/tools/registry.py:234:        # AWS tools for Bedrock, S3, Athena, and Glue (read-focused)
+app/agent/agents/tools/registry.py:277:# Bedrock toolSpec.name must be <= 64 characters.
+app/agent/agents/tools/registry.py:282:    """Truncate tool names exceeding Bedrock 64-char limit.
+app/agent/agents/tools/registry.py:292:                "Tool name exceeds Bedrock 64-char limit (len=%d, set=%s): %r -> %r",
+app/agent/agents/tools/registry.py:364:    Bedrock raises ValidationException if the same tool name appears twice in
+app/agent/utils.py:7:from langchain_aws import ChatBedrockConverse
+app/agent/utils.py:199:        if isinstance(model, ChatBedrockConverse):
+app/agent/utils.py:211:        if isinstance(model, ChatBedrockConverse):
+app/agent/service.py:332:            # causes a hard Bedrock ValidationException: prompt is too long.
+app/config.py:101:    # AWS Bedrock Application Inference Profile
+app/config.py:112:    # AWS Bedrock Configuration
+app/config.py:123:    # Keeps title generation well under the 200k Bedrock token limit even on
+app/config.py:623:    # OPUS_MODEL: Bedrock Application Inference Profile ARN for Claude Opus 4
+app/config.ollama_patched.py:89:    # AWS Bedrock Configuration
+app/tools/aws_tools.py:4:Read-only focused tools for Bedrock, S3, Athena, and Glue.
+app/tools/aws_tools.py:22:    """Get Bedrock Runtime client (for list_models only; invoke uses ChatBedrockConverse with profile ARNs)."""
+app/tools/aws_tools.py:45:    List available Bedrock foundation models.
+app/tools/aws_tools.py:51:    interceptor.thought("Listing available Bedrock models", "tool")
+app/tools/aws_tools.py:61:            return "No Bedrock models found or insufficient permissions."
+app/tools/aws_tools.py:63:        output = "Available Bedrock Models:\n" + "="*60 + "\n\n"
+app/tools/aws_tools.py:81:        error_msg = f"AWS Error listing Bedrock models: {e.response['Error']['Message']}"
+app/tools/aws_tools.py:86:        error_msg = f"Error listing Bedrock models: {str(e)}"
+app/tools/aws_tools.py:95:    Invoke an Anthropic Claude model via Bedrock Application Inference Profile.
+app/tools/aws_tools.py:105:    Note: Direct Bedrock model IDs are no longer accepted.
+app/tools/aws_tools.py:113:    interceptor.thought(f"Invoking Bedrock model via profile ARN: {model_id}", "tool")
+app/tools/aws_tools.py:157:        error_msg = f"Error invoking Bedrock model: {str(e)}"
+app/tools/log_assist_gateway.py:101:        inference_profile_arn: Optional Bedrock inference profile override.
+app/main.py:180:# Configure boto3 with extended timeouts for Bedrock streaming
+app/message/ai_message_compressor.py:43:    metadata.  This is important for Bedrock/LangChain tool_call_id pairing.
+app/message/message_tiering.py:98:    # summary would violate Bedrock's required user-first conversation shape.
+app/embedding/utils.py:50:class PatchedBedrockEmbeddings:
+app/embedding/utils.py:55:            from langchain_aws import BedrockEmbeddings
+app/embedding/utils.py:58:            self._inner = BedrockEmbeddings(*args, **kwargs)
+app/embedding/utils.py:89:    - "aws-bedrock": PatchedBedrockEmbeddings (Cohere via Bedrock)
+app/embedding/utils.py:125:        return PatchedBedrockEmbeddings(

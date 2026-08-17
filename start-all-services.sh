@@ -1,0 +1,1 @@
+/home/jakebot/start-jakebot.sh

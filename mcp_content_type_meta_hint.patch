@@ -1,0 +1,235 @@
+diff --git a/app/response_compaction.py b/app/response_compaction.py
+index 0f13d16..ec2e072 100644
+--- a/app/response_compaction.py
++++ b/app/response_compaction.py
+@@ -43,6 +43,22 @@ def maybe_truncate_text(value: Any, max_chars: int = 500) -> Any:
+     return value[:max_chars] + f"...<truncated {len(value) - max_chars} chars>"
+ 
+ 
++def mcp_content_meta(content_type: str, *, tool_name: str = "", compression_hint: str = "") -> dict[str, Any]:
++    """Return a standard MCP response metadata block for client-side compression.
++
++    The chat-agent compression layer uses this hint to dispatch large ToolMessage
++    payloads without guessing whether a response is raw STB log text, a JSON
++    metadata report, browser/HTML content, or plain text.
++    """
++
++    meta = {"content_type": content_type}
++    if tool_name:
++        meta["tool_name"] = tool_name
++    if compression_hint:
++        meta["compression_hint"] = compression_hint
++    return meta
++
++
+ def persist_full_json(
+     srv,
+     payload: dict[str, Any],
+@@ -332,13 +348,21 @@ def compact_mcp_response(
+     Full payload is persisted to S3 by default. Inline data is capped.
+     """
+     if not isinstance(payload, dict):
+-        return {"ok": True, "value": maybe_truncate_text(payload, MCP_MAX_INLINE_CHARS)}
++        return {
++            "_meta": mcp_content_meta("text", tool_name=artifact_kind, compression_hint="plain_text"),
++            "ok": True,
++            "value": maybe_truncate_text(payload, MCP_MAX_INLINE_CHARS),
++        }
+ 
+     max_inline_items = max(0, min(int(max_inline_items or MCP_MAX_INLINE_ITEMS), 200))
+     full_inline = detail_level in ("full_inline", "unsafe_full_inline")
+ 
+     if full_inline:
+         result = dict(payload)
++        result.setdefault(
++            "_meta",
++            mcp_content_meta("json_report", tool_name=artifact_kind, compression_hint="full_inline_json"),
++        )
+         result["token_safety_note"] = "Full inline response explicitly requested; may be large."
+         return result
+ 
+@@ -387,6 +411,11 @@ def compact_mcp_response(
+ 
+     compact.update(
+         {
++            "_meta": compact.get("_meta") or mcp_content_meta(
++                "json_report",
++                tool_name=artifact_kind,
++                compression_hint="preserve_json_keys_drop_large_arrays",
++            ),
+             "detail_level": detail_level,
+             "compact_response": True,
+             "include_examples": include_examples,
+diff --git a/app/server.py b/app/server.py
+index b841fa8..c0f102b 100644
+--- a/app/server.py
++++ b/app/server.py
+@@ -229,6 +229,17 @@ def _caller_tool_name(default: str = "") -> str:
+     return default
+ 
+ 
++def _mcp_content_meta(content_type: str, *, tool_name: str = "", compression_hint: str = "") -> dict[str, str]:
++    """Return standard metadata used by clients for content-aware compression."""
++
++    meta = {"content_type": content_type}
++    if tool_name:
++        meta["tool_name"] = tool_name
++    if compression_hint:
++        meta["compression_hint"] = compression_hint
++    return meta
++
++
+ def _should_block_heavy_tool(
+     allow_heavy: bool,
+     heavy_auth_token: str | None = None,
+@@ -271,6 +282,7 @@ def _heavy_tool_blocked_response(
+ 
+     if not heavy_enabled and not authorized:
+         return {
++            "_meta": _mcp_content_meta("json_report", tool_name=tool_name, compression_hint="heavy_tool_policy"),
+             "ok": False,
+             "blocked": True,
+             "overridable_in_this_runtime": bool(heavy_user_auth_enabled()),
+@@ -303,6 +315,7 @@ def _heavy_tool_blocked_response(
+         # Should not be returned in normal guard flow because _should_block_heavy_tool
+         # would allow execution, but keep a clear response if called directly.
+         return {
++            "_meta": _mcp_content_meta("json_report", tool_name=tool_name, compression_hint="heavy_tool_policy"),
+             "ok": False,
+             "blocked": False,
+             "overridable_in_this_runtime": True,
+@@ -316,6 +329,7 @@ def _heavy_tool_blocked_response(
+         }
+ 
+     return {
++        "_meta": _mcp_content_meta("json_report", tool_name=tool_name, compression_hint="heavy_tool_policy"),
+         "ok": False,
+         "blocked": True,
+         "overridable_in_this_runtime": True,
+@@ -825,6 +839,7 @@ def read_log(
+     line_window_truncated = bool(next_start_line) or line_window_request_clipped
+ 
+     return {
++        "_meta": _mcp_content_meta("stb_log", tool_name="read_log", compression_hint="stb_log_extractor"),
+         "receiver_id": receiver_id,
+         "date": date,
+         "filename": filename,
+@@ -978,6 +993,7 @@ def search_logs(
+             continue
+ 
+     return {
++        "_meta": _mcp_content_meta("json_report", tool_name="search_logs", compression_hint="preserve_json_keys_drop_large_arrays"),
+ 
+         **_triage_guardrail(
+ 
+@@ -4033,6 +4049,7 @@ def _filter_log_lines_impl(
+         filtered_log += "\n[FILTERED LOG TRUNCATED by time budget]"
+ 
+     return {
++        "_meta": _mcp_content_meta("stb_log", tool_name="filter_log_lines", compression_hint="stb_log_extractor"),
+ 
+         **_triage_guardrail(
+ 
+@@ -8748,6 +8765,7 @@ def get_tool_info() -> dict:
+     shadow_info = shadow_architecture()
+ 
+     return {
++        "_meta": _mcp_content_meta("json_report", tool_name="get_tool_info", compression_hint="preserve_json_keys_drop_large_arrays"),
+         "build_identity": _build_identity(),
+         "name": "s3-stb-logs-mcp",
+         "code_version": get_code_version(),
+diff --git a/app/token_efficient_validation.py b/app/token_efficient_validation.py
+index 1fd49d5..c0d2256 100644
+--- a/app/token_efficient_validation.py
++++ b/app/token_efficient_validation.py
+@@ -19,6 +19,7 @@ from typing import Any
+ from app.response_compaction import (
+     MCP_DEFAULT_DETAIL_LEVEL,
+     MCP_MAX_INLINE_ITEMS,
++    mcp_content_meta,
+     persist_full_json,
+ )
+ 
+@@ -117,6 +118,11 @@ def register_token_efficient_validation_tools(mcp) -> None:
+             )
+ 
+         summary = {
++            "_meta": mcp_content_meta(
++                "json_report",
++                tool_name="validate_mcp_token_efficiency",
++                compression_hint="preserve_validation_keys_drop_large_arrays",
++            ),
+             "ok": True,
+             "validation_mode": "token_efficient_safe",
+             "detail_level": detail_level,
+diff --git a/tests/test_content_type_meta_hints.py b/tests/test_content_type_meta_hints.py
+new file mode 100644
+index 0000000..a010c1a
+--- /dev/null
++++ b/tests/test_content_type_meta_hints.py
+@@ -0,0 +1,65 @@
++"""Tests for MCP content-type hints used by chat-side compression."""
++
++from __future__ import annotations
++
++import inspect
++
++from app.response_compaction import compact_mcp_response, mcp_content_meta
++from app import token_efficient_validation
++
++
++def test_mcp_content_meta_shape() -> None:
++    meta = mcp_content_meta(
++        "json_report",
++        tool_name="validate_mcp_token_efficiency",
++        compression_hint="preserve_validation_keys_drop_large_arrays",
++    )
++
++    assert meta == {
++        "content_type": "json_report",
++        "tool_name": "validate_mcp_token_efficiency",
++        "compression_hint": "preserve_validation_keys_drop_large_arrays",
++    }
++
++
++def test_compact_response_includes_json_report_meta_without_persistence() -> None:
++    payload = {
++        "ok": True,
++        "cases": [{"id": idx, "status": "passed"} for idx in range(12)],
++        "summary": {"passed": 12},
++    }
++
++    compact = compact_mcp_response(
++        None,
++        payload,
++        artifact_kind="unit_validation_report",
++        persist_full_report=False,
++        max_inline_items=3,
++    )
++
++    assert compact["_meta"]["content_type"] == "json_report"
++    assert compact["_meta"]["tool_name"] == "unit_validation_report"
++    assert compact["_meta"]["compression_hint"] == "preserve_json_keys_drop_large_arrays"
++    assert compact["compact_response"] is True
++    assert compact["cases_omitted"] == 12
++
++
++def test_validate_token_efficiency_tool_registers_json_report_meta() -> None:
++    source = inspect.getsource(token_efficient_validation.register_token_efficient_validation_tools)
++
++    assert "mcp_content_meta" in source
++    assert "json_report" in source
++    assert "validate_mcp_token_efficiency" in source
++    assert "preserve_validation_keys_drop_large_arrays" in source
++
++
++def test_server_tool_responses_include_content_type_hints() -> None:
++    server_source = (token_efficient_validation.__file__.rsplit('/app/', 1)[0] + '/app/server.py')
++    with open(server_source, 'r', encoding='utf-8') as handle:
++        source = handle.read()
++
++    assert '_mcp_content_meta("stb_log", tool_name="read_log"' in source
++    assert '_mcp_content_meta("stb_log", tool_name="filter_log_lines"' in source
++    assert '_mcp_content_meta("json_report", tool_name="search_logs"' in source
++    assert '_mcp_content_meta("json_report", tool_name="get_tool_info"' in source
++    assert 'compression_hint="heavy_tool_policy"' in source
