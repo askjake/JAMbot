@@ -30,6 +30,29 @@ OPERATIONAL_WORKFLOW_SCHEMA = "diship_operational_workflow.v1"
 #: Semantic name of the repository checkout + isolated local deployment task.
 REPO_CHECKOUT_LOCAL_DEPLOY = "repo_checkout_local_deploy"
 
+#: Semantic name of a direct local command / filesystem-inspection task that
+#: has NO repository target.
+#:
+#: D3B-FIX(2026-08-18): before this existed, detect_operational_workflow()
+#: returned None for every prompt without a repository URL, so a legitimate
+#: request like "run these diagnostic bash commands on this host" or "read
+#: every module under src/orchestrator/ and produce a plan" could never
+#: register an operational need. Under the two GENERIC_CODE_EXECUTION_
+#: METHODOLOGIES ("generic_engineering", "no_tool_response") that made code
+#: execution *unreachable*: build_tool_profile() builds an allowlist from
+#: `eligible INTERSECT operational_requested`, which was necessarily empty,
+#: and an empty-but-not-None allowlist withholds every code-execution tool
+#: ahead of the authorization gate. Granting all four authorization flags
+#: could not override it. Reproduced live: a short "Proceed with the ...
+#: task" follow-up selects generic_engineering, parses 4/4 flags true, and
+#: still binds zero operational tools.
+#:
+#: This is a *capability request*, never an authorization decision. The tools
+#: it declares still have to clear extra_tool_eligibility(), which for
+#: agent_run_shell requires all four of operator_authorized,
+#: heavy_tools_authorized, mutation_authorized and persistence_authorized.
+LOCAL_COMMAND_EXECUTION = "local_command_execution"
+
 #: Owning tool family for each privileged executor tool.  Requesting an exact
 #: tool must activate its owner family without exposing the whole family.
 OPERATIONAL_TOOL_OWNERS: dict[str, str] = {
@@ -89,6 +112,41 @@ _EXPLICIT_PYTHON_RE = re.compile(
     r"\bagent_run_python\b|\brun\s+(?:a\s+|the\s+)?python\s+(?:script|code|snippet|program)\b",
     re.I,
 )
+
+# D3B-FIX(2026-08-18): a direct local command / filesystem-inspection request
+# with no repository target. Deliberately narrow -- it must NOT fire on
+# ordinary chat. Verified non-matching against the D3B2A/D3B0 invariant
+# fixtures: "Please summarise the attached document.", "Summarize the release
+# notes.", "Draft an email about the outage."
+#
+# Two independent triggers:
+#   1. An explicit command-execution directive naming a command/shell object.
+#   2. An explicit inspection verb aimed at a concrete local path or filename.
+# Trigger 2 is what makes "read README.md and every module under
+# src/orchestrator/" a real capability request instead of unanswerable chat.
+_LOCAL_EXEC_VERB_RE = re.compile(
+    r"\b(?:run|execute|invoke)\b(?:\s+\S+){0,4}?\s+"
+    r"\b(?:command|commands|shell|bash|sh|script|scripts|diagnostics?|"
+    r"one-?liner|cli)\b",
+    re.I,
+)
+#: A concrete local path or filename -- NOT a URL. A repository URL is handled
+#: by the repository-target path above and must never reach this branch.
+_LOCAL_PATH_TOKEN = (
+    r"(?:(?:~|\.{1,2})?/[\w.@~-]+(?:/[\w.@~-]+)*/?"
+    r"|\b[\w-]+\.(?:md|py|ya?ml|json|txt|j2|sh|toml|cfg|ini|lock)\b)"
+)
+_LOCAL_INSPECT_RE = re.compile(
+    r"\b(?:read|inspect|analy[sz]e|examine|audit|open|list|cat|grep|"
+    r"walk|enumerate)\b"
+    r"(?:\s+\S+){0,8}?\s+" + _LOCAL_PATH_TOKEN,
+    re.I,
+)
+
+
+def _local_execution_intent(text: str) -> bool:
+    """True when a no-repository prompt still needs a local executor tool."""
+    return bool(_LOCAL_EXEC_VERB_RE.search(text) or _LOCAL_INSPECT_RE.search(text))
 
 #: A purely interrogative message is discussion, not an operational request.
 _DISCUSSION_LEAD_RE = re.compile(
@@ -266,7 +324,33 @@ def detect_operational_workflow(prompt: str | None) -> OperationalWorkflowReques
 
     original, host, path = extract_repository_target(text)
     if not original:
-        return None
+        # D3B-FIX(2026-08-18): no repository target. A direct local command or
+        # filesystem-inspection request is still a real operational need, so it
+        # must be able to declare the executor tools it requires -- otherwise
+        # code execution is unreachable under generic_engineering /
+        # no_tool_response regardless of authorization (see
+        # LOCAL_COMMAND_EXECUTION above).
+        #
+        # This branch is deliberately placed INSIDE the `not original` guard.
+        # A prompt that *does* carry a repository URL (e.g. review-only
+        # "Review the code quality of https://gitlab.com/...") never reaches
+        # here and keeps its existing behaviour of returning None unless a
+        # clone/ssh/deploy intent is present.
+        if not _local_execution_intent(text):
+            return None
+        required_local = ["agent_run_shell"]
+        if _EXPLICIT_PYTHON_RE.search(text):
+            required_local.append("agent_run_python")
+        return OperationalWorkflowRequest(
+            workflow=LOCAL_COMMAND_EXECUTION,
+            methodology=LOCAL_COMMAND_EXECUTION,
+            triggers=("local_command_execution",),
+            url_status=URL_NO_TARGET,
+            deployment_scope="isolated_local",
+            required_exact_tools=tuple(sorted(
+                qualified_operational_tool(name) for name in required_local
+            )),
+        )
 
     clone_intent = bool(_CLONE_VERB_RE.search(text))
     ssh_identity_intent = bool(_SSH_IDENTITY_RE.search(text))
