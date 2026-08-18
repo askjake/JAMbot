@@ -37,8 +37,16 @@ def test_config_default_is_no_longer_the_fat_fingered_value():
 
 
 def test_setting_is_actually_wired_now():
-    """It previously had zero references outside its own declaration."""
-    assert npc._resolve_max_no_progress_attempts() == 2
+    """It previously had zero references outside its own declaration.
+
+    Reads the expected value from settings rather than hardcoding it, so this
+    test verifies *wiring* (config -> resolver) independent of whatever the
+    ceiling happens to be tuned to (2 originally, 4 as of the 2026-08-18
+    tuning change -- see app/config.py comment history).
+    """
+    from app.config import get_settings
+
+    assert npc._resolve_max_no_progress_attempts() == int(get_settings().MAX_CONSECUTIVE_TOOL_ERRORS)
 
 
 def test_configured_value_is_honoured(monkeypatch):

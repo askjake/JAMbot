@@ -987,26 +987,33 @@ class AISeparatorMessage:
 
 
 def test_no_progress_accumulates_sequential_parent_failures_across_ai_messages():
-    messages = [
-        HumanMessage("Inspect the tracker read-only."),
-        AISeparatorMessage("Trying the first bounded read path."),
-        ToolMessage(
-            '{"ok": false, "result_code": "TOOL_NOT_IN_LAST_BINDING", "tool_name": "internal_search"}',
-            name="internal_search",
-        ),
-        AISeparatorMessage("Trying one final bounded read path."),
-        ToolMessage(
-            '{"ok": false, "result_code": "TOOL_NOT_IN_LAST_BINDING", "tool_name": "internal_search"}',
-            name="internal_search",
-        ),
-    ]
+    """Builds exactly `ceiling` sequential AI/Tool failure pairs.
+
+    2026-08-18: was hardcoded to exactly 2 messages/attempts, which assumed
+    the pre-tuning MAX_CONSECUTIVE_TOOL_ERRORS ceiling of 2. The ceiling is
+    now a tunable config value (4 as of the 2026-08-18 tuning pass), so this
+    test derives the message count from settings instead of a literal, to
+    avoid going stale again on the next tuning change.
+    """
+    from app.config import get_settings
+
+    ceiling = int(get_settings().MAX_CONSECUTIVE_TOOL_ERRORS)
+    messages = [HumanMessage("Inspect the tracker read-only.")]
+    for i in range(ceiling):
+        messages.append(AISeparatorMessage(f"Trying bounded read path #{i + 1}."))
+        messages.append(
+            ToolMessage(
+                '{"ok": false, "result_code": "TOOL_NOT_IN_LAST_BINDING", "tool_name": "internal_search"}',
+                name="internal_search",
+            )
+        )
     decision = evaluate_no_progress(
         messages,
         required_tools={"s3_stb_logs:list_pending_investigations"},
     )
     assert decision.stop is True
     assert decision.result_code == "BLOCKED_NO_PROGRESS_LIMIT"
-    assert decision.no_progress_attempts == 2
+    assert decision.no_progress_attempts == ceiling
     assert decision.missing_tools == ("internal_search",)
 
 
