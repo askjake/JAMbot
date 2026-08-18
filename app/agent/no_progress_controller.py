@@ -7,12 +7,61 @@ uses assistant prose or tool-like JSON in an AI message as execution evidence.
 from __future__ import annotations
 
 import json
+import logging
 from dataclasses import dataclass
 from typing import Any, Iterable, Mapping, Sequence
 
 BLOCKED_MISSING_CAPABILITY = "BLOCKED_MISSING_CAPABILITY"
 NO_PROGRESS_LIMIT_REACHED = "BLOCKED_NO_PROGRESS_LIMIT"
+logger = logging.getLogger(__name__)
+
 MAX_NO_PROGRESS_ATTEMPTS = 2
+"""Fallback ceiling on consecutive failed/blocked tool attempts.
+
+Retained as the safe default. The effective value is resolved at call time by
+``_resolve_max_no_progress_attempts()`` from ``settings.MAX_CONSECUTIVE_TOOL_ERRORS``.
+"""
+
+# D3B-FIX(2026-08-18): plausible range for the consecutive-tool-error ceiling.
+# settings.MAX_CONSECUTIVE_TOOL_ERRORS shipped as 1555550, which would have
+# silently disabled this safety net entirely had it been wired in. Any value
+# outside this band is treated as a configuration error, not as intent.
+_MIN_NO_PROGRESS_ATTEMPTS = 1
+_MAX_NO_PROGRESS_ATTEMPTS_CEILING = 100
+
+
+def _resolve_max_no_progress_attempts() -> int:
+    """Resolve the consecutive failed/blocked tool-attempt ceiling.
+
+    D3B-FIX(2026-08-18): ``settings.MAX_CONSECUTIVE_TOOL_ERRORS`` was declared in
+    app/config.py but had **zero references** anywhere in the codebase, while the
+    real enforcement point here was hardcoded to ``MAX_NO_PROGRESS_ATTEMPTS``.
+    This honours the setting, but refuses values outside a plausible band so a
+    mistyped config can never silently disable the loop guard (the shipped value
+    was 1555550).
+    """
+    try:
+        from app.config import get_settings
+
+        configured = int(
+            getattr(get_settings(), "MAX_CONSECUTIVE_TOOL_ERRORS", MAX_NO_PROGRESS_ATTEMPTS)
+        )
+    except Exception:
+        return MAX_NO_PROGRESS_ATTEMPTS
+    if (
+        configured < _MIN_NO_PROGRESS_ATTEMPTS
+        or configured > _MAX_NO_PROGRESS_ATTEMPTS_CEILING
+    ):
+        logger.warning(
+            "MAX_CONSECUTIVE_TOOL_ERRORS=%s is outside the plausible range "
+            "[%s, %s]; falling back to %s so the no-progress guard stays active.",
+            configured,
+            _MIN_NO_PROGRESS_ATTEMPTS,
+            _MAX_NO_PROGRESS_ATTEMPTS_CEILING,
+            MAX_NO_PROGRESS_ATTEMPTS,
+        )
+        return MAX_NO_PROGRESS_ATTEMPTS
+    return configured
 
 _NON_CAPABILITY_OWNERS = frozenset({
     "mailto", "http", "https", "ftp", "ftps", "ssh", "git", "file",
@@ -289,7 +338,7 @@ def evaluate_no_progress(
             missing_tools=tuple(sorted(missing or required)),
         )
 
-    if attempts >= MAX_NO_PROGRESS_ATTEMPTS:
+    if attempts >= _resolve_max_no_progress_attempts():
         return NoProgressDecision(
             stop=True,
             result_code=NO_PROGRESS_LIMIT_REACHED,
