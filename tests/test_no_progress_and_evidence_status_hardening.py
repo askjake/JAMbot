@@ -72,15 +72,40 @@ def test_single_exact_activation_path_is_permitted_once():
     assert decision.activation_allowed is True
 
 
-def test_two_consecutive_no_progress_tool_results_stop():
+def test_no_progress_ceiling_reached_stops():
+    """Renamed 2026-08-18 from test_two_consecutive_no_progress_tool_results_stop.
+
+    That name and its hardcoded "2" assumed the pre-tuning ceiling. The
+    ceiling is a tunable config value (settings.MAX_CONSECUTIVE_TOOL_ERRORS,
+    2 originally -> 4 as of the 2026-08-18 tuning), so this test now builds
+    exactly `ceiling` consecutive no-progress results and asserts stop=True,
+    rather than hardcoding a count that would silently go stale on the next
+    tuning pass.
+    """
+    from app.config import get_settings
+
+    ceiling = int(get_settings().MAX_CONSECUTIVE_TOOL_ERRORS)
     messages = [
-        _tool({"ok": False, "result_code": "TOOL_EXECUTION_ERROR", "tool_name": "a"}, name="a"),
-        _tool({"ok": False, "result_code": "TOOL_EXECUTION_ERROR", "tool_name": "b"}, name="b"),
+        _tool({"ok": False, "result_code": "TOOL_EXECUTION_ERROR", "tool_name": f"t{i}"}, name=f"t{i}")
+        for i in range(ceiling)
     ]
     decision = evaluate_no_progress(messages)
     assert decision.stop is True
     assert decision.result_code == NO_PROGRESS_LIMIT_REACHED
-    assert decision.no_progress_attempts == 2
+    assert decision.no_progress_attempts == ceiling
+
+
+def test_one_below_ceiling_does_not_yet_stop():
+    """Complement to test_no_progress_ceiling_reached_stops: ceiling-1 must not stop."""
+    from app.config import get_settings
+
+    ceiling = int(get_settings().MAX_CONSECUTIVE_TOOL_ERRORS)
+    messages = [
+        _tool({"ok": False, "result_code": "TOOL_EXECUTION_ERROR", "tool_name": f"t{i}"}, name=f"t{i}")
+        for i in range(ceiling - 1)
+    ]
+    decision = evaluate_no_progress(messages)
+    assert decision.stop is False
 
 
 def test_successful_evidence_resets_no_progress_sequence():

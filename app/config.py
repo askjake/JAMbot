@@ -242,12 +242,27 @@ class Settings(BaseSettings):
     LANGGRAPH_RECURSION_LIMIT: int = 200  # Increased to handle complex agent workflows
     MAX_TOOL_CALLS_PER_TURN: int = 50  # Maximum consecutive tool calls before forcing response
     # D3B-FIX(2026-08-18): was 1555550 -- a fat-fingered value that would have
-    # effectively disabled this ceiling had it ever been wired in (it never was:
-    # the setting had zero references anywhere in the codebase). Set to 2 to
-    # exactly preserve the behaviour production has actually been running, which
-    # came from the hardcoded MAX_NO_PROGRESS_ATTEMPTS = 2 in
-    # app/agent/no_progress_controller.py. Tune here now that it is honoured.
-    MAX_CONSECUTIVE_TOOL_ERRORS: int = 2  # Consecutive failed/blocked tool attempts before stopping
+    # effectively disabled this ceiling had it ever been wired in (it never
+    # was: the setting had zero references anywhere in the codebase). The
+    # wiring fix (no_progress_controller._resolve_max_no_progress_attempts)
+    # initially set this to 2 to exactly preserve the behaviour production
+    # had actually been running under the old hardcoded
+    # MAX_NO_PROGRESS_ATTEMPTS = 2.
+    #
+    # TUNING(2026-08-18): raised 2 -> 4 after live GHUH-browser triage showed
+    # BLOCKED_NO_PROGRESS_LIMIT firing on transient MCP ToolExceptions
+    # (get_summary, search_logs, list_dates, list_files all threw once and
+    # recovered on the very next call). A ceiling of 2 gives a bound tool
+    # exactly one retry before the whole turn is abandoned, which is too
+    # tight for a remote MCP dependency with occasional transient errors.
+    # 4 gives two retries before the no-progress guard trips, which is still
+    # a hard bound (this is a ceiling, not a retry budget) -- it only
+    # changes how many failed/blocked *consecutive* attempts are tolerated
+    # before stopping. Values outside [1, 100] are rejected by
+    # _resolve_max_no_progress_attempts() and fall back to the hardcoded
+    # safe default of 2, so this can never be raised into "effectively
+    # disabled" territory again the way 1555550 was.
+    MAX_CONSECUTIVE_TOOL_ERRORS: int = 4  # Consecutive failed/blocked tool attempts before stopping
 
 
     # Beta report agent:
