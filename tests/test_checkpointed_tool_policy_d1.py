@@ -427,8 +427,14 @@ def test_last_bound_names_replace_and_include_retry_rebinding():
     from app.agent.agents import agentic_rag
 
     source = inspect.getsource(agentic_rag.call_model)
-    # Both the initial binding and the narrower retry binding must be recorded.
-    assert source.count("_record_parent_binding(") == 3
+    # Every binding and early-terminal path must record the parent binding,
+    # otherwise checkpointed policy state goes stale on that path.
+    # D3B-FIX(2026-08-18): raised 3 -> 4. The four call sites are:
+    #   1. tool-loop safety-limit terminal return (MAX_TOOL_CALLS_PER_TURN)
+    #   2. no-progress terminal return
+    #   3. the initial model-facing binding
+    #   4. the narrower retry rebinding
+    assert source.count("_record_parent_binding(") == 4
     assert "retry_tools" in source
     reduce = make_replacement_reducer(MAX_LAST_BOUND_TOOL_NAMES)
     assert reduce(["wide_a", "wide_b"], ["narrow"]) == ["narrow"]
