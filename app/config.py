@@ -241,7 +241,13 @@ class Settings(BaseSettings):
     # LangGraph recursion limit (for agent tool loops)
     LANGGRAPH_RECURSION_LIMIT: int = 200  # Increased to handle complex agent workflows
     MAX_TOOL_CALLS_PER_TURN: int = 50  # Maximum consecutive tool calls before forcing response
-    MAX_CONSECUTIVE_TOOL_ERRORS: int = 1555550  # Maximum tool errors before stopping
+    # D3B-FIX(2026-08-18): was 1555550 -- a fat-fingered value that would have
+    # effectively disabled this ceiling had it ever been wired in (it never was:
+    # the setting had zero references anywhere in the codebase). Set to 2 to
+    # exactly preserve the behaviour production has actually been running, which
+    # came from the hardcoded MAX_NO_PROGRESS_ATTEMPTS = 2 in
+    # app/agent/no_progress_controller.py. Tune here now that it is honoured.
+    MAX_CONSECUTIVE_TOOL_ERRORS: int = 2  # Consecutive failed/blocked tool attempts before stopping
 
 
     # Beta report agent:

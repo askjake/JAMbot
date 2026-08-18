@@ -22,6 +22,7 @@ Usage:
 import logging
 import time
 from collections import deque
+from contextvars import ContextVar
 from typing import Optional
 
 logger = logging.getLogger(__name__)
@@ -53,6 +54,13 @@ def _raw_token_count(text: str) -> int:
 
 # ─── Adaptive Calibration ─────────────────────────────────────────────────────
 
+# D3B-FIX(2026-08-18): plausible band for (actual / estimated). tiktoken
+# cl100k_base vs the served model's real tokenizer diverges by tens of percent,
+# not multiples. Values outside this band are treated as scope mismatch or
+# mispaired samples, not as tokenizer drift, and are rejected.
+_PLAUSIBLE_RATIO_MIN = 0.5
+_PLAUSIBLE_RATIO_MAX = 2.0
+
 class _CalibrationState:
     """
     Maintains a rolling calibration factor between offline estimates and
@@ -61,18 +69,55 @@ class _CalibrationState:
     The factor = actual / estimated. When actual > estimated, factor > 1.0
     meaning we were under-counting and should multiply estimates up.
     """
-    __slots__ = ("factor", "_history", "_max_history")
+    __slots__ = ("factor", "_history", "_max_history", "_rejected")
 
     def __init__(self, initial_factor: float = 1.0, max_history: int = 50):
         self.factor = initial_factor
         self._history: deque = deque(maxlen=max_history)
         self._max_history = max_history
+        self._rejected = 0
 
     def update(self, estimated: int, actual: int) -> None:
-        """Record a new calibration data point and update the factor."""
+        """Record a new calibration data point and update the factor.
+
+        D3B-FIX(2026-08-18): ratios outside ``_PLAUSIBLE_RATIO_BAND`` are
+        rejected rather than averaged in. Two distinct problems produced
+        implausible ratios in production:
+
+        1. Cross-request contamination from the old module-global estimate
+           stash (fixed via ContextVar below). This produced ratios from 0.04x
+           to ~197x in a single window.
+        2. A structural scope mismatch that still exists: the estimate counts
+           only the message list, while Bedrock's ``input_tokens`` also includes
+           the system prompt and the bound tool schemas. So ``actual`` is
+           legitimately larger than ``estimated`` by a roughly *fixed* amount,
+           which a *multiplicative* factor models incorrectly.
+
+        This factor scales ``count_tokens()``, which drives compression and
+        truncation decisions. ``effective_context_budget()`` already reserves
+        space for the system prompt and tool schemas separately, so folding that
+        same overhead into the factor double-counts it and makes compression
+        fire far earlier than necessary. A tokenizer-vs-tokenizer disagreement
+        cannot be 6x; anything that large is a scope/pairing problem, and
+        silently scaling every budget decision by it destroys history for no
+        reason. Rejecting those samples keeps the factor near the honest
+        tokenizer-drift value.
+        """
         if estimated <= 0 or actual <= 0:
             return
         ratio = actual / estimated
+        if not (_PLAUSIBLE_RATIO_MIN <= ratio <= _PLAUSIBLE_RATIO_MAX):
+            self._rejected += 1
+            calibration_logger.warning(
+                "CALIBRATION_REJECT_OUTLIER estimated=%d actual=%d ratio=%.4f "
+                "band=[%.2f, %.2f] rejected_total=%d factor_unchanged=%.4f "
+                "(implausible for tokenizer drift; indicates estimate/actual "
+                "scope mismatch or mispaired estimate)",
+                estimated, actual, ratio,
+                _PLAUSIBLE_RATIO_MIN, _PLAUSIBLE_RATIO_MAX,
+                self._rejected, self.factor,
+            )
+            return
         self._history.append(ratio)
         # Exponential moving average weighted toward recent observations
         if len(self._history) >= 3:
@@ -83,6 +128,10 @@ class _CalibrationState:
             self.factor = sum(trimmed) / len(trimmed)
         else:
             self.factor = sum(self._history) / len(self._history)
+
+        # Final guard: never let the factor leave the plausible band, even if
+        # the accepted-sample mean somehow drifts there.
+        self.factor = min(_PLAUSIBLE_RATIO_MAX, max(_PLAUSIBLE_RATIO_MIN, self.factor))
 
         calibration_logger.debug(
             "CALIBRATION_UPDATE estimated=%d actual=%d ratio=%.4f new_factor=%.4f history_size=%d",
@@ -101,12 +150,18 @@ class _CalibrationState:
     def get_stats(self) -> dict:
         """Return calibration statistics for observability."""
         if not self._history:
-            return {"factor": self.factor, "samples": 0, "converged": False}
+            return {
+                "factor": self.factor,
+                "samples": 0,
+                "converged": False,
+                "rejected_outliers": self._rejected,
+            }
         sorted_h = sorted(self._history)
         return {
             "factor": round(self.factor, 4),
             "samples": len(self._history),
             "converged": self.is_converged,
+            "rejected_outliers": self._rejected,
             "min_ratio": round(sorted_h[0], 4),
             "max_ratio": round(sorted_h[-1], 4),
             "p50_ratio": round(sorted_h[len(sorted_h) // 2], 4),
@@ -170,22 +225,43 @@ def record_calibration_point(estimated_tokens: int, actual_tokens: int) -> None:
 # ─── Pre-Invocation Estimate Stash ────────────────────────────────────────────
 # Before each model invocation, call_model() calls stash_pre_invocation_estimate()
 # with the message token count it computed. The usage tracker retrieves this after
-# the invocation completes to feed calibration. Thread-safety: each async request
-# runs in a single coroutine chain, so a simple module variable suffices.
+# the invocation completes to feed calibration.
+#
+# D3B-FIX(2026-08-18): this was a plain module-level global, justified by the
+# comment "each async request runs in a single coroutine chain, so a simple
+# module variable suffices". That reasoning is wrong. One coroutine chain per
+# request does not isolate requests: concurrent requests interleave at every
+# ``await`` on the same event loop, so request B's stash overwrote request A's
+# before A's _feed_calibration() read it back. The calibration loop was
+# therefore pairing one request's estimate with another request's actual count.
+#
+# Production evidence: within a single 50-sample window, per-sample ratios
+# ranged from 0.04x (estimated=131279 actual=5610) to ~197x (estimated=94
+# actual=18519), and the "converged" factor swung between 1.19 and 28.5 across
+# windows. That is cross-request contamination, not tokenizer drift.
+#
+# A ContextVar isolates the value per async task while still propagating down a
+# single request's coroutine chain. This is the same primitive the consumer
+# module (app/usage_tracking/service.py) already uses for
+# ``usage_metadata_callback_var``.
 
-_last_pre_invocation_estimate: int = 0
+_pre_invocation_estimate_var: ContextVar[int] = ContextVar(
+    "pre_invocation_estimate", default=0
+)
 
 
 def stash_pre_invocation_estimate(estimated_tokens: int) -> None:
     """
     Store the estimated input token count just before model invocation.
-    
+
     Called by the compression pipeline after truncate_messages() completes.
     The usage tracking layer retrieves this via get_last_estimate() to
     feed the calibration system.
+
+    The value is scoped to the current async context, so concurrent requests
+    cannot overwrite each other's estimate.
     """
-    global _last_pre_invocation_estimate
-    _last_pre_invocation_estimate = estimated_tokens
+    _pre_invocation_estimate_var.set(int(estimated_tokens))
     calibration_logger.debug(
         "PRE_INVOCATION_ESTIMATE stashed=%d calibration_factor=%.4f",
         estimated_tokens, _calibration.factor
@@ -194,12 +270,21 @@ def stash_pre_invocation_estimate(estimated_tokens: int) -> None:
 
 def get_last_estimate() -> int:
     """
-    Retrieve the last stashed pre-invocation estimate.
-    
+    Retrieve the pre-invocation estimate for the *current* async context.
+
     Called by the usage tracking service after Bedrock responds, to feed
-    the calibration loop. Returns 0 if no estimate was stashed.
+    the calibration loop. Returns 0 if no estimate was stashed in this context.
     """
-    return _last_pre_invocation_estimate
+    return _pre_invocation_estimate_var.get()
+
+
+def reset_pre_invocation_estimate() -> None:
+    """Clear the current context's estimate so it cannot be reused.
+
+    A stale estimate paired with a later invocation's actual count is exactly
+    the corruption this module is guarding against.
+    """
+    _pre_invocation_estimate_var.set(0)
 
 # ─── Bedrock CountTokens API Validation ───────────────────────────────────────
 
