@@ -88,9 +88,20 @@ def test_bedrock_shape_repair_preserves_original_task_and_followup():
     )
 
     texts = [_text(msg) for msg in repaired]
+    # Bedrock Converse requires the sequence to open on a user turn.
     assert isinstance(repaired[0], HumanMessage)
-    assert "ORIGINAL TASK" in texts[0]
+    # D3B-FIX(2026-08-18): the repair no longer *deletes* the invalid leading
+    # fragment so that the earliest real HumanMessage lands at index 0. It now
+    # prepends a minimal synthetic user turn and preserves all history,
+    # because deleting forward was destroying completed tool work for turns
+    # still in flight (production: 36 -> 10 messages, ~47k tokens lost in a
+    # single pass). The original task must still be present, but is no longer
+    # required to sit at index 0 -- consistent with the presence-based
+    # assertions used throughout this module.
+    assert any("ORIGINAL TASK" in text for text in texts)
     assert any("find in your workspace" in text for text in texts)
+    # The previously-deleted leading fragment must now survive too.
+    assert any("leading invalid fragment" in text for text in texts)
 
 
 def test_truncate_messages_preserves_current_multimodal_user_turn(monkeypatch):

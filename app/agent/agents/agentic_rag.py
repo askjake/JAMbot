@@ -549,16 +549,50 @@ def ensure_bedrock_converse_message_shape(messages: list[BaseMessage]) -> list[B
     if isinstance(messages[0], HumanMessage):
         return messages
 
-    for idx, msg in enumerate(messages):
-        if isinstance(msg, HumanMessage):
-            repaired = sanitize_tool_messages(messages[idx:])
-            if repaired and isinstance(repaired[0], HumanMessage):
-                logger.warning(
-                    "Bedrock message repair: removed invalid prefix through earliest "
-                    "HumanMessage at index %s; preserved subsequent user history.",
-                    idx,
+    # D3B-FIX(2026-08-18): The window does not start with a HumanMessage --
+    # upstream trimming split a turn mid-tool-chain. The previous repair
+    # jumped forward to the *earliest surviving* HumanMessage and discarded
+    # everything before it, which silently destroyed completed tool work for
+    # turns still in flight (observed: 36 -> 10 messages / ~47k tokens lost
+    # in a single pass, "removed invalid prefix through earliest HumanMessage
+    # at index 22"). That data loss forced the agent to re-issue tool calls
+    # it had already completed, producing the message-count sawtooth pattern
+    # (45 -> 10 -> 22 -> 18 -> 25 -> 10) seen in incident logs.
+    #
+    # Fix: preserve all history by prepending a minimal synthetic
+    # HumanMessage so the sequence is Bedrock-shape-valid (starts with a
+    # `user` turn), instead of deleting the invalid prefix. This is safe
+    # because langchain_aws.ChatBedrockConverse calls merge_message_runs()
+    # before submitting to the Converse API, so a synthetic Human turn
+    # immediately followed by AI/Tool turns -- and any later ToolMessage
+    # immediately followed by a real HumanMessage -- is merged/handled
+    # correctly rather than rejected for role non-alternation.
+    invalid_prefix_len = next(
+        (idx for idx, msg in enumerate(messages) if isinstance(msg, HumanMessage)),
+        len(messages),
+    )
+    if invalid_prefix_len < len(messages):
+        repaired = sanitize_tool_messages([
+            HumanMessage(
+                content=(
+                    "Continue this task. The messages that follow include "
+                    "earlier tool activity and assistant turns from the same "
+                    "task that are still relevant; no prior user turns were "
+                    "discarded."
                 )
-                return repaired
+            ),
+            *messages,
+        ])
+        if repaired and isinstance(repaired[0], HumanMessage):
+            logger.warning(
+                "Bedrock message repair: prepended synthetic HumanMessage ahead of "
+                "%s leading non-Human message(s) instead of deleting them; "
+                "preserved all %s original messages (%s total after repair).",
+                invalid_prefix_len,
+                len(messages),
+                len(repaired),
+            )
+            return repaired
 
     logger.warning(
         "Bedrock message repair: first message was %s and no HumanMessage remained; "
@@ -841,6 +875,14 @@ def truncate_messages(messages: list[BaseMessage], max_messages: int) -> list[Ba
             max_tokens=_active_history_budget_tokens(),
             strategy="last",
             token_counter=count_message_tokens,
+            # D3B-FIX(2026-08-18): without start_on="human" the surviving
+            # window routinely began on an AIMessage/ToolMessage mid-tool-chain,
+            # which then triggered the destructive Bedrock-shape repair below.
+            # start_on="human" makes trim_messages itself respect turn
+            # boundaries, so the repair path becomes a rare true-emergency
+            # fallback instead of the common case.
+            start_on="human",
+            include_system=True,
         )
         logger.info(
             f"Token-based truncation applied, final message count: {len(messages)}"
@@ -871,10 +913,16 @@ def truncate_messages(messages: list[BaseMessage], max_messages: int) -> list[Ba
                 "Token/context truncation removed the latest HumanMessage; "
                 "restoring the active user turn instead of synthetic continuation."
             )
-            # Keep any already-bounded recent suffix only when it can coexist
-            # behind the restored current turn without invalid tool fragments.
-            messages = sanitize_tool_messages([latest_human, *messages])
-            if not messages or not isinstance(messages[0], HumanMessage):
+            # D3B-FIX(2026-08-18): this previously PREPENDED latest_human,
+            # i.e. [latest_human, *messages] -- placing the newest user
+            # request at index 0, *ahead of* older assistant answers and
+            # tool results that chronologically preceded it. The model would
+            # then read stale tool output as if it were the response to a
+            # request that had not been made yet (chronology inversion).
+            # Fix: append the restored turn at the end, which is where it
+            # actually belongs in conversation order.
+            messages = sanitize_tool_messages([*messages, latest_human])
+            if not messages or not isinstance(messages[-1], HumanMessage):
                 messages = [latest_human]
 
     if _active_provider_requires_bedrock_shape():
@@ -902,6 +950,24 @@ def _get_last_human_message(messages: list[BaseMessage]) -> str:
                 return content["text"]
             return str(content) if content else ""
     return ""
+
+
+def _count_tool_calls_since_last_human(messages: list[BaseMessage]) -> int:
+    """Count individual tool calls issued since the most recent HumanMessage.
+
+    Used as a bounded, unconditional safety net against runaway tool loops
+    (see D3B-FIX 2026-08-18 in call_model): a tool that succeeds every time
+    but keeps getting re-issued -- e.g. because earlier results were lost --
+    never trips evaluate_no_progress(), which only reacts to explicit
+    missing-capability block codes.
+    """
+    count = 0
+    for msg in reversed(messages):
+        if isinstance(msg, HumanMessage):
+            break
+        if isinstance(msg, AIMessage) and getattr(msg, "tool_calls", None):
+            count += len(msg.tool_calls)
+    return count
 
 
 ### Nodes
@@ -1042,6 +1108,57 @@ async def call_model(state: AgentState, config=None):
         ),
         first_tool=str(getattr(tool_plan, "first_tool", "") or ""),
     )
+    # D3B-FIX(2026-08-18): bounded safety net for runaway tool loops that
+    # succeed on every call. evaluate_no_progress() below only trips for
+    # explicit missing-capability block codes (TOOL_NOT_IN_LAST_BINDING,
+    # BLOCKED_UPSTREAM_UNAVAILABLE, etc). A tool that keeps succeeding but is
+    # repeatedly re-issued -- e.g. because an earlier history-collapse bug
+    # destroyed the tool results the model had already received -- never
+    # produces one of those codes and never engages that controller.
+    # Observed: a single session reached 31 tool calls / 6+ minutes with no
+    # GraphRecursionError and no terminal message. This backstop is
+    # unconditional and independent of *why* the loop is happening.
+    _tool_calls_this_turn = _count_tool_calls_since_last_human(messages)
+    # D3B-FIX(2026-08-18): settings.MAX_TOOL_CALLS_PER_TURN was declared in
+    # app/config.py (default 50) but had zero references anywhere else in
+    # the codebase -- a safety net that was configured but never wired in.
+    _max_tool_calls_per_turn = getattr(settings, "MAX_TOOL_CALLS_PER_TURN", 50)
+    if _tool_calls_this_turn >= _max_tool_calls_per_turn:
+        logger.error(
+            "TOOL_LOOP_LIMIT_REACHED tool_calls_this_turn=%d limit=%d",
+            _tool_calls_this_turn,
+            _max_tool_calls_per_turn,
+        )
+        _policy_update = _build_tool_policy_update(
+            stored=_stored_policy,
+            plan=tool_plan,
+            authorization_flags=_authorization_flags,
+            bound_tool_names=[],
+            activation_request_revision=_activation_intent.request_revision,
+            processed_activation_tool_call_ids=_processed_activation_ids,
+        )
+        publish_policy_runtime_snapshot(
+            build_policy_runtime_snapshot(
+                _policy_update, methodology=getattr(tool_plan, "methodology", "")
+            )
+        )
+        _log_tool_policy_state(
+            _policy_update, methodology=getattr(tool_plan, "methodology", "")
+        )
+        _record_parent_binding(
+            [], authorization_flags=_authorization_flags, thread_id=session_id,
+            mcop_children_forbidden=bool(tool_plan.mcop_children_forbidden),
+        )
+        return {
+            "messages": [AIMessage(content=(
+                f"Reached the per-turn tool-call safety limit ({_max_tool_calls_per_turn}) "
+                "without completing the task. Stopping here to avoid an unbounded "
+                "loop. Please review the tool results gathered so far, or narrow "
+                "the request."
+            ))],
+            **_policy_update,
+        }
+
     _no_progress = evaluate_no_progress(
         messages,
         required_tools=_required_tools,

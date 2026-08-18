@@ -28,6 +28,47 @@ VALID_SOURCES = frozenset({
 })
 
 MAX_REQUESTED_TOOLSETS = 32
+
+_CAPABILITY_NAME_UNIVERSE_CACHE: "frozenset[str] | None" = None
+
+
+def _capability_name_universe() -> "frozenset[str]":
+    """Names that are per-tool *capabilities*, never registry *toolset*
+    families -- requesting one as a toolset is a caller error (most often
+    the model itself confusing "I need X capability" with "activate X
+    toolset") and can never resolve via registry discovery, no matter how
+    long it is polled.
+    """
+    names: set[str] = {
+        # Heuristic capability tags from app.agent_mode.task_capability_plan
+        "read_only", "repository_access", "repository_clone", "mutation",
+        "remote_service_access",
+        # Declared write/network/repo requirements from TaskCapabilityPlan
+        "filesystem_write", "network_egress",
+        # Persistence-adjacent capability satisfiers treated as equivalent
+        # to filesystem_write in evaluate_child_capability_plan()
+        "persistent_artifacts", "bundle_write", "capsule_persist", "scene_persist",
+    }
+    try:
+        from app.agent import tool_profiles as _tp
+        for attr_name in dir(_tp):
+            value = getattr(_tp, attr_name, None)
+            if isinstance(value, (list, tuple)):
+                for item in value:
+                    if isinstance(item, Mapping):
+                        caps = item.get("capabilities")
+                        if isinstance(caps, (list, tuple)):
+                            names.update(str(c) for c in caps if c)
+    except Exception:
+        pass
+    return frozenset(names)
+
+
+def _is_known_capability_name(name: str) -> bool:
+    global _CAPABILITY_NAME_UNIVERSE_CACHE
+    if _CAPABILITY_NAME_UNIVERSE_CACHE is None:
+        _CAPABILITY_NAME_UNIVERSE_CACHE = _capability_name_universe()
+    return name in _CAPABILITY_NAME_UNIVERSE_CACHE
 MAX_REQUESTED_EXACT_TOOLS = 64
 MAX_AMBIGUOUS_REQUESTS = 16
 MAX_NAME_LENGTH = 128
@@ -343,6 +384,21 @@ def _intent_from_raw(
     for value in requested_toolsets:
         family = _clean_family(value)
         if not family:
+            continue
+        # D3B-FIX(2026-08-18): a request for a *tool capability* name (e.g.
+        # "filesystem_write", "network_egress") masquerading as a toolset
+        # family used to fall into `pending` -> PENDING_REGISTRY, which is
+        # reserved for families that are merely not loaded *yet*. Capability
+        # names are never registry families and will never resolve, so they
+        # sat as PENDING_REGISTRY forever: activation_intent_from_checkpoint()
+        # re-derives requested_toolsets from checkpointed state every turn,
+        # so the same unresolvable name was re-requested every turn
+        # indefinitely (observed: {"filesystem_write": "PENDING_REGISTRY"}
+        # on every turn of a session, activation_request_revision frozen).
+        # Route these to a terminal `unavailable` bucket instead, and do not
+        # record them as a durable toolset request.
+        if not registry.family_known(family) and _is_known_capability_name(family):
+            unavailable.append(family)
             continue
         # The request is durable independently of current registry health.  A
         # transient discovery outage must not erase operator intent.
